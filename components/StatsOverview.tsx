@@ -22,7 +22,7 @@ const STATS: Stat[] = [
   {
     label: 'At risk of churn',
     value: formatNumber(878),
-    change: '8.8% of base',
+    change: '8.8% of base (medium + high + critical)',
     icon: <AlertTriangle className="w-4 h-4" />,
     trend: 'down',
   },

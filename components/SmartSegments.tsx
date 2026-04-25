@@ -160,12 +160,12 @@ export default function SmartSegments() {
                         }),
                       })
                       const data = await res.json()
-                      setCampaign(data.campaign || data)
+                      setCampaign(data.success && data.campaign ? data.campaign : data)
                     } catch {
                       setCampaign({
-                        sms: `Penawaran khusus untuk ${result.segment_name}: Free 10GB + diskon 30%. Klaim di myIM3.`,
-                        email_subject: `Penawaran Eksklusif untuk ${result.segment_name}`,
-                        email_body: `Kepada pelanggan yang kami hormati,\n\nSebagai bagian dari ${result.segment_name}, kami menyiapkan penawaran khusus: Free 10GB + diskon 30% bulan depan.\n\nKlaim di myIM3 sekarang.\n\nSalam,\nIndosat Ooredoo Hutchison`,
+                        sms: `Special offer for ${result.segment_name}: Free 10GB + 30% off. Claim in myIndosat app. T&C apply.`,
+                        email_subject: `Exclusive Offer for ${result.segment_name}`,
+                        email_body: `Dear valued subscriber,\n\nAs part of the ${result.segment_name} segment, we have prepared a special offer: Free 10GB + 30% off next month.\n\nClaim now in the myIndosat app.\n\nBest regards,\nIndosat Ooredoo Hutchison`,
                         reasoning: 'Urgent retention campaign with immediate value proposition.',
                       })
                     } finally {

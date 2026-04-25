@@ -185,7 +185,7 @@ No markdown, no code fences, no preamble. Just JSON.`
     messages: [{ role: 'user', content: prompt }],
   })
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
   const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
   return JSON.parse(cleaned)
 }
@@ -222,7 +222,7 @@ No markdown, no preamble. Just JSON.`
     messages: [{ role: 'user', content: prompt }],
   })
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
   const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
   return JSON.parse(cleaned)
 }
@@ -292,7 +292,7 @@ No markdown. Just JSON.`
     messages: [{ role: 'user', content: prompt }],
   })
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
   const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
   return JSON.parse(cleaned)
 }
@@ -358,7 +358,7 @@ No markdown. Just JSON.`
     messages: [{ role: 'user', content: prompt }],
   })
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
   const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
   return JSON.parse(cleaned)
 }

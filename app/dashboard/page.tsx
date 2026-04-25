@@ -116,7 +116,7 @@ export default function DashboardPage() {
 
       <footer className="border-t border-white/[0.06] mt-16">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-white/30">
-          <div>Powered by Claude Sonnet 4 · XGBoost · Next.js 14</div>
+          <div>Powered by Claude Sonnet 4.5 · XGBoost · Next.js 14</div>
           <div>Synthetic data — no real subscriber info</div>
         </div>
       </footer>

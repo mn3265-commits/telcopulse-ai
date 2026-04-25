@@ -58,7 +58,7 @@ export default function ChurnRadar() {
         }),
       })
       const data = await res.json()
-      setCampaign(data.campaign || data)
+      setCampaign(data.success && data.campaign ? data.campaign : data)
     } catch {
       setCampaign({
         sms: 'Don\'t go! Get 10GB free + 50% off next month. Claim in the myIndosat app. T&C apply.',
