@@ -225,7 +225,7 @@ export default function SubscriberView() {
                   {/* Risk drivers */}
                   <div>
                     <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Churn Risk Drivers</div>
-                    <p className="text-[10px] text-white/30 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber's risk level.</p>
+                    <p className="text-[10px] text-white/30 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber&apos;s risk level.</p>
                     <div className={`rounded-lg p-4 border-l-4 ${
                       sub.risk_tier === 'High' || sub.risk_tier === 'Critical' ? 'bg-red-500/5 border-l-red-500' :
                       sub.risk_tier === 'Medium' || sub.risk_tier === 'Medium-High' ? 'bg-amber-500/5 border-l-amber-500' :
