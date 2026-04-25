@@ -272,9 +272,52 @@ export default function SubscriberView() {
                   </div>
 
                   {/* Contact actions */}
-                  {wf.step >= 2 && (
+                  {wf.step >= 2 && (() => {
+                    const emailSubject = `[Indosat] Penawaran Spesial untuk Pelanggan ${sub.plan_name}`
+                    const emailBody = `Kepada pelanggan ${sub.phone} yang kami hormati,\n\nSalam dari Indosat Ooredoo Hutchison.\n\n${sub.tenure_months <= 3 ? `Sebagai pelanggan baru (${sub.tenure_months} bulan), kami ingin memastikan pengalaman terbaik untuk Anda.` : `Kami sangat menghargai kesetiaan Anda selama ${sub.tenure_months} bulan bersama Indosat.`}${sub.complaints_last_90d >= 2 ? ` Kami menyadari ada ${sub.complaints_last_90d} keluhan yang belum terselesaikan dan tim kami sedang memprioritaskan penyelesaiannya.` : ''}${sub.data_usage_pct < 30 ? ` Kami memperhatikan penggunaan data Anda menurun.` : ''}\n\nSebagai pelanggan ${sub.plan_name} di ${sub.city}, kami menyiapkan penawaran khusus:\n- Bonus data 10GB gratis selama 7 hari\n- Diskon 30% untuk tagihan bulan depan\n\nKlaim mudah melalui aplikasi myIM3 > menu Penawaran Spesial.\n\nSalam hangat,\nTim Retensi Pelanggan\nIndosat Ooredoo Hutchison\n---\nHubungi kami: 185`
+                    const callScript = `Halo. Saya dari Indosat Ooredoo Hutchison, menghubungi dari ${sub.city}. ${sub.complaints_last_90d >= 2 ? `Kami menyadari ada ${sub.complaints_last_90d} keluhan yang belum terselesaikan. Tim kami sedang memprioritaskan ini.` : sub.data_usage_pct < 30 ? `Kami memperhatikan penggunaan data Anda menurun akhir-akhir ini.` : `Sebagai pelanggan setia selama ${sub.tenure_months} bulan, Anda sangat penting bagi kami.`} Untuk itu, kami menyiapkan penawaran khusus: bonus data 10GB gratis dan diskon 30 persen bulan depan. Silakan buka aplikasi my IM3, masuk ke Penawaran Spesial, dan tap Klaim Sekarang. Terima kasih.`
+                    const talkingPoints = [
+                      `Customer: ${sub.phone} (${sub.plan_name}, ${sub.plan_type})`,
+                      `Location: ${sub.city} | Tenure: ${sub.tenure_months} months | ARPU: $${sub.monthly_spend_usd.toFixed(2)}`,
+                      `Churn risk: ${(sub.predicted_churn_prob * 100).toFixed(1)}% (${sub.risk_tier})`,
+                      ...getDrivers(sub).slice(0, 3).map(d => `Risk: ${d}`),
+                      `Offer: 10GB free data + 30% off next bill`,
+                      sub.complaints_last_90d >= 1 ? `Note: ${sub.complaints_last_90d} recent complaint(s), acknowledge and empathize first` : `Note: No recent complaints, focus on value and appreciation`,
+                    ]
+
+                    return (
                     <div>
                       <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Send Retention Message</div>
+
+                      {/* Email and Call Script preview */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <div>
+                          <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Email Preview</div>
+                          <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3 text-xs text-white/70 max-h-40 overflow-y-auto whitespace-pre-line">
+                            <div className="text-white/40 mb-1">Subject: {emailSubject}</div>
+                            {emailBody}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Voice Call Script</div>
+                          <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3 text-xs text-white/70 max-h-40 overflow-y-auto">
+                            {callScript}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Talking points */}
+                      <div className="mb-3">
+                        <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Talking Points</div>
+                        <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3">
+                          {talkingPoints.map((tp, idx) => (
+                            <div key={idx} className="text-xs text-white/60 py-0.5 flex gap-2">
+                              <span className="text-white/30">{idx + 1}.</span> {tp}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="flex gap-2">
                         <button
                           disabled={sending === sub.user_id}
@@ -286,8 +329,8 @@ export default function SubscriberView() {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                   to: 'mn3265@columbia.edu',
-                                  subject: `[Indosat] Retention offer for ${sub.user_id}`,
-                                  body: `Dear subscriber ${sub.phone},\n\nAs a ${sub.plan_name} customer in ${sub.city}, we have a special retention offer for you.\n\nYour churn risk: ${(sub.predicted_churn_prob * 100).toFixed(1)}%\n\nWe value your ${sub.tenure_months} months with us. Claim your exclusive offer in the myIM3 app.\n\nBest regards,\nIndosat Ooredoo Hutchison`
+                                  subject: emailSubject,
+                                  body: emailBody
                                 }),
                               })
                               const data = await res.json()
@@ -317,7 +360,7 @@ export default function SubscriberView() {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                   to: '+16469890162',
-                                  message: `Halo. Saya dari Indosat Ooredoo Hutchison. Kami menghubungi terkait akun ${sub.user_id}. Kami memiliki penawaran spesial untuk pelanggan ${sub.plan_name} di ${sub.city}. Silakan buka aplikasi my IM3 untuk melihat penawaran eksklusif Anda. Terima kasih.`
+                                  message: callScript
                                 }),
                               })
                               const data = await res.json()
@@ -345,7 +388,7 @@ export default function SubscriberView() {
                         </div>
                       )}
                     </div>
-                  )}
+                  )})()}
 
                   {/* Outcome */}
                   {wf.step >= 3 && (
