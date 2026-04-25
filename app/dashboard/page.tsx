@@ -12,9 +12,11 @@ import StatsOverview from '@/components/StatsOverview'
 import SubscriberView from '@/components/SubscriberView'
 import WhatIfSimulator from '@/components/WhatIfSimulator'
 import ModelEvaluation from '@/components/ModelEvaluation'
-import { ClipboardCheck } from 'lucide-react'
+import PersonaArchitect from '@/components/PersonaArchitect'
+import LaunchCopilot from '@/components/LaunchCopilot'
+import { ClipboardCheck, UserCircle, Rocket } from 'lucide-react'
 
-type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif' | 'evaluation'
+type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif' | 'evaluation' | 'persona' | 'launch'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[] = [
   { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-4 h-4" />, desc: 'ML-powered risk prediction' },
@@ -24,6 +26,8 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[
   { key: 'impact', label: 'Impact Predictor', icon: <TrendingUp className="w-4 h-4" />, desc: 'Revenue forecasting' },
   { key: 'whatif', label: 'What-If', icon: <SlidersHorizontal className="w-4 h-4" />, desc: 'Model interpretability' },
   { key: 'evaluation', label: 'Evaluation', icon: <ClipboardCheck className="w-4 h-4" />, desc: 'Metrics & Go/No-Go' },
+  { key: 'persona', label: 'Persona', icon: <UserCircle className="w-4 h-4" />, desc: 'ICP generator' },
+  { key: 'launch', label: 'Launch', icon: <Rocket className="w-4 h-4" />, desc: 'GTM copilot' },
 ]
 
 export default function DashboardPage() {
@@ -103,6 +107,8 @@ export default function DashboardPage() {
             {activeTab === 'impact' && 'Forecast campaign performance before launch. Predict reach, conversion rate, and revenue impact using telecom industry benchmarks from Southeast Asia.'}
             {activeTab === 'whatif' && 'Explore model interpretability by adjusting subscriber features and watching churn predictions change in real time. Understand which factors drive risk up or down.'}
             {activeTab === 'evaluation' && 'Comprehensive model evaluation: performance metrics, baseline comparison, Go/No-Go assessment, business impact estimation, edge cases, technology stack, and AI factory architecture.'}
+            {activeTab === 'persona' && 'Generate a detailed Ideal Customer Profile (ICP) for any product and industry. Includes pain points, goals, preferred channels, and full customer lifecycle journey.'}
+            {activeTab === 'launch' && 'Generate a complete go-to-market launch plan. Includes positioning, tagline, messaging pillars, phased timeline, and channel strategy with budget allocation.'}
           </p>
           {activeTab === 'churn' && <ChurnRadar />}
           {activeTab === 'subscribers' && <SubscriberView />}
@@ -111,6 +117,8 @@ export default function DashboardPage() {
           {activeTab === 'impact' && <ImpactPredictor />}
           {activeTab === 'whatif' && <WhatIfSimulator />}
           {activeTab === 'evaluation' && <ModelEvaluation />}
+          {activeTab === 'persona' && <PersonaArchitect />}
+          {activeTab === 'launch' && <LaunchCopilot />}
         </div>
       </main>
 

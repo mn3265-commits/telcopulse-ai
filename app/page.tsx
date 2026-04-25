@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles, SlidersHorizontal, UserCheck, ClipboardCheck } from 'lucide-react'
+import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles, SlidersHorizontal, UserCheck, ClipboardCheck, UserCircle, Rocket } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -76,7 +76,7 @@ export default function HomePage() {
             </div>
             <div className="w-px h-10 bg-gray-200" />
             <div>
-              <div className="text-3xl font-medium text-gray-900">7-in-1</div>
+              <div className="text-3xl font-medium text-gray-900">9-in-1</div>
               <div className="text-xs text-gray-400 mt-1">AI modules</div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function HomePage() {
       <section id="features" className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Seven intelligent modules</div>
+            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Nine intelligent modules</div>
             <h2 className="text-4xl font-medium text-gray-900 tracking-tight">
               One platform. Every growth lever.
             </h2>
@@ -135,6 +135,18 @@ export default function HomePage() {
               title="Model Evaluation"
               tag="GO / NO-GO"
               description="Full evaluation suite: performance metrics, baseline comparison, Go/No-Go assessment, business impact estimation, edge case analysis, and AI factory architecture."
+            />
+            <FeatureCard
+              icon={<UserCircle className="w-5 h-5" />}
+              title="Persona Architect"
+              tag="ICP GENERATOR"
+              description="Type a product and industry to generate a complete Ideal Customer Profile with pain points, goals, preferred channels, and customer lifecycle journey."
+            />
+            <FeatureCard
+              icon={<Rocket className="w-5 h-5" />}
+              title="Launch Copilot"
+              tag="GTM STRATEGY"
+              description="Generate positioning, tagline, messaging pillars, a phased launch plan, and channel strategy with budget allocation for any product and audience."
             />
           </div>
         </div>
