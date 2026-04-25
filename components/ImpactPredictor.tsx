@@ -7,6 +7,8 @@ import { formatCurrency, formatNumber } from '@/lib/utils'
 export default function ImpactPredictor() {
   const [loading, setLoading] = useState(false)
   const [prediction, setPrediction] = useState<any>(null)
+  const [approved, setApproved] = useState(false)
+  const [abTest, setAbTest] = useState(false)
 
   const handlePredict = async () => {
     setLoading(true)
@@ -150,13 +152,40 @@ export default function ImpactPredictor() {
             </div>
 
             <div className="flex gap-2">
-              <button className="flex-1 glow-brand bg-white text-black hover:bg-white/90 px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                Approve & schedule campaign
+              <button
+                onClick={() => {
+                  setApproved(true)
+                  setTimeout(() => setApproved(false), 4000)
+                }}
+                className="flex-1 glow-brand bg-white text-black hover:bg-white/90 px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+              >
+                {approved ? (
+                  <><CheckCircle2 className="w-4 h-4 text-green-600" /> Campaign approved & scheduled</>
+                ) : (
+                  'Approve & schedule campaign'
+                )}
               </button>
-              <button className="bg-white/5 hover:bg-white/10 text-white/70 px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                Run A/B test variant
+              <button
+                onClick={() => {
+                  setAbTest(true)
+                  setTimeout(() => setAbTest(false), 4000)
+                }}
+                className="bg-white/5 hover:bg-white/10 text-white/70 px-4 py-2.5 rounded-lg text-sm font-medium transition"
+              >
+                {abTest ? 'A/B test created' : 'Run A/B test variant'}
               </button>
             </div>
+
+            {approved && (
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-sm text-green-300 animate-in fade-in">
+                Campaign approved. Scheduled for deployment to 234 subscribers via SMS + Email within 24 hours. Control group (10%) will be held for measurement.
+              </div>
+            )}
+            {abTest && (
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 text-sm text-blue-300 animate-in fade-in">
+                A/B test created. Variant A: current offer (50% off x 3 months). Variant B: 20GB bonus + loyalty points. 50/50 split across segment. Results available in 14 days.
+              </div>
+            )}
           </>
         )}
       </div>
