@@ -38,7 +38,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-400/10 border border-brand-400/20 rounded-full mb-8 animate-fade-in">
             <Sparkles className="w-3 h-3 text-brand-200" />
-            <span className="text-xs text-brand-200 font-medium tracking-wide">BUILT BY A CVM VETERAN · 100M+ SUBSCRIBERS</span>
+            <span className="text-xs text-brand-200 font-medium tracking-wide">COLUMBIA UNIVERSITY SPS · AI SOLUTION DESIGN & PROTOTYPE EVALUATION</span>
           </div>
           
           <h1 className="text-6xl font-medium text-white tracking-tight leading-[1.05] mb-6 animate-slide-up">
@@ -170,11 +170,13 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto text-center">
           <Users className="w-12 h-12 text-brand-400 mx-auto mb-6" strokeWidth={1.5} />
           <h2 className="text-4xl font-medium text-white tracking-tight mb-4">
-            Built from 10 years in the trenches.
+            Designed from real operator challenges.
           </h2>
           <p className="text-white/60 text-lg leading-relaxed mb-8">
-            I managed lifecycle campaigns for 100M+ telecom subscribers — at Indosat, Smartfren, Hutchison 3, and more. 
-            TelcoPulse is the tool I wished existed. Every feature solves a real pain I lived through.
+            TelcoPulse addresses the gap between churn prediction and retention execution in
+            Indonesian telecom. The AI pipeline was designed around actual CRM workflows at operators
+            like Indosat Ooredoo Hutchison, where reactive retention processes leave millions of
+            at-risk subscribers unaddressed each month.
           </p>
           <Link
             href="/dashboard"
