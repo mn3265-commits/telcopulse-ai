@@ -11,8 +11,10 @@ import ImpactPredictor from '@/components/ImpactPredictor'
 import StatsOverview from '@/components/StatsOverview'
 import SubscriberView from '@/components/SubscriberView'
 import WhatIfSimulator from '@/components/WhatIfSimulator'
+import ModelEvaluation from '@/components/ModelEvaluation'
+import { ClipboardCheck } from 'lucide-react'
 
-type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif'
+type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif' | 'evaluation'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[] = [
   { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-4 h-4" />, desc: 'ML-powered risk prediction' },
@@ -21,6 +23,7 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[
   { key: 'campaign', label: 'Campaign Writer', icon: <Zap className="w-4 h-4" />, desc: 'Multi-channel content' },
   { key: 'impact', label: 'Impact Predictor', icon: <TrendingUp className="w-4 h-4" />, desc: 'Revenue forecasting' },
   { key: 'whatif', label: 'What-If', icon: <SlidersHorizontal className="w-4 h-4" />, desc: 'Model interpretability' },
+  { key: 'evaluation', label: 'Evaluation', icon: <ClipboardCheck className="w-4 h-4" />, desc: 'Metrics & Go/No-Go' },
 ]
 
 export default function DashboardPage() {
@@ -99,6 +102,7 @@ export default function DashboardPage() {
             {activeTab === 'campaign' && 'Generate multi-channel retention campaigns with AI. Create personalized SMS, email, push notification, and WhatsApp messages with tone and goal customization.'}
             {activeTab === 'impact' && 'Forecast campaign performance before launch. Predict reach, conversion rate, and revenue impact using telecom industry benchmarks from Southeast Asia.'}
             {activeTab === 'whatif' && 'Explore model interpretability by adjusting subscriber features and watching churn predictions change in real time. Understand which factors drive risk up or down.'}
+            {activeTab === 'evaluation' && 'Comprehensive model evaluation: performance metrics, baseline comparison, Go/No-Go assessment, business impact estimation, edge cases, technology stack, and AI factory architecture.'}
           </p>
           {activeTab === 'churn' && <ChurnRadar />}
           {activeTab === 'subscribers' && <SubscriberView />}
@@ -106,6 +110,7 @@ export default function DashboardPage() {
           {activeTab === 'campaign' && <CampaignWriter />}
           {activeTab === 'impact' && <ImpactPredictor />}
           {activeTab === 'whatif' && <WhatIfSimulator />}
+          {activeTab === 'evaluation' && <ModelEvaluation />}
         </div>
       </main>
 

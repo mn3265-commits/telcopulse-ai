@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles, SlidersHorizontal, UserCheck } from 'lucide-react'
+import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles, SlidersHorizontal, UserCheck, ClipboardCheck } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -79,7 +79,7 @@ export default function HomePage() {
             </div>
             <div className="w-px h-10 bg-white/10" />
             <div>
-              <div className="text-3xl font-medium text-white">6-in-1</div>
+              <div className="text-3xl font-medium text-white">7-in-1</div>
               <div className="text-xs text-white/40 mt-1">AI modules</div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function HomePage() {
       <section id="features" className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Six intelligent modules</div>
+            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Seven intelligent modules</div>
             <h2 className="text-4xl font-medium text-white tracking-tight">
               One platform. Every growth lever.
             </h2>
@@ -132,6 +132,12 @@ export default function HomePage() {
               title="What-If Simulator"
               tag="INTERPRETABILITY"
               description="Adjust subscriber features with interactive sliders and watch churn predictions change in real time. Understand which factors drive risk up or down."
+            />
+            <FeatureCard
+              icon={<ClipboardCheck className="w-5 h-5" />}
+              title="Model Evaluation"
+              tag="GO / NO-GO"
+              description="Full evaluation suite: performance metrics, baseline comparison, Go/No-Go assessment, business impact estimation, edge case analysis, and AI factory architecture."
             />
           </div>
         </div>
