@@ -133,26 +133,26 @@ export async function generateMultiChannelCampaign(req: CampaignGenerationReques
   const client = getClient()
   if (!client) {
     const toneMap = {
-      friendly: { greeting: 'Halo!', closing: 'Kami senang Anda bersama kami.' },
-      urgent: { greeting: 'Jangan lewatkan!', closing: 'Penawaran terbatas, klaim sekarang.' },
-      premium: { greeting: 'Eksklusif untuk Anda.', closing: 'Sebagai pelanggan premium, Anda layak mendapat yang terbaik.' },
-      casual: { greeting: 'Hey!', closing: 'Sampai jumpa di myIM3!' },
+      friendly: { greeting: 'Hello!', closing: 'We are glad to have you with us.' },
+      urgent: { greeting: 'Don\'t miss out!', closing: 'Limited-time offer, claim now.' },
+      premium: { greeting: 'Exclusively for you.', closing: 'As a premium subscriber, you deserve the best.' },
+      casual: { greeting: 'Hey!', closing: 'See you on the myIndosat app!' },
     }
     const t = toneMap[req.tone] || toneMap.friendly
     const goalAction = {
-      retention: 'tetap bersama kami',
-      acquisition: 'bergabung dengan Indosat',
-      upsell: 'upgrade paket Anda',
-      reactivation: 'kembali ke Indosat',
+      retention: 'stay with us',
+      acquisition: 'join Indosat',
+      upsell: 'upgrade your plan',
+      reactivation: 'come back to Indosat',
     }
 
     return {
-      sms: `${t.greeting} ${req.offer}. ${goalAction[req.goal].charAt(0).toUpperCase() + goalAction[req.goal].slice(1)} sekarang. Buka myIM3 untuk klaim. T&C berlaku.`,
+      sms: `${t.greeting} ${req.offer}. ${goalAction[req.goal].charAt(0).toUpperCase() + goalAction[req.goal].slice(1)} now. Open the myIndosat app to claim. T&C apply.`,
       push_title: `${req.offer.slice(0, 35)}...`,
-      push_body: `${t.greeting} Klaim penawaran eksklusif Anda di myIM3 sekarang.`,
-      email_subject: `Penawaran ${req.goal === 'retention' ? 'Spesial' : req.goal === 'upsell' ? 'Upgrade' : 'Eksklusif'} untuk ${req.segmentName}`,
-      email_body: `Kepada pelanggan ${req.segmentName} yang kami hormati,\n\n${t.greeting} ${req.segmentDescription}.\n\nKami menyiapkan penawaran khusus untuk Anda: ${req.offer}.\n\nPenawaran ini dirancang untuk membantu Anda ${goalAction[req.goal]}. Klaim mudah melalui aplikasi myIM3, menu Penawaran Spesial.\n\n${t.closing}\n\nSalam,\nTim CRM\nIndosat Ooredoo Hutchison`,
-      whatsapp: `${t.greeting} Penawaran khusus untuk Anda: ${req.offer}. Klaim di myIM3 sekarang!`,
+      push_body: `${t.greeting} Claim your exclusive offer on the myIndosat app now.`,
+      email_subject: `${req.goal === 'retention' ? 'Special' : req.goal === 'upsell' ? 'Upgrade' : 'Exclusive'} Offer for ${req.segmentName}`,
+      email_body: `Dear valued ${req.segmentName} subscriber,\n\n${t.greeting} ${req.segmentDescription}.\n\nWe have prepared a special offer for you: ${req.offer}.\n\nThis offer is designed to help you ${goalAction[req.goal]}. Claim easily through the myIndosat app, under the Special Offers menu.\n\n${t.closing}\n\nBest regards,\nCRM Team\nIndosat Ooredoo Hutchison`,
+      whatsapp: `${t.greeting} Special offer for you: ${req.offer}. Claim on the myIndosat app now!`,
       reasoning: `${req.tone.charAt(0).toUpperCase() + req.tone.slice(1)} ${req.goal} campaign targeting ${req.segmentName}. Multi-channel approach maximizes reach across SMS, push, email, and WhatsApp touchpoints.`
     }
   }

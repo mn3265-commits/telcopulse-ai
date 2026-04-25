@@ -61,9 +61,9 @@ export default function ChurnRadar() {
       setCampaign(data.campaign || data)
     } catch {
       setCampaign({
-        sms: 'Jangan pergi! Dapatkan 10GB gratis + diskon 50% bulan depan. Klaim di myIM3. T&C berlaku.',
-        email_subject: 'Kami ingin kamu tetap bersama kami',
-        email_body: 'Dear valued customer,\n\nWe noticed changes in your usage. As a thank you for your loyalty, enjoy 10GB free data + 50% off your next bill.\n\nClaim now in the myIM3 app.\n\nBest regards,\nIndosat Ooredoo Hutchison',
+        sms: 'Don\'t go! Get 10GB free + 50% off next month. Claim in the myIndosat app. T&C apply.',
+        email_subject: 'We want you to stay with us',
+        email_body: 'Dear valued customer,\n\nWe noticed changes in your usage. As a thank you for your loyalty, enjoy 10GB free data + 50% off your next bill.\n\nClaim now in the myIndosat app.\n\nBest regards,\nIndosat Ooredoo Hutchison',
         reasoning: 'Urgent retention with immediate value proposition to prevent imminent churn.',
       })
     } finally {

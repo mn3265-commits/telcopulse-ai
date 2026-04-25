@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const client = twilio(sid, token)
 
-    const twiml = `<Response><Say language="id-ID" voice="Polly.Siti">${message}</Say><Pause length="1"/><Say language="id-ID" voice="Polly.Siti">Terima kasih telah mendengarkan. Selamat tinggal.</Say></Response>`
+    const twiml = `<Response><Say language="en-US" voice="Polly.Joanna">${message}</Say><Pause length="1"/><Say language="en-US" voice="Polly.Joanna">Thank you for listening. Goodbye.</Say></Response>`
 
     await client.calls.create({
       to: to.replace('****', '0000'), // masked numbers won't work, fallback
