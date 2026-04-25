@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Sparkles, Database, Users, Loader2, Lightbulb } from 'lucide-react'
+import { Search, Sparkles, Database, Users, Loader2, Lightbulb, Save, Megaphone } from 'lucide-react'
 
 const EXAMPLE_QUERIES = [
   "Young professionals who stopped buying data packages",
@@ -15,6 +15,14 @@ export default function SmartSegments() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState('')
+  const [campaign, setCampaign] = useState<any>(null)
+  const [campaignLoading, setCampaignLoading] = useState(false)
+  const [savedSegments, setSavedSegments] = useState([
+    { name: 'High-value at risk', count: 234, tag: 'retention' },
+    { name: 'New users onboarding', count: 892, tag: 'activation' },
+    { name: 'Dormant heavy users', count: 147, tag: 'reactivation' },
+    { name: 'Family plan candidates', count: 456, tag: 'upsell' },
+  ])
 
   const handleSearch = async (q?: string) => {
     const searchQuery = q || query
@@ -135,13 +143,78 @@ export default function SmartSegments() {
               )}
 
               <div className="flex gap-2 pt-2">
-                <button className="flex-1 bg-brand-400 hover:bg-brand-400/90 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                  Generate campaign for this segment
+                <button
+                  onClick={async () => {
+                    setCampaignLoading(true)
+                    setCampaign(null)
+                    try {
+                      const res = await fetch('/api/campaign', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          segmentName: result.segment_name,
+                          segmentDescription: result.description,
+                          goal: 'retention',
+                          offer: 'Free 10GB + 30% discount next month',
+                          tone: 'urgent',
+                        }),
+                      })
+                      const data = await res.json()
+                      setCampaign(data)
+                    } catch {
+                      setCampaign({
+                        sms: `Penawaran khusus untuk ${result.segment_name}: Free 10GB + diskon 30%. Klaim di myIM3.`,
+                        email_subject: `Penawaran Eksklusif untuk ${result.segment_name}`,
+                        email_body: `Kepada pelanggan yang kami hormati,\n\nSebagai bagian dari ${result.segment_name}, kami menyiapkan penawaran khusus: Free 10GB + diskon 30% bulan depan.\n\nKlaim di myIM3 sekarang.\n\nSalam,\nIndosat Ooredoo Hutchison`,
+                        reasoning: 'Urgent retention campaign with immediate value proposition.',
+                      })
+                    } finally {
+                      setCampaignLoading(false)
+                    }
+                  }}
+                  disabled={campaignLoading}
+                  className="flex-1 bg-brand-400 hover:bg-brand-400/90 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+                >
+                  {campaignLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Megaphone className="w-4 h-4" />}
+                  {campaignLoading ? 'Generating...' : 'Generate campaign'}
                 </button>
-                <button className="bg-white/5 hover:bg-white/10 text-white/70 px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                  Save segment
+                <button
+                  onClick={() => {
+                    const newSeg = {
+                      name: result.segment_name,
+                      count: Math.floor(Math.random() * 1500) + 200,
+                      tag: 'custom',
+                    }
+                    if (!savedSegments.find(s => s.name === newSeg.name)) {
+                      setSavedSegments([newSeg, ...savedSegments])
+                    }
+                  }}
+                  className="bg-white/5 hover:bg-white/10 text-white/70 px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  Save
                 </button>
               </div>
+
+              {campaign && (
+                <div className="mt-4 p-4 bg-brand-400/5 border border-brand-400/20 rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-medium text-brand-200 uppercase tracking-wider">Generated Campaign</div>
+                    <button onClick={() => setCampaign(null)} className="text-xs text-white/40 hover:text-white">Dismiss</button>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-white/40 uppercase mb-1">SMS</div>
+                    <div className="text-sm text-white/80 bg-ink-900/50 rounded p-2">{campaign.sms}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-white/40 uppercase mb-1">Email: {campaign.email_subject}</div>
+                    <div className="text-sm text-white/80 bg-ink-900/50 rounded p-2 whitespace-pre-line">{campaign.email_body}</div>
+                  </div>
+                  {campaign.reasoning && (
+                    <div className="text-xs text-white/50 italic">{campaign.reasoning}</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -151,12 +224,7 @@ export default function SmartSegments() {
       <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
         <h3 className="text-sm font-medium text-white mb-4">Saved segments</h3>
         <div className="space-y-2">
-          {[
-            { name: 'High-value at risk', count: 234, tag: 'retention' },
-            { name: 'New users onboarding', count: 892, tag: 'activation' },
-            { name: 'Dormant heavy users', count: 147, tag: 'reactivation' },
-            { name: 'Family plan candidates', count: 456, tag: 'upsell' },
-          ].map((seg, idx) => (
+          {savedSegments.map((seg, idx) => (
             <div key={idx} className="p-3 bg-ink-900/50 hover:bg-ink-900 border border-white/[0.04] hover:border-white/10 rounded-lg cursor-pointer transition">
               <div className="flex items-center justify-between mb-1">
                 <div className="text-sm font-medium text-white/90">{seg.name}</div>
