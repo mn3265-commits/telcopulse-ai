@@ -275,11 +275,11 @@ export default function SubscriberView() {
                     <div>
                       <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Send Retention Message</div>
                       <div className="flex gap-2">
-                        <button onClick={() => doAction(sub.user_id, wf.action, 3)}
+                        <button onClick={() => doAction(sub.user_id, wf.action || 'approved', 3)}
                           className="flex-1 bg-brand-400 hover:bg-brand-400/90 text-white px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
                           <Mail className="w-3.5 h-3.5" /> Send Email
                         </button>
-                        <button onClick={() => doAction(sub.user_id, wf.action, 3)}
+                        <button onClick={() => doAction(sub.user_id, wf.action || 'approved', 3)}
                           className="flex-1 bg-white/5 hover:bg-white/10 text-white/70 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
                           <PhoneCall className="w-3.5 h-3.5" /> Voice Call
                         </button>
