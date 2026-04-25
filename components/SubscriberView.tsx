@@ -63,7 +63,8 @@ export default function SubscriberView() {
   const [search, setSearch] = useState('')
   const [riskFilter, setRiskFilter] = useState('All')
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [workflows, setWorkflows] = useState<Record<string, { step: number; action?: string; outcome?: string }>>({})
+  const [workflows, setWorkflows] = useState<Record<string, { step: number; action?: string; outcome?: string; sendStatus?: string }>>({})
+  const [sending, setSending] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/data/subscribers_scored.csv')
@@ -275,18 +276,72 @@ export default function SubscriberView() {
                     <div>
                       <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Send Retention Message</div>
                       <div className="flex gap-2">
-                        <button onClick={() => doAction(sub.user_id, wf.action || 'approved', 3)}
-                          className="flex-1 bg-brand-400 hover:bg-brand-400/90 text-white px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
-                          <Mail className="w-3.5 h-3.5" /> Send Email
+                        <button
+                          disabled={sending === sub.user_id}
+                          onClick={async () => {
+                            setSending(sub.user_id)
+                            try {
+                              const res = await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  to: 'mn3265@columbia.edu',
+                                  subject: `[Indosat] Retention offer for ${sub.user_id}`,
+                                  body: `Dear subscriber ${sub.phone},\n\nAs a ${sub.plan_name} customer in ${sub.city}, we have a special retention offer for you.\n\nYour churn risk: ${(sub.predicted_churn_prob * 100).toFixed(1)}%\n\nWe value your ${sub.tenure_months} months with us. Claim your exclusive offer in the myIM3 app.\n\nBest regards,\nIndosat Ooredoo Hutchison`
+                                }),
+                              })
+                              const data = await res.json()
+                              setWorkflows(prev => ({
+                                ...prev,
+                                [sub.user_id]: { ...prev[sub.user_id], step: 3, sendStatus: data.success ? `Email sent to mn3265@columbia.edu` : `Failed: ${data.error}` }
+                              }))
+                            } catch (err: any) {
+                              setWorkflows(prev => ({
+                                ...prev,
+                                [sub.user_id]: { ...prev[sub.user_id], step: 3, sendStatus: `Failed: ${err.message}` }
+                              }))
+                            } finally {
+                              setSending(null)
+                            }
+                          }}
+                          className="flex-1 bg-brand-400 hover:bg-brand-400/90 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                          {sending === sub.user_id ? <span className="animate-spin">...</span> : <Mail className="w-3.5 h-3.5" />} Send Email
                         </button>
-                        <button onClick={() => doAction(sub.user_id, wf.action || 'approved', 3)}
-                          className="flex-1 bg-white/5 hover:bg-white/10 text-white/70 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
-                          <PhoneCall className="w-3.5 h-3.5" /> Voice Call
+                        <button
+                          disabled={sending === sub.user_id}
+                          onClick={async () => {
+                            setSending(sub.user_id)
+                            try {
+                              const res = await fetch('/api/send-call', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  to: '+16469890162',
+                                  message: `Halo. Saya dari Indosat Ooredoo Hutchison. Kami menghubungi terkait akun ${sub.user_id}. Kami memiliki penawaran spesial untuk pelanggan ${sub.plan_name} di ${sub.city}. Silakan buka aplikasi my IM3 untuk melihat penawaran eksklusif Anda. Terima kasih.`
+                                }),
+                              })
+                              const data = await res.json()
+                              setWorkflows(prev => ({
+                                ...prev,
+                                [sub.user_id]: { ...prev[sub.user_id], step: 3, sendStatus: data.success ? `Calling +16469890162...` : `Failed: ${data.error}` }
+                              }))
+                            } catch (err: any) {
+                              setWorkflows(prev => ({
+                                ...prev,
+                                [sub.user_id]: { ...prev[sub.user_id], step: 3, sendStatus: `Failed: ${err.message}` }
+                              }))
+                            } finally {
+                              setSending(null)
+                            }
+                          }}
+                          className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/70 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                          {sending === sub.user_id ? <span className="animate-spin">...</span> : <PhoneCall className="w-3.5 h-3.5" />} Voice Call
                         </button>
                       </div>
-                      {wf.step >= 3 && (
-                        <div className="mt-2 text-xs text-green-400 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Retention message sent to {sub.phone}
+                      {wf.sendStatus && (
+                        <div className={`mt-2 text-xs flex items-center gap-1.5 ${wf.sendStatus.startsWith('Failed') ? 'text-red-400' : 'text-green-400'}`}>
+                          {wf.sendStatus.startsWith('Failed') ? <XCircle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {wf.sendStatus}
                         </div>
                       )}
                     </div>
