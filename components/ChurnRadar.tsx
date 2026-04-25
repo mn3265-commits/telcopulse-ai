@@ -58,7 +58,7 @@ export default function ChurnRadar() {
         }),
       })
       const data = await res.json()
-      setCampaign(data)
+      setCampaign(data.campaign || data)
     } catch {
       setCampaign({
         sms: 'Jangan pergi! Dapatkan 10GB gratis + diskon 50% bulan depan. Klaim di myIM3. T&C berlaku.',

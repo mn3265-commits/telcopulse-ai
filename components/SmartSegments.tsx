@@ -160,7 +160,7 @@ export default function SmartSegments() {
                         }),
                       })
                       const data = await res.json()
-                      setCampaign(data)
+                      setCampaign(data.campaign || data)
                     } catch {
                       setCampaign({
                         sms: `Penawaran khusus untuk ${result.segment_name}: Free 10GB + diskon 30%. Klaim di myIM3.`,
