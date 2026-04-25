@@ -3,9 +3,6 @@
   "devCommand": "next dev",
   "framework": "nextjs",
   "installCommand": "npm install",
-  "env": {
-    "ANTHROPIC_API_KEY": "@anthropic_api_key"
-  },
   "functions": {
     "app/api/campaign/route.ts": { "maxDuration": 30 },
     "app/api/segment/route.ts": { "maxDuration": 30 },
