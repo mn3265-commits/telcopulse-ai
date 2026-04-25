@@ -170,7 +170,7 @@ export default function CampaignWriter() {
               <div className="bg-brand-400/5 border border-brand-400/20 rounded-xl p-4 flex gap-3 animate-slide-up">
                 <Sparkles className="w-4 h-4 text-brand-200 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-xs font-medium text-brand-200 mb-1">Claude's strategy</div>
+                  <div className="text-xs font-medium text-brand-200 mb-1">Claude&apos;s strategy</div>
                   <div className="text-sm text-white/80">{campaign.reasoning}</div>
                 </div>
               </div>
