@@ -19,15 +19,15 @@ import { ClipboardCheck, UserCircle, Rocket } from 'lucide-react'
 type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif' | 'evaluation' | 'persona' | 'launch'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[] = [
-  { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-4 h-4" />, desc: 'ML-powered risk prediction' },
-  { key: 'subscribers', label: 'Subscribers', icon: <Users className="w-4 h-4" />, desc: 'Individual retention workflow' },
-  { key: 'segments', label: 'Smart Segments', icon: <Target className="w-4 h-4" />, desc: 'Natural language queries' },
-  { key: 'campaign', label: 'Campaign Writer', icon: <Zap className="w-4 h-4" />, desc: 'Multi-channel content' },
-  { key: 'impact', label: 'Impact Predictor', icon: <TrendingUp className="w-4 h-4" />, desc: 'Revenue forecasting' },
-  { key: 'whatif', label: 'What-If', icon: <SlidersHorizontal className="w-4 h-4" />, desc: 'Model interpretability' },
-  { key: 'evaluation', label: 'Evaluation', icon: <ClipboardCheck className="w-4 h-4" />, desc: 'Metrics & Go/No-Go' },
-  { key: 'persona', label: 'Persona', icon: <UserCircle className="w-4 h-4" />, desc: 'ICP generator' },
-  { key: 'launch', label: 'Launch', icon: <Rocket className="w-4 h-4" />, desc: 'GTM copilot' },
+  { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-3.5 h-3.5" />, desc: 'ML-powered risk prediction' },
+  { key: 'subscribers', label: 'Subscribers', icon: <Users className="w-3.5 h-3.5" />, desc: 'Individual retention workflow' },
+  { key: 'segments', label: 'Segments', icon: <Target className="w-3.5 h-3.5" />, desc: 'Natural language queries' },
+  { key: 'campaign', label: 'Campaigns', icon: <Zap className="w-3.5 h-3.5" />, desc: 'Multi-channel content' },
+  { key: 'impact', label: 'Impact', icon: <TrendingUp className="w-3.5 h-3.5" />, desc: 'Revenue forecasting' },
+  { key: 'whatif', label: 'What-If', icon: <SlidersHorizontal className="w-3.5 h-3.5" />, desc: 'Model interpretability' },
+  { key: 'persona', label: 'Persona', icon: <UserCircle className="w-3.5 h-3.5" />, desc: 'ICP generator' },
+  { key: 'launch', label: 'Launch', icon: <Rocket className="w-3.5 h-3.5" />, desc: 'GTM copilot' },
+  { key: 'evaluation', label: 'Evaluation', icon: <ClipboardCheck className="w-3.5 h-3.5" />, desc: 'Metrics & Go/No-Go' },
 ]
 
 export default function DashboardPage() {
@@ -81,7 +81,7 @@ export default function DashboardPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`relative px-5 py-3 text-sm font-medium transition flex items-center gap-2 group ${
+                className={`relative px-3 py-3 text-xs font-medium transition flex items-center gap-1.5 group ${
                   activeTab === tab.key
                     ? 'text-gray-900'
                     : 'text-gray-400 hover:text-gray-700'
