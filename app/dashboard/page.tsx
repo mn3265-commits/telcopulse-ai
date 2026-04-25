@@ -3,19 +3,24 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Activity, Brain, Target, Zap, TrendingUp, ArrowLeft, Sparkles } from 'lucide-react'
+import { Users, SlidersHorizontal } from 'lucide-react'
 import ChurnRadar from '@/components/ChurnRadar'
 import SmartSegments from '@/components/SmartSegments'
 import CampaignWriter from '@/components/CampaignWriter'
 import ImpactPredictor from '@/components/ImpactPredictor'
 import StatsOverview from '@/components/StatsOverview'
+import SubscriberView from '@/components/SubscriberView'
+import WhatIfSimulator from '@/components/WhatIfSimulator'
 
-type TabKey = 'churn' | 'segments' | 'campaign' | 'impact'
+type TabKey = 'churn' | 'subscribers' | 'segments' | 'campaign' | 'impact' | 'whatif'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[] = [
   { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-4 h-4" />, desc: 'ML-powered risk prediction' },
+  { key: 'subscribers', label: 'Subscribers', icon: <Users className="w-4 h-4" />, desc: 'Individual retention workflow' },
   { key: 'segments', label: 'Smart Segments', icon: <Target className="w-4 h-4" />, desc: 'Natural language queries' },
   { key: 'campaign', label: 'Campaign Writer', icon: <Zap className="w-4 h-4" />, desc: 'Multi-channel content' },
   { key: 'impact', label: 'Impact Predictor', icon: <TrendingUp className="w-4 h-4" />, desc: 'Revenue forecasting' },
+  { key: 'whatif', label: 'What-If', icon: <SlidersHorizontal className="w-4 h-4" />, desc: 'Model interpretability' },
 ]
 
 export default function DashboardPage() {
@@ -88,9 +93,11 @@ export default function DashboardPage() {
         {/* Tab content */}
         <div className="animate-fade-in" key={activeTab}>
           {activeTab === 'churn' && <ChurnRadar />}
+          {activeTab === 'subscribers' && <SubscriberView />}
           {activeTab === 'segments' && <SmartSegments />}
           {activeTab === 'campaign' && <CampaignWriter />}
           {activeTab === 'impact' && <ImpactPredictor />}
+          {activeTab === 'whatif' && <WhatIfSimulator />}
         </div>
       </main>
 
