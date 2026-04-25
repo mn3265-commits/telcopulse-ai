@@ -90,8 +90,16 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Tab content */}
+        {/* Tab description + content */}
         <div className="animate-fade-in" key={activeTab}>
+          <p className="text-xs text-white/40 mb-5">
+            {activeTab === 'churn' && 'Overview of churn risk distribution across the subscriber base. XGBoost model scores 10,000 subscribers and surfaces the highest-risk accounts for immediate action.'}
+            {activeTab === 'subscribers' && 'Individual subscriber retention workflow. Search, review AI predictions, approve or override risk levels, send personalized email or voice call, and record outcomes for model retraining.'}
+            {activeTab === 'segments' && 'Create customer segments using natural language. The system converts your query into SQL filters, identifies matching subscribers, and suggests targeted campaign strategies.'}
+            {activeTab === 'campaign' && 'Generate multi-channel retention campaigns with AI. Create personalized SMS, email, push notification, and WhatsApp messages with tone and goal customization.'}
+            {activeTab === 'impact' && 'Forecast campaign performance before launch. Predict reach, conversion rate, and revenue impact using telecom industry benchmarks from Southeast Asia.'}
+            {activeTab === 'whatif' && 'Explore model interpretability by adjusting subscriber features and watching churn predictions change in real time. Understand which factors drive risk up or down.'}
+          </p>
           {activeTab === 'churn' && <ChurnRadar />}
           {activeTab === 'subscribers' && <SubscriberView />}
           {activeTab === 'segments' && <SmartSegments />}

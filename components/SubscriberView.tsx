@@ -114,6 +114,7 @@ export default function SubscriberView() {
     <div className="space-y-4">
       {/* Search + Filter */}
       <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
+        <p className="text-xs text-white/40 mb-3">Search for individual subscribers and manage the full retention workflow: review AI predictions, approve or override risk levels, send personalized messages, and record outcomes.</p>
         <div className="flex gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
@@ -200,7 +201,8 @@ export default function SubscriberView() {
 
                   {/* Profile grid */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Customer Profile</div>
+                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Customer Profile</div>
+                    <p className="text-[10px] text-white/30 mb-3">Subscriber demographics, plan details, and usage indicators from the CRM database.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {[
                         { label: 'Tenure', value: `${sub.tenure_months} months` },
@@ -222,7 +224,8 @@ export default function SubscriberView() {
 
                   {/* Risk drivers */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Churn Risk Drivers</div>
+                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Churn Risk Drivers</div>
+                    <p className="text-[10px] text-white/30 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber's risk level.</p>
                     <div className={`rounded-lg p-4 border-l-4 ${
                       sub.risk_tier === 'High' || sub.risk_tier === 'Critical' ? 'bg-red-500/5 border-l-red-500' :
                       sub.risk_tier === 'Medium' || sub.risk_tier === 'Medium-High' ? 'bg-amber-500/5 border-l-amber-500' :
@@ -247,7 +250,8 @@ export default function SubscriberView() {
 
                   {/* Actions */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Marketer Decision</div>
+                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Marketer Decision</div>
+                    <p className="text-[10px] text-white/30 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
                     <div className="flex gap-2">
                       <button onClick={() => doAction(sub.user_id, 'approved', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
@@ -276,18 +280,10 @@ export default function SubscriberView() {
                     const emailSubject = `[Indosat] Penawaran Spesial untuk Pelanggan ${sub.plan_name}`
                     const emailBody = `Kepada pelanggan ${sub.phone} yang kami hormati,\n\nSalam dari Indosat Ooredoo Hutchison.\n\n${sub.tenure_months <= 3 ? `Sebagai pelanggan baru (${sub.tenure_months} bulan), kami ingin memastikan pengalaman terbaik untuk Anda.` : `Kami sangat menghargai kesetiaan Anda selama ${sub.tenure_months} bulan bersama Indosat.`}${sub.complaints_last_90d >= 2 ? ` Kami menyadari ada ${sub.complaints_last_90d} keluhan yang belum terselesaikan dan tim kami sedang memprioritaskan penyelesaiannya.` : ''}${sub.data_usage_pct < 30 ? ` Kami memperhatikan penggunaan data Anda menurun.` : ''}\n\nSebagai pelanggan ${sub.plan_name} di ${sub.city}, kami menyiapkan penawaran khusus:\n- Bonus data 10GB gratis selama 7 hari\n- Diskon 30% untuk tagihan bulan depan\n\nKlaim mudah melalui aplikasi myIM3 > menu Penawaran Spesial.\n\nSalam hangat,\nTim Retensi Pelanggan\nIndosat Ooredoo Hutchison\n---\nHubungi kami: 185`
                     const callScript = `Halo. Saya dari Indosat Ooredoo Hutchison, menghubungi dari ${sub.city}. ${sub.complaints_last_90d >= 2 ? `Kami menyadari ada ${sub.complaints_last_90d} keluhan yang belum terselesaikan. Tim kami sedang memprioritaskan ini.` : sub.data_usage_pct < 30 ? `Kami memperhatikan penggunaan data Anda menurun akhir-akhir ini.` : `Sebagai pelanggan setia selama ${sub.tenure_months} bulan, Anda sangat penting bagi kami.`} Untuk itu, kami menyiapkan penawaran khusus: bonus data 10GB gratis dan diskon 30 persen bulan depan. Silakan buka aplikasi my IM3, masuk ke Penawaran Spesial, dan tap Klaim Sekarang. Terima kasih.`
-                    const talkingPoints = [
-                      `Customer: ${sub.phone} (${sub.plan_name}, ${sub.plan_type})`,
-                      `Location: ${sub.city} | Tenure: ${sub.tenure_months} months | ARPU: $${sub.monthly_spend_usd.toFixed(2)}`,
-                      `Churn risk: ${(sub.predicted_churn_prob * 100).toFixed(1)}% (${sub.risk_tier})`,
-                      ...getDrivers(sub).slice(0, 3).map(d => `Risk: ${d}`),
-                      `Offer: 10GB free data + 30% off next bill`,
-                      sub.complaints_last_90d >= 1 ? `Note: ${sub.complaints_last_90d} recent complaint(s), acknowledge and empathize first` : `Note: No recent complaints, focus on value and appreciation`,
-                    ]
-
                     return (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Send Retention Message</div>
+                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Send Retention Message</div>
+                      <p className="text-[10px] text-white/30 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
 
                       {/* Email and Call Script preview */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
@@ -303,18 +299,6 @@ export default function SubscriberView() {
                           <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3 text-xs text-white/70 max-h-40 overflow-y-auto">
                             {callScript}
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Talking points */}
-                      <div className="mb-3">
-                        <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Talking Points</div>
-                        <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3">
-                          {talkingPoints.map((tp, idx) => (
-                            <div key={idx} className="text-xs text-white/60 py-0.5 flex gap-2">
-                              <span className="text-white/30">{idx + 1}.</span> {tp}
-                            </div>
-                          ))}
                         </div>
                       </div>
 
@@ -393,7 +377,8 @@ export default function SubscriberView() {
                   {/* Outcome */}
                   {wf.step >= 3 && (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Record Outcome</div>
+                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Record Outcome</div>
+                      <p className="text-[10px] text-white/30 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
                       <div className="flex gap-2">
                         {['Retained', 'Churned', 'No response'].map(outcome => (
                           <button key={outcome} onClick={() => doOutcome(sub.user_id, outcome)}

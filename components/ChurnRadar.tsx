@@ -81,7 +81,7 @@ export default function ChurnRadar() {
               <h3 className="text-sm font-medium text-white">Churn risk distribution</h3>
               <span className="text-xs text-white/40">XGBoost model</span>
             </div>
-            <p className="text-xs text-white/40 mb-5">Predicted across 10,000 subscribers</p>
+            <p className="text-xs text-white/40 mb-5">How subscribers are distributed across risk tiers, from very low to critical churn probability.</p>
 
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={riskDistribution} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -106,7 +106,8 @@ export default function ChurnRadar() {
           </div>
 
           <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Model details</div>
+            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-1">Model details</div>
+            <p className="text-[10px] text-white/30 mb-3">Configuration and performance of the churn prediction model.</p>
             <div className="space-y-2.5 text-sm">
               <Row label="Algorithm" value="XGBoost Classifier" />
               <Row label="Features" value="18 behavioral + demographic" />
@@ -125,7 +126,7 @@ export default function ChurnRadar() {
                 <AlertTriangle className="w-4 h-4 text-brand-400" />
                 High-risk subscribers
               </h3>
-              <p className="text-xs text-white/40 mt-0.5">Sorted by predicted churn probability</p>
+              <p className="text-xs text-white/40 mt-0.5">Subscribers most likely to churn, sorted by predicted probability. Export to CSV or generate a retention campaign.</p>
             </div>
             <button
               onClick={handleExport}

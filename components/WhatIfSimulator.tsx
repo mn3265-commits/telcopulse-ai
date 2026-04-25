@@ -93,7 +93,7 @@ export default function WhatIfSimulator() {
             <SlidersHorizontal className="w-4 h-4 text-brand-400" />
             <h3 className="text-sm font-medium text-white">Subscriber profile</h3>
           </div>
-          <p className="text-xs text-white/40 mb-5">Adjust features to see how churn prediction changes in real time.</p>
+          <p className="text-xs text-white/40 mb-5">Adjust subscriber features below and watch how the churn prediction changes in real time. This demonstrates which factors the model considers most important.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <SliderInput label="Tenure (months)" value={tenure} min={0} max={36} onChange={setTenure} />
@@ -108,7 +108,8 @@ export default function WhatIfSimulator() {
         </div>
 
         <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-          <div className="text-xs font-medium text-white/60 mb-3">Try these scenarios</div>
+          <div className="text-xs font-medium text-white/60 mb-1">Pre-built scenarios</div>
+          <p className="text-[10px] text-white/30 mb-3">Click to load a realistic subscriber profile and see how the model responds.</p>
           <div className="flex gap-2 flex-wrap">
             {SCENARIOS.map((s, idx) => (
               <button key={idx} onClick={() => loadScenario(s)}
@@ -143,7 +144,8 @@ export default function WhatIfSimulator() {
         </div>
 
         <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-          <div className="text-xs font-medium text-white/60 mb-3">What this means</div>
+          <div className="text-xs font-medium text-white/60 mb-1">Interpretation</div>
+          <p className="text-[10px] text-white/30 mb-2">What this risk level means and recommended next steps.</p>
           <div className="text-sm text-white/70 leading-relaxed">
             {prob >= 0.5
               ? 'This subscriber profile shows strong churn signals. Immediate retention outreach recommended within 24 hours. Consider personalized offer based on usage pattern and complaint history.'
