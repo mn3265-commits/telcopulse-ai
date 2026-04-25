@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 98%;
+  --card: 240 3% 7%;
+  --card-foreground: 0 0% 98%;
+  --muted: 240 3% 12%;
+  --muted-foreground: 240 5% 64%;
+  --border: 240 3% 15%;
+  --input: 240 3% 15%;
+  --ring: 14 82% 53%;
+  --radius: 0.5rem;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv11", "ss01";
+  font-variation-settings: "opsz" 32;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Noise texture for premium feel */
+.noise-bg {
+  position: relative;
+}
+.noise-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient border utility */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+              linear-gradient(135deg, #E85D24 0%, transparent 50%) border-box;
+  border: 1px solid transparent;
+}
+
+/* Glow effect for CTA */
+.glow-brand {
+  box-shadow: 0 0 0 1px rgba(232, 93, 36, 0.3),
+              0 8px 24px -8px rgba(232, 93, 36, 0.4);
+}
+
+/* Typography refinement */
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}

@@ -1,0 +1,21 @@
+node_modules
+.next
+.env.local
+.env
+.DS_Store
+*.log
+.vercel
+coverage
+dist
+build
+
+# Python
+__pycache__
+*.pyc
+.venv
+venv
+
+# Data (keep the synthetic CSV in the repo — don't ignore!)
+# data/*.csv  ← intentionally NOT ignored so clones work out of the box
+ml/*.pkl
+ml/model_metadata.json

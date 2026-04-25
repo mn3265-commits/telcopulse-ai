@@ -1,0 +1,105 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Activity, Brain, Target, Zap, TrendingUp, ArrowLeft, Sparkles } from 'lucide-react'
+import ChurnRadar from '@/components/ChurnRadar'
+import SmartSegments from '@/components/SmartSegments'
+import CampaignWriter from '@/components/CampaignWriter'
+import ImpactPredictor from '@/components/ImpactPredictor'
+import StatsOverview from '@/components/StatsOverview'
+
+type TabKey = 'churn' | 'segments' | 'campaign' | 'impact'
+
+const TABS: { key: TabKey; label: string; icon: React.ReactNode; desc: string }[] = [
+  { key: 'churn', label: 'Churn Radar', icon: <Brain className="w-4 h-4" />, desc: 'ML-powered risk prediction' },
+  { key: 'segments', label: 'Smart Segments', icon: <Target className="w-4 h-4" />, desc: 'Natural language queries' },
+  { key: 'campaign', label: 'Campaign Writer', icon: <Zap className="w-4 h-4" />, desc: 'Multi-channel content' },
+  { key: 'impact', label: 'Impact Predictor', icon: <TrendingUp className="w-4 h-4" />, desc: 'Revenue forecasting' },
+]
+
+export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState<TabKey>('churn')
+
+  return (
+    <div className="min-h-screen bg-ink-900">
+      {/* Top nav */}
+      <header className="border-b border-white/[0.06] sticky top-0 bg-ink-900/80 backdrop-blur-xl z-50">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-2 text-white/60 hover:text-white transition">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm">Back</span>
+            </Link>
+            <div className="h-6 w-px bg-white/10" />
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-md bg-brand-400 flex items-center justify-center">
+                <Activity className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+              </div>
+              <span className="text-white font-medium tracking-tight">TelcoPulse</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-xs text-white/40">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span>Demo mode · 10,000 subscribers loaded</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Overview */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-brand-400" />
+            <span className="text-xs font-medium text-brand-200 tracking-wider uppercase">Live dashboard</span>
+          </div>
+          <h1 className="text-3xl font-medium text-white tracking-tight mb-1">Marketing intelligence</h1>
+          <p className="text-white/50 text-sm">Real-time AI insights across your subscriber base</p>
+        </div>
+
+        <StatsOverview />
+
+        {/* Tabs */}
+        <div className="mt-10 mb-6 border-b border-white/[0.08]">
+          <div className="flex gap-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative px-5 py-3 text-sm font-medium transition flex items-center gap-2 group ${
+                  activeTab === tab.key 
+                    ? 'text-white' 
+                    : 'text-white/40 hover:text-white/70'
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+                {activeTab === tab.key && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-400" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab content */}
+        <div className="animate-fade-in" key={activeTab}>
+          {activeTab === 'churn' && <ChurnRadar />}
+          {activeTab === 'segments' && <SmartSegments />}
+          {activeTab === 'campaign' && <CampaignWriter />}
+          {activeTab === 'impact' && <ImpactPredictor />}
+        </div>
+      </main>
+
+      <footer className="border-t border-white/[0.06] mt-16">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-white/30">
+          <div>Powered by Claude Sonnet 4 · XGBoost · Next.js 14</div>
+          <div>Synthetic data — no real subscriber info</div>
+        </div>
+      </footer>
+    </div>
+  )
+}
