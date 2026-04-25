@@ -88,12 +88,12 @@ export default function WhatIfSimulator() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Sliders */}
       <div className="lg:col-span-2 space-y-4">
-        <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-1">
             <SlidersHorizontal className="w-4 h-4 text-brand-400" />
-            <h3 className="text-sm font-medium text-white">Subscriber profile</h3>
+            <h3 className="text-sm font-medium text-gray-900">Subscriber profile</h3>
           </div>
-          <p className="text-xs text-white/40 mb-5">Adjust subscriber features below and watch how the churn prediction changes in real time. This demonstrates which factors the model considers most important.</p>
+          <p className="text-xs text-gray-400 mb-5">Adjust subscriber features below and watch how the churn prediction changes in real time. This demonstrates which factors the model considers most important.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <SliderInput label="Tenure (months)" value={tenure} min={0} max={36} onChange={setTenure} />
@@ -107,13 +107,13 @@ export default function WhatIfSimulator() {
           </div>
         </div>
 
-        <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-          <div className="text-xs font-medium text-white/60 mb-1">Pre-built scenarios</div>
-          <p className="text-[10px] text-white/30 mb-3">Click to load a realistic subscriber profile and see how the model responds.</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+          <div className="text-xs font-medium text-gray-500 mb-1">Pre-built scenarios</div>
+          <p className="text-[10px] text-gray-400 mb-3">Click to load a realistic subscriber profile and see how the model responds.</p>
           <div className="flex gap-2 flex-wrap">
             {SCENARIOS.map((s, idx) => (
               <button key={idx} onClick={() => loadScenario(s)}
-                className="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-full transition border border-white/5">
+                className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-900 rounded-full transition border border-gray-100">
                 {s.name}
               </button>
             ))}
@@ -124,29 +124,29 @@ export default function WhatIfSimulator() {
       {/* Result */}
       <div className="space-y-4">
         <div className={`rounded-xl p-6 border ${risk.bg} transition-all duration-300`}>
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-2">Predicted churn risk</div>
-          <div className="text-5xl font-bold text-white mb-2">{(prob * 100).toFixed(1)}%</div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-2">Predicted churn risk</div>
+          <div className="text-5xl font-bold text-gray-900 mb-2">{(prob * 100).toFixed(1)}%</div>
           <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${risk.color} ${risk.bg}`}>
             {risk.label} RISK
           </div>
 
-          <div className="mt-4 pt-4 border-t border-white/[0.06]">
-            <div className="text-xs text-white/40 mb-1">vs. average subscriber</div>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="text-xs text-gray-400 mb-1">vs. average subscriber</div>
             <div className="flex items-center gap-2">
               {diff > 0.01 ? <TrendingUp className="w-4 h-4 text-red-400" /> :
                diff < -0.01 ? <TrendingDown className="w-4 h-4 text-green-400" /> :
-               <Minus className="w-4 h-4 text-white/40" />}
-              <span className={`text-lg font-semibold ${diff > 0.01 ? 'text-red-400' : diff < -0.01 ? 'text-green-400' : 'text-white/60'}`}>
+               <Minus className="w-4 h-4 text-gray-400" />}
+              <span className={`text-lg font-semibold ${diff > 0.01 ? 'text-red-400' : diff < -0.01 ? 'text-green-400' : 'text-gray-500'}`}>
                 {diff > 0 ? '+' : ''}{(diff * 100).toFixed(1)}pp
               </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-          <div className="text-xs font-medium text-white/60 mb-1">Interpretation</div>
-          <p className="text-[10px] text-white/30 mb-2">What this risk level means and recommended next steps.</p>
-          <div className="text-sm text-white/70 leading-relaxed">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+          <div className="text-xs font-medium text-gray-500 mb-1">Interpretation</div>
+          <p className="text-[10px] text-gray-400 mb-2">What this risk level means and recommended next steps.</p>
+          <div className="text-sm text-gray-600 leading-relaxed">
             {prob >= 0.5
               ? 'This subscriber profile shows strong churn signals. Immediate retention outreach recommended within 24 hours. Consider personalized offer based on usage pattern and complaint history.'
               : prob >= 0.3
@@ -166,13 +166,13 @@ function SliderInput({ label, value, min, max, step = 1, onChange }: {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs text-white/50">{label}</span>
-        <span className="text-xs font-mono text-white/80 bg-ink-900 px-2 py-0.5 rounded">{value}</span>
+        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-xs font-mono text-gray-700 bg-white px-2 py-0.5 rounded">{value}</span>
       </div>
       <input
         type="range" min={min} max={max} step={step} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-brand-400"
+        className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-400"
       />
     </div>
   )

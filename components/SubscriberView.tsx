@@ -113,23 +113,23 @@ export default function SubscriberView() {
   return (
     <div className="space-y-4">
       {/* Search + Filter */}
-      <div className="bg-ink-800/30 border border-white/[0.06] rounded-xl p-5">
-        <p className="text-xs text-white/40 mb-3">Search for individual subscribers and manage the full retention workflow: review AI predictions, approve or override risk levels, send personalized messages, and record outcomes.</p>
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+        <p className="text-xs text-gray-400 mb-3">Search for individual subscribers and manage the full retention workflow: review AI predictions, approve or override risk levels, send personalized messages, and record outcomes.</p>
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by ID, phone, city, or plan..."
-              className="w-full bg-ink-900/80 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-400/50 transition"
+              className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-400/50 transition"
             />
           </div>
           <select
             value={riskFilter}
             onChange={e => setRiskFilter(e.target.value)}
-            className="bg-ink-900/80 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-400/50"
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-brand-400/50"
           >
             <option value="All">All Risk Levels</option>
             <option value="High">High / Critical</option>
@@ -137,7 +137,7 @@ export default function SubscriberView() {
             <option value="Low">Low</option>
           </select>
         </div>
-        <div className="text-xs text-white/40 mt-2">{filtered.length} subscriber(s) found</div>
+        <div className="text-xs text-gray-400 mt-2">{filtered.length} subscriber(s) found</div>
       </div>
 
       {/* Subscriber list */}
@@ -149,28 +149,28 @@ export default function SubscriberView() {
           const prob = (sub.predicted_churn_prob * 100).toFixed(1)
 
           return (
-            <div key={sub.user_id} className={`bg-ink-800/30 border border-white/[0.06] rounded-xl overflow-hidden transition border-l-4 ${getRiskBorder(sub.risk_tier)}`}>
+            <div key={sub.user_id} className={`bg-gray-50 border border-gray-200 rounded-xl overflow-hidden transition border-l-4 ${getRiskBorder(sub.risk_tier)}`}>
               {/* Header row */}
               <button
                 onClick={() => setExpanded(isOpen ? null : sub.user_id)}
-                className="w-full flex items-center justify-between p-4 text-left hover:bg-white/[0.02] transition"
+                className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition"
               >
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-white">{sub.user_id}</span>
-                      <span className="text-xs text-white/40">{sub.phone}</span>
+                      <span className="text-sm font-medium text-gray-900">{sub.user_id}</span>
+                      <span className="text-xs text-gray-400">{sub.phone}</span>
                       {wf.step > 1 && (
                         <span className="text-[10px] px-2 py-0.5 rounded bg-brand-400/10 text-brand-200 font-medium">
                           {STEPS[wf.step - 1]}
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-white/40 mt-0.5 flex items-center gap-2">
+                    <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
                       <MapPin className="w-3 h-3" /> {sub.city}
-                      <span className="w-1 h-1 rounded-full bg-white/20" />
+                      <span className="w-1 h-1 rounded-full bg-gray-300" />
                       {sub.plan_name} ({sub.plan_type})
-                      <span className="w-1 h-1 rounded-full bg-white/20" />
+                      <span className="w-1 h-1 rounded-full bg-gray-300" />
                       {formatCurrency(sub.monthly_spend_usd)}/mo
                     </div>
                   </div>
@@ -179,20 +179,20 @@ export default function SubscriberView() {
                   <div className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getRiskColor(sub.risk_tier)}`}>
                     {prob}% risk
                   </div>
-                  {isOpen ? <ChevronUp className="w-4 h-4 text-white/40" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                 </div>
               </button>
 
               {/* Expanded detail */}
               {isOpen && (
-                <div className="border-t border-white/[0.06] p-5 space-y-5 animate-in fade-in duration-200">
+                <div className="border-t border-gray-200 p-5 space-y-5 animate-in fade-in duration-200">
                   {/* Step tracker */}
                   <div className="flex gap-1">
                     {STEPS.map((step, idx) => (
                       <div key={idx} className={`flex-1 text-center py-1.5 rounded text-[10px] font-semibold tracking-wider ${
                         idx + 1 < wf.step ? 'bg-green-500/20 text-green-400' :
                         idx + 1 === wf.step ? 'bg-brand-400/20 text-brand-200' :
-                        'bg-white/5 text-white/30'
+                        'bg-gray-100 text-gray-400'
                       }`}>
                         {idx + 1}. {step.toUpperCase()}
                       </div>
@@ -202,7 +202,7 @@ export default function SubscriberView() {
                   {/* Profile grid */}
                   <div>
                     <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Customer Profile</div>
-                    <p className="text-[10px] text-white/30 mb-3">Subscriber demographics, plan details, and usage indicators from the CRM database.</p>
+                    <p className="text-[10px] text-gray-400 mb-3">Subscriber demographics, plan details, and usage indicators from the CRM database.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {[
                         { label: 'Tenure', value: `${sub.tenure_months} months` },
@@ -214,9 +214,9 @@ export default function SubscriberView() {
                         { label: 'Dropped Calls', value: `${sub.dropped_calls_last_30d}` },
                         { label: 'Device', value: sub.device_brand },
                       ].map((item, idx) => (
-                        <div key={idx} className="bg-ink-900/50 rounded-lg p-3">
-                          <div className="text-[10px] text-white/40 uppercase tracking-wider">{item.label}</div>
-                          <div className="text-sm font-medium text-white mt-0.5">{item.value}</div>
+                        <div key={idx} className="bg-gray-50 rounded-lg p-3">
+                          <div className="text-[10px] text-gray-400 uppercase tracking-wider">{item.label}</div>
+                          <div className="text-sm font-medium text-gray-900 mt-0.5">{item.value}</div>
                         </div>
                       ))}
                     </div>
@@ -225,22 +225,22 @@ export default function SubscriberView() {
                   {/* Risk drivers */}
                   <div>
                     <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Churn Risk Drivers</div>
-                    <p className="text-[10px] text-white/30 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber&apos;s risk level.</p>
+                    <p className="text-[10px] text-gray-400 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber&apos;s risk level.</p>
                     <div className={`rounded-lg p-4 border-l-4 ${
                       sub.risk_tier === 'High' || sub.risk_tier === 'Critical' ? 'bg-red-500/5 border-l-red-500' :
                       sub.risk_tier === 'Medium' || sub.risk_tier === 'Medium-High' ? 'bg-amber-500/5 border-l-amber-500' :
                       'bg-green-500/5 border-l-green-500'
                     }`}>
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="text-2xl font-bold text-white">{prob}%</div>
+                        <div className="text-2xl font-bold text-gray-900">{prob}%</div>
                         <div className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getRiskColor(sub.risk_tier)}`}>
                           {sub.risk_tier} RISK
                         </div>
                       </div>
                       <div className="space-y-1.5">
                         {drivers.map((d, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-sm text-white/70">
-                            <AlertTriangle className="w-3.5 h-3.5 text-white/30 flex-shrink-0 mt-0.5" />
+                          <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                            <AlertTriangle className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                             <span>{d}</span>
                           </div>
                         ))}
@@ -251,25 +251,25 @@ export default function SubscriberView() {
                   {/* Actions */}
                   <div>
                     <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Marketer Decision</div>
-                    <p className="text-[10px] text-white/30 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
+                    <p className="text-[10px] text-gray-400 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
                     <div className="flex gap-2">
                       <button onClick={() => doAction(sub.user_id, 'approved', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'approved' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 hover:bg-white/10 text-white/60'}`}>
+                          wf.action === 'approved' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                         <CheckCircle2 className="w-3.5 h-3.5" /> Approve AI
                       </button>
                       <button onClick={() => doAction(sub.user_id, 'escalated', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'escalated' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/5 hover:bg-white/10 text-white/60'}`}>
+                          wf.action === 'escalated' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                         <AlertTriangle className="w-3.5 h-3.5" /> Escalate
                       </button>
                       <button onClick={() => doAction(sub.user_id, 'safe', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'safe' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-white/5 hover:bg-white/10 text-white/60'}`}>
+                          wf.action === 'safe' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                         <Shield className="w-3.5 h-3.5" /> Mark Safe
                       </button>
                       <button onClick={() => doReset(sub.user_id)}
-                        className="px-3 py-2 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 text-white/40 transition">
+                        className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-400 transition">
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -283,20 +283,20 @@ export default function SubscriberView() {
                     return (
                     <div>
                       <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Send Retention Message</div>
-                      <p className="text-[10px] text-white/30 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
+                      <p className="text-[10px] text-gray-400 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
 
                       {/* Email and Call Script preview */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Email Preview</div>
-                          <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3 text-xs text-white/70 max-h-40 overflow-y-auto whitespace-pre-line">
-                            <div className="text-white/40 mb-1">Subject: {emailSubject}</div>
+                          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5">Email Preview</div>
+                          <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto whitespace-pre-line">
+                            <div className="text-gray-400 mb-1">Subject: {emailSubject}</div>
                             {emailBody}
                           </div>
                         </div>
                         <div>
-                          <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1.5">Voice Call Script</div>
-                          <div className="bg-ink-900/80 border border-white/[0.06] rounded-lg p-3 text-xs text-white/70 max-h-40 overflow-y-auto">
+                          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5">Voice Call Script</div>
+                          <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto">
                             {callScript}
                           </div>
                         </div>
@@ -361,7 +361,7 @@ export default function SubscriberView() {
                               setSending(null)
                             }
                           }}
-                          className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/70 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                          className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-600 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
                           {sending === sub.user_id ? <span className="animate-spin">...</span> : <PhoneCall className="w-3.5 h-3.5" />} Voice Call
                         </button>
                       </div>
@@ -378,7 +378,7 @@ export default function SubscriberView() {
                   {wf.step >= 3 && (
                     <div>
                       <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Record Outcome</div>
-                      <p className="text-[10px] text-white/30 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
+                      <p className="text-[10px] text-gray-400 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
                       <div className="flex gap-2">
                         {['Retained', 'Churned', 'No response'].map(outcome => (
                           <button key={outcome} onClick={() => doOutcome(sub.user_id, outcome)}
@@ -387,14 +387,14 @@ export default function SubscriberView() {
                                 ? outcome === 'Retained' ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                                 : outcome === 'Churned' ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                                 : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                : 'bg-white/5 hover:bg-white/10 text-white/60'
+                                : 'bg-gray-100 hover:bg-gray-200 text-gray-500'
                             }`}>
                             {outcome}
                           </button>
                         ))}
                       </div>
                       {wf.outcome && (
-                        <div className="mt-2 text-xs text-white/50">
+                        <div className="mt-2 text-xs text-gray-500">
                           Outcome recorded. This data feeds into the monthly model retraining pipeline.
                         </div>
                       )}
@@ -408,7 +408,7 @@ export default function SubscriberView() {
       </div>
 
       {filtered.length > 30 && (
-        <div className="text-center text-xs text-white/40 py-4">
+        <div className="text-center text-xs text-gray-400 py-4">
           Showing 30 of {filtered.length} subscribers. Use search or filters to narrow results.
         </div>
       )}
