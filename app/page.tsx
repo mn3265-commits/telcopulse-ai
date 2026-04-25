@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles } from 'lucide-react'
+import { ArrowRight, Activity, Zap, Target, Brain, TrendingUp, Users, Sparkles, SlidersHorizontal, UserCheck } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -21,7 +21,7 @@ export default function HomePage() {
           <div className="flex items-center gap-8">
             <Link href="#features" className="text-sm text-white/60 hover:text-white transition">Features</Link>
             <Link href="#how-it-works" className="text-sm text-white/60 hover:text-white transition">How it works</Link>
-            <Link href="https://github.com/mohagungnugroho/telcopulse-ai" className="text-sm text-white/60 hover:text-white transition">GitHub</Link>
+            <Link href="https://github.com/mn3265-commits/telcopulse-ai" className="text-sm text-white/60 hover:text-white transition">GitHub</Link>
             <Link 
               href="/dashboard"
               className="text-sm font-medium text-black bg-white hover:bg-white/90 px-4 py-1.5 rounded-lg transition flex items-center gap-1.5"
@@ -79,7 +79,7 @@ export default function HomePage() {
             </div>
             <div className="w-px h-10 bg-white/10" />
             <div>
-              <div className="text-3xl font-medium text-white">4-in-1</div>
+              <div className="text-3xl font-medium text-white">6-in-1</div>
               <div className="text-xs text-white/40 mt-1">AI modules</div>
             </div>
           </div>
@@ -90,36 +90,48 @@ export default function HomePage() {
       <section id="features" className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Four intelligent modules</div>
+            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-3">Six intelligent modules</div>
             <h2 className="text-4xl font-medium text-white tracking-tight">
               One platform. Every growth lever.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
-            <FeatureCard 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
+            <FeatureCard
               icon={<Brain className="w-5 h-5" />}
               title="Churn Radar"
               tag="ML-POWERED"
-              description="Real XGBoost model trained on 18 behavioral features. Identifies high-risk subscribers before they leave, with explanations of why each one might churn."
+              description="XGBoost model trained on 18 behavioral features. Identifies high-risk subscribers before they leave, with explanations of why each one might churn."
             />
-            <FeatureCard 
+            <FeatureCard
+              icon={<UserCheck className="w-5 h-5" />}
+              title="Subscriber Workflow"
+              tag="HUMAN-IN-THE-LOOP"
+              description="Individual subscriber retention workflow with 4-step tracker: AI Scored, Reviewed, Contacted, Outcome. Approve, escalate, or override AI predictions."
+            />
+            <FeatureCard
               icon={<Target className="w-5 h-5" />}
               title="Smart Segments"
               tag="NATURAL LANGUAGE"
-              description="Type 'young users who stopped buying data packages' — Claude converts it to SQL, runs the query, and suggests the best campaign for that segment."
+              description="Type 'high-value postpaid with declining usage' and get instant SQL filters, subscriber counts, and strategic recommendations."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<Zap className="w-5 h-5" />}
               title="Campaign Writer"
               tag="MULTI-CHANNEL"
-              description="Generate on-brand SMS (160 char), push notifications, email, and WhatsApp messages in one click. Tone-adjustable, compliance-aware."
+              description="Generate on-brand SMS, push notifications, email, and WhatsApp messages in one click. Tone-adjustable, compliance-aware."
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<TrendingUp className="w-5 h-5" />}
               title="Impact Predictor"
               tag="FORECASTING"
-              description="Before you hit send, Claude estimates reach, conversion rate, and revenue impact based on telecom industry benchmarks and your segment data."
+              description="Before you hit send, estimate reach, conversion rate, and revenue impact based on telecom industry benchmarks and your segment data."
+            />
+            <FeatureCard
+              icon={<SlidersHorizontal className="w-5 h-5" />}
+              title="What-If Simulator"
+              tag="INTERPRETABILITY"
+              description="Adjust subscriber features with interactive sliders and watch churn predictions change in real time. Understand which factors drive risk up or down."
             />
           </div>
         </div>
@@ -171,9 +183,9 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/[0.06] px-6 py-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-sm text-white/40">
-          <div>Built by <Link href="https://linkedin.com/in/mohagungnugroho" className="text-white/60 hover:text-white transition">Mohammad Agung Nugroho</Link></div>
+          <div>Built by <Link href="https://linkedin.com/in/mohagungnugroho" className="text-white/60 hover:text-white transition">Agung Nugroho</Link> · Columbia University SPS</div>
           <div className="flex gap-6">
-            <Link href="https://github.com/mohagungnugroho/telcopulse-ai" className="hover:text-white transition">GitHub</Link>
+            <Link href="https://github.com/mn3265-commits/telcopulse-ai" className="hover:text-white transition">GitHub</Link>
             <Link href="https://linkedin.com/in/mohagungnugroho" className="hover:text-white transition">LinkedIn</Link>
           </div>
         </div>
