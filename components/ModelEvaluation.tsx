@@ -116,14 +116,14 @@ export default function ModelEvaluation() {
 
       {/* ── 1. Performance Metrics ── */}
       <div>
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Performance Metrics</div>
-        <p className="text-xs text-gray-400 mb-4">XGBoost classifier trained on 10,000 subscribers with 18 behavioral and demographic features.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Performance Metrics</div>
+        <p className="text-xs text-gray-600 mb-4">XGBoost classifier trained on 10,000 subscribers with 18 behavioral and demographic features.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
           {performanceMetrics.map((m) => (
             <div key={m.label} className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
               <m.icon className="w-4 h-4 text-brand-400 mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{m.value}</div>
-              <div className="text-[10px] text-gray-400 mt-1">{m.label}</div>
+              <div className="text-[10px] text-gray-600 mt-1">{m.label}</div>
             </div>
           ))}
         </div>
@@ -133,27 +133,27 @@ export default function ModelEvaluation() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Confusion Matrix */}
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-          <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Confusion Matrix</div>
-          <p className="text-xs text-gray-400 mb-4">Prediction outcomes on the 2,000-sample test set.</p>
+          <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Confusion Matrix</div>
+          <p className="text-xs text-gray-600 mb-4">Prediction outcomes on the 2,000-sample test set.</p>
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-              <div className="text-[10px] text-green-400/60 uppercase tracking-wider mb-1">True Negative</div>
-              <div className="text-2xl font-bold text-green-400">1,023</div>
+              <div className="text-[10px] text-green-600/60 uppercase tracking-wider mb-1">True Negative</div>
+              <div className="text-2xl font-bold text-green-600">1,023</div>
             </div>
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
-              <div className="text-[10px] text-red-400/60 uppercase tracking-wider mb-1">False Positive</div>
-              <div className="text-2xl font-bold text-red-400">480</div>
+              <div className="text-[10px] text-red-600/60 uppercase tracking-wider mb-1">False Positive</div>
+              <div className="text-2xl font-bold text-red-600">480</div>
             </div>
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
-              <div className="text-[10px] text-red-400/60 uppercase tracking-wider mb-1">False Negative</div>
-              <div className="text-2xl font-bold text-red-400">168</div>
+              <div className="text-[10px] text-red-600/60 uppercase tracking-wider mb-1">False Negative</div>
+              <div className="text-2xl font-bold text-red-600">168</div>
             </div>
             <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-              <div className="text-[10px] text-green-400/60 uppercase tracking-wider mb-1">True Positive</div>
-              <div className="text-2xl font-bold text-green-400">329</div>
+              <div className="text-[10px] text-green-600/60 uppercase tracking-wider mb-1">True Positive</div>
+              <div className="text-2xl font-bold text-green-600">329</div>
             </div>
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-center text-[10px] text-gray-400">
+          <div className="mt-3 grid grid-cols-2 gap-2 text-center text-[10px] text-gray-600">
             <div>Predicted: No Churn</div>
             <div>Predicted: Churn</div>
           </div>
@@ -161,23 +161,23 @@ export default function ModelEvaluation() {
 
         {/* Baseline Comparison */}
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-          <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Baseline Comparison</div>
-          <p className="text-xs text-gray-400 mb-4">Three models evaluated on the same test set.</p>
+          <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Baseline Comparison</div>
+          <p className="text-xs text-gray-600 mb-4">Three models evaluated on the same test set.</p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left text-gray-400 font-medium pb-2">Model</th>
-                  <th className="text-right text-gray-400 font-medium pb-2">AUC-ROC</th>
-                  <th className="text-right text-gray-400 font-medium pb-2">Precision</th>
-                  <th className="text-right text-gray-400 font-medium pb-2">Recall</th>
-                  <th className="text-right text-gray-400 font-medium pb-2">F1</th>
+                  <th className="text-left text-gray-600 font-medium pb-2">Model</th>
+                  <th className="text-right text-gray-600 font-medium pb-2">AUC-ROC</th>
+                  <th className="text-right text-gray-600 font-medium pb-2">Precision</th>
+                  <th className="text-right text-gray-600 font-medium pb-2">Recall</th>
+                  <th className="text-right text-gray-600 font-medium pb-2">F1</th>
                 </tr>
               </thead>
               <tbody>
                 {baselineModels.map((m) => (
                   <tr key={m.model} className={`border-b border-gray-100 ${m.highlight ? 'bg-brand-400/5' : ''}`}>
-                    <td className={`py-2.5 ${m.highlight ? 'text-brand-200 font-medium' : 'text-gray-600'}`}>{m.model}</td>
+                    <td className={`py-2.5 ${m.highlight ? 'text-brand-400 font-medium' : 'text-gray-600'}`}>{m.model}</td>
                     <td className="text-right text-gray-700 font-mono">{m.auc}</td>
                     <td className="text-right text-gray-700 font-mono">{m.precision}</td>
                     <td className="text-right text-gray-700 font-mono">{m.recall}</td>
@@ -187,7 +187,7 @@ export default function ModelEvaluation() {
               </tbody>
             </table>
           </div>
-          <p className="text-[10px] text-gray-400 mt-3 italic">
+          <p className="text-[10px] text-gray-600 mt-3 italic">
             XGBoost wins on AUC (threshold-independent ranking quality). The rule-based heuristic
             shows higher F1 at its default cutoff but lower AUC, meaning it&apos;s less flexible to
             tune across operating points.
@@ -197,16 +197,16 @@ export default function ModelEvaluation() {
 
       {/* ── 4. Go / No-Go Evaluation ── */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Go / No-Go Evaluation</div>
-        <p className="text-xs text-gray-400 mb-4">Production readiness assessment against minimum thresholds.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Go / No-Go Evaluation</div>
+        <p className="text-xs text-gray-600 mb-4">Production readiness assessment against minimum thresholds.</p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left text-gray-400 font-medium pb-2">Metric</th>
-                <th className="text-left text-gray-400 font-medium pb-2">Target</th>
-                <th className="text-left text-gray-400 font-medium pb-2">Actual</th>
-                <th className="text-left text-gray-400 font-medium pb-2">Status</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Metric</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Target</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Actual</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -217,7 +217,7 @@ export default function ModelEvaluation() {
                   <td className="text-gray-700 font-mono">{r.actual}</td>
                   <td>
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      r.pass ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                      r.pass ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'
                     }`}>
                       <CheckCircle2 className="w-3 h-3" />
                       {r.pass ? 'PASS' : 'FAIL'}
@@ -229,7 +229,7 @@ export default function ModelEvaluation() {
           </table>
         </div>
         <div className="mt-4 pt-3 border-t border-gray-200">
-          <span className="inline-flex items-center gap-2 text-sm font-semibold text-green-400">
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-green-600">
             <CheckCircle2 className="w-4 h-4" />
             RECOMMENDATION: GO
           </span>
@@ -238,17 +238,17 @@ export default function ModelEvaluation() {
 
       {/* ── 5. Business Impact Estimation ── */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Business Impact Estimation</div>
-        <p className="text-xs text-gray-400 mb-4">Estimated revenue impact from deploying the churn prediction model at scale.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Business Impact Estimation</div>
+        <p className="text-xs text-gray-600 mb-4">Estimated revenue impact from deploying the churn prediction model at scale.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {businessMetrics.map((m) => (
             <div key={m.label} className="bg-gray-50 border border-gray-100 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <m.icon className="w-3.5 h-3.5 text-brand-400" />
-                <span className="text-[10px] text-gray-400">{m.label}</span>
+                <span className="text-[10px] text-gray-600">{m.label}</span>
               </div>
               <div className="text-2xl font-bold text-gray-900">{m.value}</div>
-              <div className="text-[9px] text-gray-300 mt-1">{m.source}</div>
+              <div className="text-[10px] text-gray-500 mt-1">{m.source}</div>
             </div>
           ))}
         </div>
@@ -257,7 +257,7 @@ export default function ModelEvaluation() {
         <div className="mt-4">
           <button
             onClick={() => setShowBusinessBreakdown(!showBusinessBreakdown)}
-            className="flex items-center gap-1.5 text-xs text-brand-200 hover:text-gray-900 transition"
+            className="flex items-center gap-1.5 text-xs text-brand-400 hover:text-gray-900 transition"
           >
             {showBusinessBreakdown ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             {showBusinessBreakdown ? 'Hide' : 'Show'} full breakdown
@@ -265,17 +265,17 @@ export default function ModelEvaluation() {
           {showBusinessBreakdown && (
             <div className="mt-3 bg-gray-50 border border-gray-100 rounded-lg p-4 text-xs text-gray-500 space-y-2">
               <div className="font-medium text-gray-700 mb-2">Revenue Impact Calculation</div>
-              <div>1. <span className="text-gray-400">Subscriber base:</span> 95,000,000 (Indosat FY2024 reported subscribers)</div>
-              <div>2. <span className="text-gray-400">Monthly churn rate:</span> 3.5% (GSMA Intelligence 2023, Southeast Asia mobile prepaid average)</div>
-              <div>3. <span className="text-gray-400">Monthly churners:</span> 95,000,000 x 3.5% = 3,325,000</div>
-              <div>4. <span className="text-gray-400">Model recall:</span> 66% of churners correctly identified = 3,325,000 x 0.66 ≈ 2,194,500</div>
-              <div>5. <span className="text-gray-400">Retention rate with proactive offer:</span> 25% (industry benchmark for targeted retention campaigns)</div>
-              <div>6. <span className="text-gray-400">Subscribers retained/month:</span> 2,194,500 x 25% ≈ 548,625</div>
-              <div>7. <span className="text-gray-400">Avg ARPU:</span> $8.50/month (Indosat FY2024 blended ARPU)</div>
-              <div>8. <span className="text-gray-400">LTV factor:</span> Partial 12-month lifetime value applied (not full LTV, discounted for re-churn risk)</div>
-              <div>9. <span className="text-gray-400">Revenue saved/month:</span> 548,625 x $8.50 x ~0.95 partial factor ≈ $4.4M</div>
-              <div>10. <span className="text-gray-400">Annual impact:</span> $4.4M x 12 ≈ $52.7M</div>
-              <div className="pt-2 border-t border-gray-100 text-[10px] text-gray-400 italic">
+              <div>1. <span className="text-gray-600">Subscriber base:</span> 95,000,000 (Indosat FY2024 reported subscribers)</div>
+              <div>2. <span className="text-gray-600">Monthly churn rate:</span> 3.5% (GSMA Intelligence 2023, Southeast Asia mobile prepaid average)</div>
+              <div>3. <span className="text-gray-600">Monthly churners:</span> 95,000,000 x 3.5% = 3,325,000</div>
+              <div>4. <span className="text-gray-600">Model recall:</span> 66% of churners correctly identified = 3,325,000 x 0.66 ≈ 2,194,500</div>
+              <div>5. <span className="text-gray-600">Retention rate with proactive offer:</span> 25% (industry benchmark for targeted retention campaigns)</div>
+              <div>6. <span className="text-gray-600">Subscribers retained/month:</span> 2,194,500 x 25% ≈ 548,625</div>
+              <div>7. <span className="text-gray-600">Avg ARPU:</span> $8.50/month (Indosat FY2024 blended ARPU)</div>
+              <div>8. <span className="text-gray-600">LTV factor:</span> Partial 12-month lifetime value applied (not full LTV, discounted for re-churn risk)</div>
+              <div>9. <span className="text-gray-600">Revenue saved/month:</span> 548,625 x $8.50 x ~0.95 partial factor ≈ $4.4M</div>
+              <div>10. <span className="text-gray-600">Annual impact:</span> $4.4M x 12 ≈ $52.7M</div>
+              <div className="pt-2 border-t border-gray-100 text-[10px] text-gray-600 italic">
                 Note: Actual impact depends on campaign execution quality, offer cost, and churn reason distribution. This is a top-of-funnel estimate.
               </div>
             </div>
@@ -285,8 +285,8 @@ export default function ModelEvaluation() {
 
       {/* ── 6. Edge Cases and Failure Modes ── */}
       <div>
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Edge Cases and Failure Modes</div>
-        <p className="text-xs text-gray-400 mb-4">Scenarios where model performance degrades significantly. Click to expand details.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Edge Cases and Failure Modes</div>
+        <p className="text-xs text-gray-600 mb-4">Scenarios where model performance degrades significantly. Click to expand details.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {edgeCases.map((ec, idx) => (
             <div key={idx} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
@@ -296,17 +296,17 @@ export default function ModelEvaluation() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                    <AlertTriangle className="w-4 h-4 text-red-400" />
+                    <AlertTriangle className="w-4 h-4 text-red-600" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-800">{ec.title}</div>
-                    <div className="text-[10px] text-gray-400">AUC drops to {ec.stress.auc.toFixed(2)}</div>
+                    <div className="text-[10px] text-gray-600">AUC drops to {ec.stress.auc.toFixed(2)}</div>
                   </div>
                 </div>
                 {expandedEdgeCase === idx ? (
-                  <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-gray-600 flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
                 )}
               </button>
               {expandedEdgeCase === idx && (
@@ -316,10 +316,10 @@ export default function ModelEvaluation() {
                     <table className="w-full text-[11px]">
                       <thead>
                         <tr className="border-b border-gray-200">
-                          <th className="text-left text-gray-400 font-medium pb-1.5">Metric</th>
-                          <th className="text-right text-gray-400 font-medium pb-1.5">Normal</th>
-                          <th className="text-right text-gray-400 font-medium pb-1.5">Stress</th>
-                          <th className="text-right text-gray-400 font-medium pb-1.5">Delta</th>
+                          <th className="text-left text-gray-600 font-medium pb-1.5">Metric</th>
+                          <th className="text-right text-gray-600 font-medium pb-1.5">Normal</th>
+                          <th className="text-right text-gray-600 font-medium pb-1.5">Stress</th>
+                          <th className="text-right text-gray-600 font-medium pb-1.5">Delta</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -330,8 +330,8 @@ export default function ModelEvaluation() {
                             <tr key={key} className="border-b border-gray-100">
                               <td className="py-1.5 text-gray-500">{label}</td>
                               <td className="text-right text-gray-600 font-mono">{ec.normal[key].toFixed(2)}</td>
-                              <td className="text-right text-red-400 font-mono">{ec.stress[key].toFixed(2)}</td>
-                              <td className="text-right text-red-400/70 font-mono">{delta.toFixed(2)}</td>
+                              <td className="text-right text-red-600 font-mono">{ec.stress[key].toFixed(2)}</td>
+                              <td className="text-right text-red-600/70 font-mono">{delta.toFixed(2)}</td>
                             </tr>
                           )
                         })}
@@ -347,14 +347,14 @@ export default function ModelEvaluation() {
 
       {/* ── 7. Technology Stack ── */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Technology Stack</div>
-        <p className="text-xs text-gray-400 mb-4">End-to-end platform components powering TelcoPulse AI.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Technology Stack</div>
+        <p className="text-xs text-gray-600 mb-4">End-to-end platform components powering TelcoPulse AI.</p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left text-gray-400 font-medium pb-2">Component</th>
-                <th className="text-left text-gray-400 font-medium pb-2">Technology</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Component</th>
+                <th className="text-left text-gray-600 font-medium pb-2">Technology</th>
               </tr>
             </thead>
             <tbody>
@@ -371,8 +371,8 @@ export default function ModelEvaluation() {
 
       {/* ── 8. AI Factory Architecture ── */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">AI Factory Architecture</div>
-        <p className="text-xs text-gray-400 mb-5">End-to-end data flow from ingestion through delivery and feedback loop.</p>
+        <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">AI Factory Architecture</div>
+        <p className="text-xs text-gray-600 mb-5">End-to-end data flow from ingestion through delivery and feedback loop.</p>
         <div className="flex flex-wrap items-center justify-center gap-y-4 gap-x-1">
           {architectureSteps.map((step, idx) => (
             <div key={step.label} className="flex items-center gap-1">
@@ -381,7 +381,7 @@ export default function ModelEvaluation() {
                   <step.icon className="w-5 h-5 text-brand-400" />
                 </div>
                 <div className="text-[10px] font-medium text-gray-700 text-center leading-tight">{step.label}</div>
-                <div className="text-[9px] text-gray-400 text-center mt-0.5">{step.desc}</div>
+                <div className="text-[10px] text-gray-600 text-center mt-0.5">{step.desc}</div>
               </div>
               {idx < architectureSteps.length - 1 && (
                 <ArrowRight className="w-4 h-4 text-brand-400/40 flex-shrink-0 mt-[-20px]" />
@@ -389,7 +389,7 @@ export default function ModelEvaluation() {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-300">
+        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-500">
           <RefreshCw className="w-3 h-3" />
           <span>Continuous feedback loop from outcome tracking back to feature engineering and model retraining</span>
         </div>

@@ -53,7 +53,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 text-xs text-gray-600">
               <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               <span>Demo mode · 10,000 subscribers loaded</span>
             </div>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-brand-400" />
-            <span className="text-xs font-medium text-brand-200 tracking-wider uppercase">Live dashboard</span>
+            <span className="text-xs font-medium text-brand-400 tracking-wider uppercase">Live dashboard</span>
           </div>
           <h1 className="text-3xl font-medium text-gray-900 tracking-tight mb-1">Marketing intelligence</h1>
           <p className="text-gray-500 text-sm">Real-time AI insights across your subscriber base</p>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                 className={`relative px-3 py-3 text-xs font-medium transition flex items-center gap-1.5 group ${
                   activeTab === tab.key
                     ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-700'
+                    : 'text-gray-600 hover:text-gray-700'
                 }`}
               >
                 {tab.icon}
@@ -99,7 +99,7 @@ export default function DashboardPage() {
 
         {/* Tab description + content */}
         <div className="animate-fade-in" key={activeTab}>
-          <p className="text-xs text-gray-400 mb-5">
+          <p className="text-xs text-gray-600 mb-5">
             {activeTab === 'churn' && 'Overview of churn risk distribution across the subscriber base. XGBoost model scores 10,000 subscribers and surfaces the highest-risk accounts for immediate action.'}
             {activeTab === 'subscribers' && 'Individual subscriber retention workflow. Search, review AI predictions, approve or override risk levels, send personalized email or voice call, and record outcomes for model retraining.'}
             {activeTab === 'segments' && 'Create customer segments using natural language. The system converts your query into SQL filters, identifies matching subscribers, and suggests targeted campaign strategies.'}
@@ -123,7 +123,7 @@ export default function DashboardPage() {
       </main>
 
       <footer className="border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-gray-400">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-gray-600">
           <div>Powered by Claude Sonnet 4.5 · XGBoost · Next.js 14</div>
           <div>Synthetic data — no real subscriber info</div>
         </div>

@@ -61,11 +61,11 @@ export default function SmartSegments() {
             <Sparkles className="w-4 h-4 text-brand-400" />
             <h3 className="text-sm font-medium text-gray-900">Ask in plain English</h3>
           </div>
-          <p className="text-xs text-gray-400 mb-4">Claude converts your question into SQL and identifies matching subscribers</p>
+          <p className="text-xs text-gray-600 mb-4">Claude converts your question into SQL and identifies matching subscribers</p>
 
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
               <input
                 type="text"
                 value={query}
@@ -85,7 +85,7 @@ export default function SmartSegments() {
           </div>
 
           <div className="mt-4">
-            <div className="text-[10px] font-medium text-gray-400 tracking-wider uppercase mb-2">Try these examples</div>
+            <div className="text-[10px] font-medium text-gray-600 tracking-wider uppercase mb-2">Try these examples</div>
             <div className="flex flex-wrap gap-2">
               {EXAMPLE_QUERIES.map((ex, idx) => (
                 <button
@@ -111,20 +111,20 @@ export default function SmartSegments() {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 animate-slide-up">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-2">Segment found</div>
+                <div className="text-xs font-medium text-brand-400 tracking-wider uppercase mb-2">Segment found</div>
                 <h3 className="text-xl font-medium text-gray-900 mb-1">{result.segment_name}</h3>
                 <p className="text-sm text-gray-500">{result.description}</p>
               </div>
               <div className="flex items-center gap-2 bg-brand-400/10 px-3 py-1.5 rounded-lg">
-                <Users className="w-4 h-4 text-brand-200" />
-                <span className="text-sm font-medium text-brand-200">{Math.floor(Math.random() * 1500) + 200} users</span>
+                <Users className="w-4 h-4 text-brand-400" />
+                <span className="text-sm font-medium text-brand-400">{Math.floor(Math.random() * 1500) + 200} users</span>
               </div>
             </div>
 
             <div className="mt-5 space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Database className="w-3.5 h-3.5 text-gray-400" />
+                  <Database className="w-3.5 h-3.5 text-gray-600" />
                   <span className="text-xs font-medium text-gray-500">Auto-generated SQL</span>
                 </div>
                 <pre className="bg-white border border-gray-200 rounded-lg p-3 text-xs font-mono text-gray-600 overflow-x-auto">
@@ -134,9 +134,9 @@ export default function SmartSegments() {
 
               {result.strategic_insight && (
                 <div className="flex gap-3 p-4 bg-brand-400/5 border border-brand-400/20 rounded-lg">
-                  <Lightbulb className="w-4 h-4 text-brand-200 flex-shrink-0 mt-0.5" />
+                  <Lightbulb className="w-4 h-4 text-brand-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-xs font-medium text-brand-200 mb-1">Strategic insight</div>
+                    <div className="text-xs font-medium text-brand-400 mb-1">Strategic insight</div>
                     <div className="text-sm text-gray-700">{result.strategic_insight}</div>
                   </div>
                 </div>
@@ -199,15 +199,15 @@ export default function SmartSegments() {
               {campaign && (
                 <div className="mt-4 p-4 bg-brand-400/5 border border-brand-400/20 rounded-lg space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-medium text-brand-200 uppercase tracking-wider">Generated Campaign</div>
-                    <button onClick={() => setCampaign(null)} className="text-xs text-gray-400 hover:text-gray-900">Dismiss</button>
+                    <div className="text-xs font-medium text-brand-400 uppercase tracking-wider">Generated Campaign</div>
+                    <button onClick={() => setCampaign(null)} className="text-xs text-gray-600 hover:text-gray-900">Dismiss</button>
                   </div>
                   <div>
-                    <div className="text-[10px] text-gray-400 uppercase mb-1">SMS</div>
+                    <div className="text-[10px] text-gray-600 uppercase mb-1">SMS</div>
                     <div className="text-sm text-gray-700 bg-gray-50 rounded p-2">{campaign.sms}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-gray-400 uppercase mb-1">Email: {campaign.email_subject}</div>
+                    <div className="text-[10px] text-gray-600 uppercase mb-1">Email: {campaign.email_subject}</div>
                     <div className="text-sm text-gray-700 bg-gray-50 rounded p-2 whitespace-pre-line">{campaign.email_body}</div>
                   </div>
                   {campaign.reasoning && (
@@ -228,9 +228,9 @@ export default function SmartSegments() {
             <div key={idx} className="p-3 bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 rounded-lg cursor-pointer transition">
               <div className="flex items-center justify-between mb-1">
                 <div className="text-sm font-medium text-gray-800">{seg.name}</div>
-                <div className="text-xs text-gray-400">{seg.count}</div>
+                <div className="text-xs text-gray-600">{seg.count}</div>
               </div>
-              <div className="text-[10px] font-medium text-brand-200 tracking-wider uppercase">{seg.tag}</div>
+              <div className="text-[10px] font-medium text-brand-400 tracking-wider uppercase">{seg.tag}</div>
             </div>
           ))}
         </div>

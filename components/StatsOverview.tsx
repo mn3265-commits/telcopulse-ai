@@ -53,16 +53,16 @@ export default function StatsOverview() {
         >
           <div className="flex items-center justify-between mb-3">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              stat.trend === 'up' ? 'bg-green-400/10 text-green-400' :
-              stat.trend === 'down' ? 'bg-brand-400/10 text-brand-200' :
-              'bg-gray-100 text-gray-400'
+              stat.trend === 'up' ? 'bg-green-400/10 text-green-600' :
+              stat.trend === 'down' ? 'bg-brand-400/10 text-brand-400' :
+              'bg-gray-100 text-gray-600'
             }`}>
               {stat.icon}
             </div>
           </div>
-          <div className="text-xs text-gray-400 mb-1.5">{stat.label}</div>
+          <div className="text-xs text-gray-600 mb-1.5">{stat.label}</div>
           <div className="text-2xl font-medium text-gray-900 mb-1">{stat.value}</div>
-          <div className="text-xs text-gray-400">{stat.change}</div>
+          <div className="text-xs text-gray-600">{stat.change}</div>
         </div>
       ))}
     </div>

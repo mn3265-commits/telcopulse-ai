@@ -31,9 +31,9 @@ const STEPS = ['AI Scored', 'Reviewed', 'Contacted', 'Outcome']
 
 function getRiskColor(tier: string) {
   switch (tier) {
-    case 'High': case 'Critical': return 'bg-red-500/15 text-red-400 border-red-500/20'
+    case 'High': case 'Critical': return 'bg-red-500/15 text-red-600 border-red-500/20'
     case 'Medium': case 'Medium-High': return 'bg-amber-500/15 text-amber-400 border-amber-500/20'
-    default: return 'bg-green-500/15 text-green-400 border-green-500/20'
+    default: return 'bg-green-500/15 text-green-600 border-green-500/20'
   }
 }
 
@@ -114,10 +114,10 @@ export default function SubscriberView() {
     <div className="space-y-4">
       {/* Search + Filter */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <p className="text-xs text-gray-400 mb-3">Search for individual subscribers and manage the full retention workflow: review AI predictions, approve or override risk levels, send personalized messages, and record outcomes.</p>
+        <p className="text-xs text-gray-600 mb-3">Search for individual subscribers and manage the full retention workflow: review AI predictions, approve or override risk levels, send personalized messages, and record outcomes.</p>
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             <input
               type="text"
               value={search}
@@ -137,7 +137,7 @@ export default function SubscriberView() {
             <option value="Low">Low</option>
           </select>
         </div>
-        <div className="text-xs text-gray-400 mt-2">{filtered.length} subscriber(s) found</div>
+        <div className="text-xs text-gray-600 mt-2">{filtered.length} subscriber(s) found</div>
       </div>
 
       {/* Subscriber list */}
@@ -159,14 +159,14 @@ export default function SubscriberView() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-gray-900">{sub.user_id}</span>
-                      <span className="text-xs text-gray-400">{sub.phone}</span>
+                      <span className="text-xs text-gray-600">{sub.phone}</span>
                       {wf.step > 1 && (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-brand-400/10 text-brand-200 font-medium">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-brand-400/10 text-brand-400 font-medium">
                           {STEPS[wf.step - 1]}
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
+                    <div className="text-xs text-gray-600 mt-0.5 flex items-center gap-2">
                       <MapPin className="w-3 h-3" /> {sub.city}
                       <span className="w-1 h-1 rounded-full bg-gray-300" />
                       {sub.plan_name} ({sub.plan_type})
@@ -179,7 +179,7 @@ export default function SubscriberView() {
                   <div className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getRiskColor(sub.risk_tier)}`}>
                     {prob}% risk
                   </div>
-                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
                 </div>
               </button>
 
@@ -190,9 +190,9 @@ export default function SubscriberView() {
                   <div className="flex gap-1">
                     {STEPS.map((step, idx) => (
                       <div key={idx} className={`flex-1 text-center py-1.5 rounded text-[10px] font-semibold tracking-wider ${
-                        idx + 1 < wf.step ? 'bg-green-500/20 text-green-400' :
-                        idx + 1 === wf.step ? 'bg-brand-400/20 text-brand-200' :
-                        'bg-gray-100 text-gray-400'
+                        idx + 1 < wf.step ? 'bg-green-500/20 text-green-600' :
+                        idx + 1 === wf.step ? 'bg-brand-400/20 text-brand-400' :
+                        'bg-gray-100 text-gray-600'
                       }`}>
                         {idx + 1}. {step.toUpperCase()}
                       </div>
@@ -201,8 +201,8 @@ export default function SubscriberView() {
 
                   {/* Profile grid */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Customer Profile</div>
-                    <p className="text-[10px] text-gray-400 mb-3">Subscriber demographics, plan details, and usage indicators from the CRM database.</p>
+                    <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Customer Profile</div>
+                    <p className="text-[10px] text-gray-600 mb-3">Subscriber demographics, plan details, and usage indicators from the CRM database.</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {[
                         { label: 'Tenure', value: `${sub.tenure_months} months` },
@@ -215,7 +215,7 @@ export default function SubscriberView() {
                         { label: 'Device', value: sub.device_brand },
                       ].map((item, idx) => (
                         <div key={idx} className="bg-gray-50 rounded-lg p-3">
-                          <div className="text-[10px] text-gray-400 uppercase tracking-wider">{item.label}</div>
+                          <div className="text-[10px] text-gray-600 uppercase tracking-wider">{item.label}</div>
                           <div className="text-sm font-medium text-gray-900 mt-0.5">{item.value}</div>
                         </div>
                       ))}
@@ -224,8 +224,8 @@ export default function SubscriberView() {
 
                   {/* Risk drivers */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Churn Risk Drivers</div>
-                    <p className="text-[10px] text-gray-400 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber&apos;s risk level.</p>
+                    <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Churn Risk Drivers</div>
+                    <p className="text-[10px] text-gray-600 mb-3">AI-generated churn probability and the top behavioral factors driving this subscriber&apos;s risk level.</p>
                     <div className={`rounded-lg p-4 border-l-4 ${
                       sub.risk_tier === 'High' || sub.risk_tier === 'Critical' ? 'bg-red-500/5 border-l-red-500' :
                       sub.risk_tier === 'Medium' || sub.risk_tier === 'Medium-High' ? 'bg-amber-500/5 border-l-amber-500' :
@@ -240,7 +240,7 @@ export default function SubscriberView() {
                       <div className="space-y-1.5">
                         {drivers.map((d, idx) => (
                           <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                            <AlertTriangle className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
+                            <AlertTriangle className="w-3.5 h-3.5 text-gray-600 flex-shrink-0 mt-0.5" />
                             <span>{d}</span>
                           </div>
                         ))}
@@ -250,17 +250,17 @@ export default function SubscriberView() {
 
                   {/* Actions */}
                   <div>
-                    <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Marketer Decision</div>
-                    <p className="text-[10px] text-gray-400 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
+                    <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Marketer Decision</div>
+                    <p className="text-[10px] text-gray-600 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
                     <div className="flex gap-2">
                       <button onClick={() => doAction(sub.user_id, 'approved', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'approved' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                          wf.action === 'approved' ? 'bg-green-500/20 text-green-600 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                         <CheckCircle2 className="w-3.5 h-3.5" /> Approve AI
                       </button>
                       <button onClick={() => doAction(sub.user_id, 'escalated', 2)}
                         className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'escalated' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                          wf.action === 'escalated' ? 'bg-red-500/20 text-red-600 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                         <AlertTriangle className="w-3.5 h-3.5" /> Escalate
                       </button>
                       <button onClick={() => doAction(sub.user_id, 'safe', 2)}
@@ -269,7 +269,7 @@ export default function SubscriberView() {
                         <Shield className="w-3.5 h-3.5" /> Mark Safe
                       </button>
                       <button onClick={() => doReset(sub.user_id)}
-                        className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-400 transition">
+                        className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -282,20 +282,20 @@ export default function SubscriberView() {
                     const callScript = `Hello. I am calling from Indosat Ooredoo Hutchison, reaching out from ${sub.city}. ${sub.complaints_last_90d >= 2 ? `We are aware of ${sub.complaints_last_90d} unresolved complaints. Our team is prioritizing their resolution.` : sub.data_usage_pct < 30 ? `We noticed your data usage has been declining recently.` : `As a loyal subscriber for ${sub.tenure_months} months, you are very important to us.`} We have prepared a special offer for you: free 10GB bonus data and a 30% discount next month. Please open the myIndosat app, go to Special Offers, and tap Claim Now. Thank you.`
                     return (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Send Retention Message</div>
-                      <p className="text-[10px] text-gray-400 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Send Retention Message</div>
+                      <p className="text-[10px] text-gray-600 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
 
                       {/* Email and Call Script preview */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5">Email Preview</div>
+                          <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Email Preview</div>
                           <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto whitespace-pre-line">
-                            <div className="text-gray-400 mb-1">Subject: {emailSubject}</div>
+                            <div className="text-gray-600 mb-1">Subject: {emailSubject}</div>
                             {emailBody}
                           </div>
                         </div>
                         <div>
-                          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5">Voice Call Script</div>
+                          <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Voice Call Script</div>
                           <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto">
                             {callScript}
                           </div>
@@ -366,7 +366,7 @@ export default function SubscriberView() {
                         </button>
                       </div>
                       {wf.sendStatus && (
-                        <div className={`mt-2 text-xs flex items-center gap-1.5 ${wf.sendStatus.startsWith('Failed') ? 'text-red-400' : 'text-green-400'}`}>
+                        <div className={`mt-2 text-xs flex items-center gap-1.5 ${wf.sendStatus.startsWith('Failed') ? 'text-red-600' : 'text-green-600'}`}>
                           {wf.sendStatus.startsWith('Failed') ? <XCircle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                           {wf.sendStatus}
                         </div>
@@ -377,15 +377,15 @@ export default function SubscriberView() {
                   {/* Outcome */}
                   {wf.step >= 3 && (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-1">Record Outcome</div>
-                      <p className="text-[10px] text-gray-400 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Record Outcome</div>
+                      <p className="text-[10px] text-gray-600 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
                       <div className="flex gap-2">
                         {['Retained', 'Churned', 'No response'].map(outcome => (
                           <button key={outcome} onClick={() => doOutcome(sub.user_id, outcome)}
                             className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${
                               wf.outcome === outcome
-                                ? outcome === 'Retained' ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                : outcome === 'Churned' ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
+                                : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
                                 : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-500'
                             }`}>
@@ -408,7 +408,7 @@ export default function SubscriberView() {
       </div>
 
       {filtered.length > 30 && (
-        <div className="text-center text-xs text-gray-400 py-4">
+        <div className="text-center text-xs text-gray-600 py-4">
           Showing 30 of {filtered.length} subscribers. Use search or filters to narrow results.
         </div>
       )}

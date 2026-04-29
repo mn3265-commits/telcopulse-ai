@@ -79,9 +79,9 @@ export default function ChurnRadar() {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-sm font-medium text-gray-900">Churn risk distribution</h3>
-              <span className="text-xs text-gray-400">XGBoost model</span>
+              <span className="text-xs text-gray-600">XGBoost model</span>
             </div>
-            <p className="text-xs text-gray-400 mb-5">How subscribers are distributed across risk tiers, from very low to critical churn probability.</p>
+            <p className="text-xs text-gray-600 mb-5">How subscribers are distributed across risk tiers, from very low to critical churn probability.</p>
 
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={riskDistribution} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -106,8 +106,8 @@ export default function ChurnRadar() {
           </div>
 
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-            <div className="text-xs font-medium text-brand-200 tracking-wider uppercase mb-1">Model details</div>
-            <p className="text-[10px] text-gray-400 mb-3">Configuration and performance of the churn prediction model.</p>
+            <div className="text-xs font-medium text-brand-400 tracking-wider uppercase mb-1">Model details</div>
+            <p className="text-[10px] text-gray-600 mb-3">Configuration and performance of the churn prediction model.</p>
             <div className="space-y-2.5 text-sm">
               <Row label="Algorithm" value="XGBoost Classifier" />
               <Row label="Features" value="18 behavioral + demographic" />
@@ -126,11 +126,11 @@ export default function ChurnRadar() {
                 <AlertTriangle className="w-4 h-4 text-brand-400" />
                 High-risk subscribers
               </h3>
-              <p className="text-xs text-gray-400 mt-0.5">Subscribers most likely to churn, sorted by predicted probability. Export to CSV or generate a retention campaign.</p>
+              <p className="text-xs text-gray-600 mt-0.5">Subscribers most likely to churn, sorted by predicted probability. Export to CSV or generate a retention campaign.</p>
             </div>
             <button
               onClick={handleExport}
-              className="text-xs text-brand-200 hover:text-gray-900 transition flex items-center gap-1"
+              className="text-xs text-brand-400 hover:text-gray-900 transition flex items-center gap-1"
             >
               <Download className="w-3 h-3" />
               Export list
@@ -148,11 +148,11 @@ export default function ChurnRadar() {
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-9 h-9 rounded-lg bg-brand-400/10 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-4 h-4 text-brand-200" />
+                    <Phone className="w-4 h-4 text-brand-400" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium text-gray-800 truncate">{sub.phone}</div>
-                    <div className="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
+                    <div className="text-xs text-gray-600 flex items-center gap-2 mt-0.5">
                       <span>{sub.plan}</span>
                       <span className="w-1 h-1 rounded-full bg-gray-300" />
                       <span className="truncate">{sub.reason}</span>
@@ -160,10 +160,10 @@ export default function ChurnRadar() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 ml-3">
-                  <div className="text-xs text-gray-400">{formatCurrency(sub.spend)}/mo</div>
+                  <div className="text-xs text-gray-600">{formatCurrency(sub.spend)}/mo</div>
                   <div className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                    sub.risk >= 0.9 ? 'bg-red-500/15 text-red-400' :
-                    sub.risk >= 0.8 ? 'bg-brand-400/15 text-brand-200' :
+                    sub.risk >= 0.9 ? 'bg-red-500/15 text-red-600' :
+                    sub.risk >= 0.8 ? 'bg-brand-400/15 text-brand-400' :
                     'bg-amber-500/15 text-amber-400'
                   }`}>
                     {Math.round(sub.risk * 100)}% risk
@@ -176,7 +176,7 @@ export default function ChurnRadar() {
           <div className="mt-5 pt-4 border-t border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <TrendingDown className="w-3.5 h-3.5" />
-              <span>Projected MRR loss if no action: <span className="text-brand-200 font-medium">{formatCurrency(1247)}</span></span>
+              <span>Projected MRR loss if no action: <span className="text-brand-400 font-medium">{formatCurrency(1247)}</span></span>
             </div>
             <button
               onClick={handleGenerateCampaign}
@@ -194,30 +194,30 @@ export default function ChurnRadar() {
       {campaign && (
         <div className="bg-gray-50 border border-brand-400/20 rounded-xl p-5 animate-in fade-in duration-300">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-brand-200">Generated Retention Campaign</h3>
+            <h3 className="text-sm font-medium text-brand-400">Generated Retention Campaign</h3>
             <button
               onClick={() => setCampaign(null)}
-              className="text-xs text-gray-400 hover:text-gray-900 transition"
+              className="text-xs text-gray-600 hover:text-gray-900 transition"
             >
               Dismiss
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1.5">SMS</div>
+              <div className="text-xs text-gray-600 uppercase tracking-wider mb-1.5">SMS</div>
               <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">{campaign.sms}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1.5">Email Subject</div>
+              <div className="text-xs text-gray-600 uppercase tracking-wider mb-1.5">Email Subject</div>
               <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">{campaign.email_subject}</div>
             </div>
             <div className="md:col-span-2">
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1.5">Email Body</div>
+              <div className="text-xs text-gray-600 uppercase tracking-wider mb-1.5">Email Body</div>
               <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 whitespace-pre-line">{campaign.email_body}</div>
             </div>
             {campaign.reasoning && (
               <div className="md:col-span-2">
-                <div className="text-xs text-gray-400 uppercase tracking-wider mb-1.5">Strategy</div>
+                <div className="text-xs text-gray-600 uppercase tracking-wider mb-1.5">Strategy</div>
                 <div className="text-sm text-gray-500 italic">{campaign.reasoning}</div>
               </div>
             )}
@@ -231,8 +231,8 @@ export default function ChurnRadar() {
 function Row({ label, value, highlight }: { label: string, value: string, highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-gray-400">{label}</span>
-      <span className={highlight ? 'text-brand-200 font-medium' : 'text-gray-700 font-mono text-xs'}>{value}</span>
+      <span className="text-gray-600">{label}</span>
+      <span className={highlight ? 'text-brand-400 font-medium' : 'text-gray-700 font-mono text-xs'}>{value}</span>
     </div>
   )
 }

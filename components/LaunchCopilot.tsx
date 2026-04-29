@@ -235,7 +235,7 @@ export default function LaunchCopilot() {
               <Rocket className="w-4 h-4 text-brand-400" />
               <h3 className="text-sm font-medium text-gray-900">Launch details</h3>
             </div>
-            <p className="text-xs text-gray-400 mb-5">
+            <p className="text-xs text-gray-600 mb-5">
               Describe your product and target audience to generate a complete go-to-market launch strategy with positioning, messaging, phased plan, and channel mix.
             </p>
 
@@ -247,7 +247,7 @@ export default function LaunchCopilot() {
                   value={product}
                   onChange={e => setProduct(e.target.value)}
                   placeholder="e.g. AI-powered churn prediction platform"
-                  className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400"
+                  className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400"
                 />
               </div>
               <div>
@@ -257,7 +257,7 @@ export default function LaunchCopilot() {
                   value={audience}
                   onChange={e => setAudience(e.target.value)}
                   placeholder="e.g. Telecom CVM managers in Southeast Asia"
-                  className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400"
+                  className="w-full text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400"
                 />
               </div>
               <div>
@@ -295,7 +295,7 @@ export default function LaunchCopilot() {
 
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
             <div className="text-xs font-medium text-gray-500 mb-1">Try an example</div>
-            <p className="text-[10px] text-gray-400 mb-3">Click to pre-fill a product and audience, then generate the plan.</p>
+            <p className="text-[10px] text-gray-600 mb-3">Click to pre-fill a product and audience, then generate the plan.</p>
             <div className="flex gap-2 flex-wrap">
               {EXAMPLES.map((ex, idx) => (
                 <button
@@ -317,12 +317,12 @@ export default function LaunchCopilot() {
               <div className="space-y-3">
                 <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto" />
                 <p className="text-sm text-gray-500">Crafting your launch strategy...</p>
-                <p className="text-[10px] text-gray-400">Analyzing product-market fit, channels, and timing</p>
+                <p className="text-[10px] text-gray-600">Analyzing product-market fit, channels, and timing</p>
               </div>
             ) : plan ? (
               <div className="space-y-3 w-full">
                 <div className="bg-brand-400/10 border border-brand-400/20 rounded-lg p-4">
-                  <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-2">Tagline</div>
+                  <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-2">Tagline</div>
                   <p className="text-sm font-semibold text-gray-900">{plan.tagline}</p>
                 </div>
                 <div className="text-left space-y-2">
@@ -346,9 +346,9 @@ export default function LaunchCopilot() {
               </div>
             ) : (
               <div className="space-y-3">
-                <Rocket className="w-8 h-8 text-gray-300 mx-auto" />
-                <p className="text-sm text-gray-400">Your launch plan will appear here</p>
-                <p className="text-[10px] text-gray-300">Enter a product and audience, then click generate</p>
+                <Rocket className="w-8 h-8 text-gray-500 mx-auto" />
+                <p className="text-sm text-gray-600">Your launch plan will appear here</p>
+                <p className="text-[10px] text-gray-500">Enter a product and audience, then click generate</p>
               </div>
             )}
           </div>
@@ -360,7 +360,7 @@ export default function LaunchCopilot() {
         <div className="space-y-6">
           {/* Positioning Statement */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-            <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Positioning Statement</div>
+            <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-3">Positioning Statement</div>
             <p className="text-sm text-gray-700 leading-relaxed">
               {plan.positioning}<span className="font-bold text-gray-900">{plan.boldPhrase}</span>
             </p>
@@ -368,7 +368,7 @@ export default function LaunchCopilot() {
 
           {/* Messaging Pillars */}
           <div>
-            <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Messaging Pillars</div>
+            <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-3">Messaging Pillars</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {plan.pillars.map((pillar, idx) => (
                 <div key={idx} className="bg-gray-50 border border-gray-200 rounded-xl p-5">
@@ -384,13 +384,13 @@ export default function LaunchCopilot() {
 
           {/* Phased Launch Plan */}
           <div>
-            <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Phased Launch Plan</div>
+            <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-3">Phased Launch Plan</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {plan.phases.map((phase, idx) => (
                 <div key={idx} className={`bg-gray-50 border border-gray-200 rounded-xl p-5 border-l-4 ${phase.borderColor}`}>
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-sm font-medium text-gray-900">Phase {idx + 1}: {phase.name}</h4>
-                    <span className="text-[10px] text-gray-400 bg-white px-2 py-0.5 rounded">{phase.timeline}</span>
+                    <span className="text-[10px] text-gray-600 bg-white px-2 py-0.5 rounded">{phase.timeline}</span>
                   </div>
                   <ul className="space-y-2">
                     {phase.items.map((item, i) => (
@@ -407,16 +407,16 @@ export default function LaunchCopilot() {
 
           {/* Channel Strategy */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-            <div className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase mb-3">Channel Strategy</div>
+            <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-3">Channel Strategy</div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pb-2 pr-4">Channel</th>
-                    <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pb-2 pr-4">Priority</th>
-                    <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pb-2 pr-4">Budget %</th>
-                    <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pb-2 pr-4">Expected Reach</th>
-                    <th className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pb-2">CTA</th>
+                    <th className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pb-2 pr-4">Channel</th>
+                    <th className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pb-2 pr-4">Priority</th>
+                    <th className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pb-2 pr-4">Budget %</th>
+                    <th className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pb-2 pr-4">Expected Reach</th>
+                    <th className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pb-2">CTA</th>
                   </tr>
                 </thead>
                 <tbody>

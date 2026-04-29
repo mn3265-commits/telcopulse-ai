@@ -249,13 +249,13 @@ export default function PersonaArchitect() {
               <User className="w-4 h-4 text-brand-400" />
               <h3 className="text-sm font-medium text-gray-900">Define your target</h3>
             </div>
-            <p className="text-xs text-gray-400 mb-5">
+            <p className="text-xs text-gray-600 mb-5">
               Enter a product or service and the target industry to generate a detailed Ideal Customer Profile with persona insights, pain points, and lifecycle mapping.
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase block mb-1.5">
+                <label className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase block mb-1.5">
                   Product or service
                 </label>
                 <input
@@ -263,11 +263,11 @@ export default function PersonaArchitect() {
                   value={product}
                   onChange={e => setProduct(e.target.value)}
                   placeholder="e.g. 5G enterprise data plan"
-                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400 placeholder:text-gray-300 transition"
+                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400 placeholder:text-gray-500 transition"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase block mb-1.5">
+                <label className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase block mb-1.5">
                   Industry or market
                 </label>
                 <input
@@ -275,7 +275,7 @@ export default function PersonaArchitect() {
                   value={industry}
                   onChange={e => setIndustry(e.target.value)}
                   placeholder="e.g. Indonesian telecom, SMB segment"
-                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400 placeholder:text-gray-300 transition"
+                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400 placeholder:text-gray-500 transition"
                 />
               </div>
               <button
@@ -290,7 +290,7 @@ export default function PersonaArchitect() {
 
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
             <div className="text-xs font-medium text-gray-500 mb-1">Example queries</div>
-            <p className="text-[10px] text-gray-400 mb-3">Click to auto-fill the inputs with a sample product and market combination.</p>
+            <p className="text-[10px] text-gray-600 mb-3">Click to auto-fill the inputs with a sample product and market combination.</p>
             <div className="flex gap-2 flex-wrap">
               {EXAMPLES.map((ex, idx) => (
                 <button
@@ -313,13 +313,13 @@ export default function PersonaArchitect() {
                 <div className="text-center">
                   <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto mb-3" />
                   <p className="text-sm text-gray-500">Building persona profile...</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Analyzing product-market fit</p>
+                  <p className="text-[10px] text-gray-600 mt-1">Analyzing product-market fit</p>
                 </div>
               ) : (
                 <div className="text-center">
                   <User className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-                  <p className="text-sm text-gray-400">Click Generate to create an ICP</p>
-                  <p className="text-[10px] text-gray-300 mt-1">Fill in a product and industry above</p>
+                  <p className="text-sm text-gray-600">Click Generate to create an ICP</p>
+                  <p className="text-[10px] text-gray-500 mt-1">Fill in a product and industry above</p>
                 </div>
               )}
             </div>
@@ -334,7 +334,7 @@ export default function PersonaArchitect() {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-3">
               <User className="w-4 h-4 text-brand-400" />
-              <h3 className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase">Persona Summary</h3>
+              <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Persona Summary</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {[
@@ -345,7 +345,7 @@ export default function PersonaArchitect() {
                 { label: 'Location', value: persona.summary.location },
               ].map((item, idx) => (
                 <div key={idx}>
-                  <div className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">{item.label}</div>
+                  <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-0.5">{item.label}</div>
                   <div className="text-sm text-gray-900 font-medium">{item.value}</div>
                 </div>
               ))}
@@ -356,8 +356,8 @@ export default function PersonaArchitect() {
             {/* Pain Points */}
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Target className="w-4 h-4 text-red-400" />
-                <h3 className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase">Pain Points</h3>
+                <Target className="w-4 h-4 text-red-600" />
+                <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Pain Points</h3>
               </div>
               <ul className="space-y-2.5">
                 {persona.painPoints.map((point, idx) => (
@@ -373,7 +373,7 @@ export default function PersonaArchitect() {
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUpIcon className="w-4 h-4 text-green-500" />
-                <h3 className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase">Goals &amp; Motivations</h3>
+                <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Goals &amp; Motivations</h3>
               </div>
               <ul className="space-y-2.5">
                 {persona.goals.map((goal, idx) => (
@@ -391,7 +391,7 @@ export default function PersonaArchitect() {
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <MessageSquare className="w-4 h-4 text-brand-400" />
-                <h3 className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase">Preferred Channels</h3>
+                <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Preferred Channels</h3>
               </div>
               <div className="space-y-3">
                 {persona.channels.map((ch, idx) => (
@@ -415,7 +415,7 @@ export default function PersonaArchitect() {
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <BarChart3 className="w-4 h-4 text-brand-400" />
-                <h3 className="text-[10px] font-semibold text-brand-200 tracking-wider uppercase">Customer Lifecycle Journey</h3>
+                <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Customer Lifecycle Journey</h3>
               </div>
               <div className="flex flex-col gap-3">
                 {persona.lifecycle.map((step, idx) => (

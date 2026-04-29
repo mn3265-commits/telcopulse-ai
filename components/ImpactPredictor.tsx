@@ -74,9 +74,9 @@ export default function ImpactPredictor() {
       <div className="lg:col-span-2 space-y-4">
         {!prediction && !loading && (
           <div className="bg-gray-50 border border-gray-200 border-dashed rounded-xl p-12 text-center">
-            <TrendingUp className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-            <div className="text-gray-400 text-sm mb-1">Click Predict to forecast impact</div>
-            <div className="text-gray-400 text-xs">Claude will use industry benchmarks and your segment data</div>
+            <TrendingUp className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+            <div className="text-gray-600 text-sm mb-1">Click Predict to forecast impact</div>
+            <div className="text-gray-600 text-xs">Claude will use industry benchmarks and your segment data</div>
           </div>
         )}
 
@@ -114,7 +114,7 @@ export default function ImpactPredictor() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-900">Confidence level</h3>
                 <div className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                  prediction.confidence === 'high' ? 'bg-green-400/10 text-green-400' :
+                  prediction.confidence === 'high' ? 'bg-green-400/10 text-green-600' :
                   prediction.confidence === 'medium' ? 'bg-amber-400/10 text-amber-400' :
                   'bg-gray-100 text-gray-500'
                 }`}>
@@ -128,7 +128,7 @@ export default function ImpactPredictor() {
                   <div className="space-y-1.5">
                     {prediction.key_assumptions.map((a: string, idx: number) => (
                       <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-green-400 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
                         <span>{a}</span>
                       </div>
                     ))}
@@ -142,7 +142,7 @@ export default function ImpactPredictor() {
                   <div className="space-y-1.5">
                     {prediction.risks.map((r: string, idx: number) => (
                       <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                        <AlertTriangle className="w-3.5 h-3.5 text-brand-200 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-3.5 h-3.5 text-brand-400 flex-shrink-0 mt-0.5" />
                         <span>{r}</span>
                       </div>
                     ))}
@@ -197,13 +197,13 @@ function MetricCard({ icon, label, value, trend }: { icon: React.ReactNode, labe
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
       <div className={`w-7 h-7 rounded-lg mb-3 flex items-center justify-center ${
-        trend === 'up' ? 'bg-green-400/10 text-green-400' :
-        trend === 'down' ? 'bg-brand-400/10 text-brand-200' :
+        trend === 'up' ? 'bg-green-400/10 text-green-600' :
+        trend === 'down' ? 'bg-brand-400/10 text-brand-400' :
         'bg-gray-100 text-gray-500'
       }`}>
         {icon}
       </div>
-      <div className="text-xs text-gray-400 mb-1">{label}</div>
+      <div className="text-xs text-gray-600 mb-1">{label}</div>
       <div className="text-xl font-medium text-gray-900">{value}</div>
     </div>
   )
@@ -212,7 +212,7 @@ function MetricCard({ icon, label, value, trend }: { icon: React.ReactNode, labe
 function Detail({ label, value }: { label: string, value: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-gray-400">{label}</span>
+      <span className="text-xs text-gray-600">{label}</span>
       <span className="text-sm text-gray-700 font-medium">{value}</span>
     </div>
   )

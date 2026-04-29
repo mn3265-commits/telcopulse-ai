@@ -11,8 +11,8 @@ const CHANNELS = [
 ]
 
 const GOALS = [
-  { key: 'retention', label: 'Retention', color: 'bg-brand-400/10 text-brand-200' },
-  { key: 'acquisition', label: 'Acquisition', color: 'bg-green-400/10 text-green-400' },
+  { key: 'retention', label: 'Retention', color: 'bg-brand-400/10 text-brand-400' },
+  { key: 'acquisition', label: 'Acquisition', color: 'bg-green-400/10 text-green-600' },
   { key: 'upsell', label: 'Upsell', color: 'bg-blue-400/10 text-blue-400' },
   { key: 'reactivation', label: 'Reactivation', color: 'bg-amber-400/10 text-amber-400' },
 ]
@@ -91,7 +91,7 @@ export default function CampaignWriter() {
                     className={`px-3 py-2 rounded-lg text-xs font-medium transition ${
                       goal === g.key
                         ? `${g.color} border border-current/30`
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 border border-transparent'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
                     }`}
                   >
                     {g.label}
@@ -118,7 +118,7 @@ export default function CampaignWriter() {
                     className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition capitalize ${
                       tone === t
                         ? 'bg-brand-400 text-white'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
                     {t}
@@ -146,9 +146,9 @@ export default function CampaignWriter() {
       <div className="lg:col-span-3 space-y-3">
         {!campaign && !loading && (
           <div className="bg-gray-50 border border-gray-200 border-dashed rounded-xl p-12 text-center">
-            <Sparkles className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-            <div className="text-gray-400 text-sm mb-1">No campaign generated yet</div>
-            <div className="text-gray-400 text-xs">Configure your campaign on the left and click Generate</div>
+            <Sparkles className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+            <div className="text-gray-600 text-sm mb-1">No campaign generated yet</div>
+            <div className="text-gray-600 text-xs">Configure your campaign on the left and click Generate</div>
           </div>
         )}
 
@@ -168,9 +168,9 @@ export default function CampaignWriter() {
           <>
             {campaign.reasoning && (
               <div className="bg-brand-400/5 border border-brand-400/20 rounded-xl p-4 flex gap-3 animate-slide-up">
-                <Sparkles className="w-4 h-4 text-brand-200 flex-shrink-0 mt-0.5" />
+                <Sparkles className="w-4 h-4 text-brand-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-xs font-medium text-brand-200 mb-1">Claude&apos;s strategy</div>
+                  <div className="text-xs font-medium text-brand-400 mb-1">Claude&apos;s strategy</div>
                   <div className="text-sm text-gray-700">{campaign.reasoning}</div>
                 </div>
               </div>
@@ -184,20 +184,20 @@ export default function CampaignWriter() {
                 <div key={channel.key} className="bg-gray-50 border border-gray-200 rounded-xl p-5 animate-slide-up" style={{ animationDelay: `${idx * 50}ms` }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-brand-400/10 flex items-center justify-center text-brand-200">
+                      <div className="w-7 h-7 rounded-lg bg-brand-400/10 flex items-center justify-center text-brand-400">
                         {channel.icon}
                       </div>
                       <span className="text-sm font-medium text-gray-900">{channel.label}</span>
-                      <span className={`text-xs ${overLimit ? 'text-red-400' : 'text-gray-400'}`}>
+                      <span className={`text-xs ${overLimit ? 'text-red-600' : 'text-gray-600'}`}>
                         {charCount}/{channel.limit} chars
                       </span>
                     </div>
                     <button
                       onClick={() => handleCopy(channel.key, content)}
-                      className="text-xs text-gray-400 hover:text-gray-900 transition flex items-center gap-1"
+                      className="text-xs text-gray-600 hover:text-gray-900 transition flex items-center gap-1"
                     >
                       {copied === channel.key ? (
-                        <><Check className="w-3 h-3 text-green-400" /> Copied</>
+                        <><Check className="w-3 h-3 text-green-600" /> Copied</>
                       ) : (
                         <><Copy className="w-3 h-3" /> Copy</>
                       )}
@@ -214,16 +214,16 @@ export default function CampaignWriter() {
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 animate-slide-up">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-brand-400/10 flex items-center justify-center text-brand-200">
+                    <div className="w-7 h-7 rounded-lg bg-brand-400/10 flex items-center justify-center text-brand-400">
                       <Mail className="w-4 h-4" />
                     </div>
                     <span className="text-sm font-medium text-gray-900">Email body</span>
                   </div>
                   <button
                     onClick={() => handleCopy('email_body', campaign.email_body)}
-                    className="text-xs text-gray-400 hover:text-gray-900 transition flex items-center gap-1"
+                    className="text-xs text-gray-600 hover:text-gray-900 transition flex items-center gap-1"
                   >
-                    {copied === 'email_body' ? <><Check className="w-3 h-3 text-green-400" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+                    {copied === 'email_body' ? <><Check className="w-3 h-3 text-green-600" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
                   </button>
                 </div>
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
@@ -241,7 +241,7 @@ export default function CampaignWriter() {
 function Field({ label, children }: { label: string, children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[10px] font-medium text-gray-400 tracking-wider uppercase mb-1.5 block">{label}</label>
+      <label className="text-[10px] font-medium text-gray-600 tracking-wider uppercase mb-1.5 block">{label}</label>
       {children}
     </div>
   )

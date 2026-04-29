@@ -49,10 +49,10 @@ function predictChurn(features: {
 }
 
 function getRiskTier(prob: number): { label: string, color: string, bg: string } {
-  if (prob >= 0.7) return { label: 'CRITICAL', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' }
-  if (prob >= 0.5) return { label: 'HIGH', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' }
+  if (prob >= 0.7) return { label: 'CRITICAL', color: 'text-red-600', bg: 'bg-red-500/10 border-red-500/20' }
+  if (prob >= 0.5) return { label: 'HIGH', color: 'text-red-600', bg: 'bg-red-500/10 border-red-500/20' }
   if (prob >= 0.3) return { label: 'MEDIUM', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' }
-  return { label: 'LOW', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' }
+  return { label: 'LOW', color: 'text-green-600', bg: 'bg-green-500/10 border-green-500/20' }
 }
 
 const SCENARIOS = [
@@ -93,7 +93,7 @@ export default function WhatIfSimulator() {
             <SlidersHorizontal className="w-4 h-4 text-brand-400" />
             <h3 className="text-sm font-medium text-gray-900">Subscriber profile</h3>
           </div>
-          <p className="text-xs text-gray-400 mb-5">Adjust subscriber features below and watch how the churn prediction changes in real time. This demonstrates which factors the model considers most important.</p>
+          <p className="text-xs text-gray-600 mb-5">Adjust subscriber features below and watch how the churn prediction changes in real time. This demonstrates which factors the model considers most important.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <SliderInput label="Tenure (months)" value={tenure} min={0} max={36} onChange={setTenure} />
@@ -109,7 +109,7 @@ export default function WhatIfSimulator() {
 
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
           <div className="text-xs font-medium text-gray-500 mb-1">Pre-built scenarios</div>
-          <p className="text-[10px] text-gray-400 mb-3">Click to load a realistic subscriber profile and see how the model responds.</p>
+          <p className="text-[10px] text-gray-600 mb-3">Click to load a realistic subscriber profile and see how the model responds.</p>
           <div className="flex gap-2 flex-wrap">
             {SCENARIOS.map((s, idx) => (
               <button key={idx} onClick={() => loadScenario(s)}
@@ -124,19 +124,19 @@ export default function WhatIfSimulator() {
       {/* Result */}
       <div className="space-y-4">
         <div className={`rounded-xl p-6 border ${risk.bg} transition-all duration-300`}>
-          <div className="text-xs text-gray-400 uppercase tracking-wider mb-2">Predicted churn risk</div>
+          <div className="text-xs text-gray-600 uppercase tracking-wider mb-2">Predicted churn risk</div>
           <div className="text-5xl font-bold text-gray-900 mb-2">{(prob * 100).toFixed(1)}%</div>
           <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${risk.color} ${risk.bg}`}>
             {risk.label} RISK
           </div>
 
           <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="text-xs text-gray-400 mb-1">vs. average subscriber</div>
+            <div className="text-xs text-gray-600 mb-1">vs. average subscriber</div>
             <div className="flex items-center gap-2">
-              {diff > 0.01 ? <TrendingUp className="w-4 h-4 text-red-400" /> :
-               diff < -0.01 ? <TrendingDown className="w-4 h-4 text-green-400" /> :
-               <Minus className="w-4 h-4 text-gray-400" />}
-              <span className={`text-lg font-semibold ${diff > 0.01 ? 'text-red-400' : diff < -0.01 ? 'text-green-400' : 'text-gray-500'}`}>
+              {diff > 0.01 ? <TrendingUp className="w-4 h-4 text-red-600" /> :
+               diff < -0.01 ? <TrendingDown className="w-4 h-4 text-green-600" /> :
+               <Minus className="w-4 h-4 text-gray-600" />}
+              <span className={`text-lg font-semibold ${diff > 0.01 ? 'text-red-600' : diff < -0.01 ? 'text-green-600' : 'text-gray-500'}`}>
                 {diff > 0 ? '+' : ''}{(diff * 100).toFixed(1)}pp
               </span>
             </div>
@@ -145,7 +145,7 @@ export default function WhatIfSimulator() {
 
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
           <div className="text-xs font-medium text-gray-500 mb-1">Interpretation</div>
-          <p className="text-[10px] text-gray-400 mb-2">What this risk level means and recommended next steps.</p>
+          <p className="text-[10px] text-gray-600 mb-2">What this risk level means and recommended next steps.</p>
           <div className="text-sm text-gray-600 leading-relaxed">
             {prob >= 0.5
               ? 'This subscriber profile shows strong churn signals. Immediate retention outreach recommended within 24 hours. Consider personalized offer based on usage pattern and complaint history.'
