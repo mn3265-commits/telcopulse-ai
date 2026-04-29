@@ -4,12 +4,13 @@
 
 ### Marketing intelligence for subscription businesses — built by someone who managed it at scale.
 
-**[Live Demo](https://telcopulse-ai.vercel.app)** · **[Video Walkthrough](#)** · **[Architecture](#architecture)**
+**[Live Demo](https://telcopulse-ai.vercel.app)** · **[Architecture](#architecture)** · **[Modules](#what-it-does)** · **[Quick start](#quick-start)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)
 ![Claude](https://img.shields.io/badge/Claude-Sonnet_4-E85D24?style=flat-square)
 ![XGBoost](https://img.shields.io/badge/XGBoost-ML-2EC4B6?style=flat-square)
+![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat-square&logo=vercel)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 </div>
@@ -30,52 +31,73 @@ TelcoPulse is the tool I wished existed every Monday morning, staring at 10 dash
 
 ## What it does
 
-Four AI modules, one platform, shared customer data:
+Nine modules, one platform, one shared subscriber dataset:
 
-| Module | What it does |
-|---|---|
-| 🧠 **Churn Radar** | Real XGBoost model scores every subscriber. Explains *why* they might churn. |
-| 🎯 **Smart Segments** | Type in plain English ("young users who stopped buying data") → Claude generates SQL, runs it, suggests the campaign. |
-| ⚡ **Campaign Writer** | One brief, four channels. SMS (160 char), push, email, WhatsApp — all on-brand. |
-| 📊 **Impact Predictor** | Before you hit send, Claude estimates reach, conversion, and revenue based on telecom benchmarks. |
+| # | Module | Tag | What it does |
+|---|---|---|---|
+| 1 | 🧠 **Churn Radar** | ML-POWERED | XGBoost model scores every subscriber on 18 behavioral features. Returns risk + the *reason* each one might churn. |
+| 2 | 👤 **Subscriber Workflow** | HUMAN-IN-THE-LOOP | Per-subscriber retention tracker with a 4-step flow: AI Scored → Reviewed → Contacted → Outcome. Approve, escalate, or override the AI. |
+| 3 | 🎯 **Smart Segments** | NATURAL LANGUAGE | Type "high-value postpaid with declining usage" → Claude turns it into SQL filters, runs it, and suggests a campaign angle. |
+| 4 | ⚡ **Campaign Writer** | MULTI-CHANNEL | One brief, four channels. SMS (160 char), push, email, WhatsApp — all on-brand, tone-adjustable, compliance-aware. |
+| 5 | 📊 **Impact Predictor** | FORECASTING | Before you hit send, Claude estimates reach, conversion, and revenue using telecom benchmarks and your segment data. |
+| 6 | 🎚️ **What-If Simulator** | INTERPRETABILITY | Drag sliders on subscriber features and watch churn probability move in real time. Makes the model legible. |
+| 7 | 📋 **Model Evaluation** | GO / NO-GO | Full eval suite: metrics, baseline comparison, business-impact estimate, edge cases, and an AI factory architecture view. |
+| 8 | 🪪 **Persona Architect** | ICP GENERATOR | Type a product + industry → get an Ideal Customer Profile with pains, goals, channels, and a lifecycle journey. |
+| 9 | 🚀 **Launch Copilot** | GTM STRATEGY | Generate positioning, taglines, messaging pillars, a phased launch plan, and a budget-allocated channel mix. |
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
 │  Frontend Layer                                 │
-│  Next.js 14 + TypeScript + Tailwind + Recharts  │
+│  Next.js 14 App Router · TypeScript · Tailwind  │
+│  Recharts · Framer Motion · Geist · Radix UI    │
 └──────────────────┬──────────────────────────────┘
                    │
 ┌──────────────────┴──────────────────────────────┐
-│  AI Reasoning Layer                              │
-│  Claude Sonnet 4 (multi-step chains)             │
+│  API Layer (Next.js route handlers)             │
+│  /api/churn  /api/segment  /api/campaign        │
+│  /api/insights  /api/send-email  /api/send-call │
 └──────────────────┬──────────────────────────────┘
                    │
-┌──────────────────┴──────────────────────────────┐
-│  ML Layer                                        │
-│  XGBoost churn model (18 features, ROC-AUC 0.65) │
-└──────────────────┬──────────────────────────────┘
+        ┌──────────┴──────────┐
+        │                     │
+┌───────┴────────┐   ┌────────┴──────────────────┐
+│  AI Reasoning  │   │  ML Inference             │
+│  Claude Sonnet │   │  XGBoost (joblib)         │
+│  4 — multi-step│   │  18 features · ROC-AUC    │
+│  chains via    │   │  0.65 · trained on 8K /   │
+│  Anthropic SDK │   │  evaluated on 2K          │
+└───────┬────────┘   └────────┬──────────────────┘
+        │                     │
+        └──────────┬──────────┘
                    │
 ┌──────────────────┴──────────────────────────────┐
 │  Data Layer                                      │
-│  10K synthetic subscribers (realistic patterns)  │
+│  10K synthetic SEA-telecom subscribers           │
+│  CSV-backed; realistic prepaid/postpaid mix      │
+└──────────────────────────────────────────────────┘
+                   │
+┌──────────────────┴──────────────────────────────┐
+│  Outbound (optional)                             │
+│  Twilio (voice/SMS) · Nodemailer (email)         │
 └──────────────────────────────────────────────────┘
 ```
 
 ## Tech stack
 
-- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Recharts, Framer Motion
-- **AI:** Claude Sonnet 4 via Anthropic SDK (4 distinct reasoning chains)
-- **ML:** XGBoost classifier, scikit-learn, pandas, numpy
-- **Deploy:** Vercel (edge runtime), GitHub Actions CI
-- **Design:** Custom dark theme, Geist font, coral accent (nod to Indosat brand)
+- **Frontend:** Next.js 14 (App Router), TypeScript 5.6, Tailwind CSS, Recharts, Framer Motion, Radix UI, Geist font
+- **AI:** Claude Sonnet 4 via `@anthropic-ai/sdk` (distinct reasoning chains per module)
+- **ML:** XGBoost classifier, scikit-learn, pandas, numpy — model served via Python helper, metadata in `ml/model_metadata.json`
+- **Outbound:** Twilio (voice/SMS), Nodemailer (email) — gated behind env vars, optional
+- **Deploy:** Vercel (Edge + Node runtime), GitHub Actions CI
+- **Design:** Light theme, coral brand accent (a nod to Indosat), monochrome typography
 
 ## Quick start
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/mohagungnugroho/telcopulse-ai.git
+git clone https://github.com/mn3265-commits/telcopulse-ai.git
 cd telcopulse-ai
 
 # 2. Install dependencies
@@ -83,9 +105,9 @@ npm install
 
 # 3. Set up environment variables
 cp .env.example .env.local
-# Add your ANTHROPIC_API_KEY
+# At minimum, set ANTHROPIC_API_KEY
 
-# 4. Generate synthetic dataset (one-time)
+# 4. Generate the synthetic dataset (one-time)
 python scripts/generate_dataset.py
 
 # 5. Train the churn model (one-time)
@@ -95,7 +117,17 @@ python scripts/train_model.py
 npm run dev
 ```
 
-Visit `http://localhost:3000`
+Open `http://localhost:3000` and click **Launch dashboard**.
+
+### Environment variables
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | ✅ | Powers all Claude reasoning ([get one](https://console.anthropic.com)) |
+| `TWILIO_ACCOUNT_SID` | optional | Outbound voice/SMS |
+| `TWILIO_AUTH_TOKEN` | optional | Outbound voice/SMS |
+| `TWILIO_FROM_NUMBER` | optional | Sender ID for Twilio |
+| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | optional | Outbound email via Nodemailer |
 
 ## The synthetic dataset
 
@@ -110,53 +142,74 @@ This isn't random noise. Every signal is a churn predictor I actually used manag
 
 ## The ML model
 
-```python
+```
 Algorithm:    XGBoost Classifier
 Features:     18 (behavioral + demographic)
-Training:     80/20 split, stratified
-Metrics:
-  - Accuracy:    0.70
-  - ROC-AUC:     0.65
-  - Precision:   0.50
-  - Recall:      0.26
+Training:     80/20 stratified split (8K train · 2K test)
 
-Top features:
-  1. NPS score                   (0.13)
-  2. Complaints last 90d         (0.10)
-  3. Days since last topup       (0.08)
-  4. Plan type (prepaid/postpaid)(0.07)
-  5. Tenure months               (0.06)
+Metrics
+  Accuracy:   0.70
+  ROC-AUC:    0.65
+  Precision:  0.50
+  Recall:     0.26
+  F1:         0.35
+
+Top feature importances
+  1. NPS score                    0.13
+  2. Complaints (last 90d)        0.09
+  3. Days since last topup        0.08
+  4. Plan type (prepaid vs post)  0.07
+  5. Tenure (months)              0.06
 ```
 
-## Screenshots
+The Model Evaluation tab in the app surfaces these numbers alongside a baseline comparison, business-impact estimate, and Go/No-Go assessment — the same artifact a CVM lead would expect before moving a model to production.
 
-> Landing page, dashboard, and feature views showcasing the Vercel/Linear-inspired aesthetic.
+## Project layout
+
+```
+app/             # Next.js App Router (pages + route handlers)
+  api/           # /churn, /segment, /campaign, /insights, /send-email, /send-call
+  dashboard/     # Main product surface
+components/      # Nine module components + shared UI primitives
+lib/             # Shared helpers (Anthropic client, dataset loader, utils)
+ml/              # Trained model artifact + metadata
+scripts/         # Dataset generator + model trainer (Python)
+data/            # Generated synthetic subscriber CSV
+docs/            # Deployment guide + technical description
+notebooks/       # Exploratory notebooks
+public/          # Static assets
+```
 
 ## Deployment
 
 Deploys to Vercel in one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mohagungnugroho/telcopulse-ai)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mn3265-commits/telcopulse-ai)
 
-Required environment variables:
-- `ANTHROPIC_API_KEY` — Your Claude API key ([get one](https://console.anthropic.com))
+Set `ANTHROPIC_API_KEY` in the Vercel project settings. Outbound channels (Twilio, SMTP) are optional — the app works fully without them.
+
+A more detailed walkthrough lives in [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md).
 
 ## Roadmap
 
-- [x] Churn Radar with real ML model
+- [x] Churn Radar with a real ML model
 - [x] Natural language segmentation
 - [x] Multi-channel campaign generation
 - [x] Impact prediction
+- [x] What-If simulator with live re-scoring
+- [x] Model Evaluation suite (Go/No-Go)
+- [x] Persona Architect (ICP generator)
+- [x] Launch Copilot (GTM strategy)
 - [ ] A/B test framework
-- [ ] Webhook integrations (Twilio, SendGrid)
+- [ ] First-class webhook integrations (Twilio, SendGrid)
 - [ ] Multi-tenant SaaS version
-- [ ] Real database (Supabase)
+- [ ] Real database (Supabase / Postgres)
 
 ## About the author
 
-**Mohammad Agung Nugroho** — Currently pursuing MS in Technology Management at **Columbia University** (GPA 4.08).
+**Mohammad Agung Nugroho** — currently pursuing a Master's at **Columbia University**.
 
-10+ years of experience in product, marketing, and CVM across telecom, e-commerce, and consulting. Built this as a portfolio project to demonstrate that domain expertise + modern AI/ML = tools that marketers actually want to use.
+10+ years across product, marketing, and CVM in telecom, e-commerce, and consulting. TelcoPulse is a portfolio project to demonstrate that domain expertise + modern AI/ML produces tools marketers actually want to use — not another wrapper around a chat box.
 
 [LinkedIn](https://linkedin.com/in/mohagungnugroho) · [Email](mailto:agung.nugroho@columbia.edu)
 
