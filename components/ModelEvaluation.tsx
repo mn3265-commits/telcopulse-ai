@@ -14,11 +14,11 @@ import {
 const performanceMetrics = [
   { label: 'AUC-ROC', value: '0.73', icon: Target },
   { label: 'Accuracy', value: '0.68', icon: Activity },
-  { label: 'Precision (churn)', value: '0.41', icon: Gauge },
-  { label: 'Recall (churn)', value: '0.66', icon: Eye },
+  { label: 'Precision', value: '0.41', icon: Gauge },
+  { label: 'Recall', value: '0.66', icon: Eye },
   { label: 'F1 Score', value: '0.50', icon: BarChart3 },
   { label: 'Threshold', value: '0.40', icon: Timer },
-  { label: 'Inference latency', value: '0.3ms', icon: Zap },
+  { label: 'Latency', value: '0.3ms', icon: Zap },
 ]
 
 // ── Baseline Comparison ──
@@ -123,7 +123,7 @@ export default function ModelEvaluation() {
             <div key={m.label} className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center min-w-0 overflow-hidden">
               <m.icon className="w-4 h-4 text-brand-400 mx-auto mb-2" />
               <div className="text-xl font-bold text-gray-900 leading-tight tabular-nums truncate">{m.value}</div>
-              <div className="text-[10px] text-gray-600 mt-1 leading-tight">{m.label}</div>
+              <div className="text-[10px] text-gray-600 mt-1 leading-tight truncate">{m.label}</div>
             </div>
           ))}
         </div>
