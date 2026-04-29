@@ -1,4 +1,4 @@
-# TelcoPulse AI: Technical Description (1-Page)
+# TelcoPulse AI: Technical Description
 
 **Mohammad Agung Nugroho · Columbia University SPS · AI Solution Design and Prototype Evaluation · April 2026**
 
