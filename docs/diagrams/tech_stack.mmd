@@ -1,0 +1,57 @@
+flowchart TB
+    subgraph L1["Presentation"]
+        FE1["Next.js 14 App Router"]
+        FE2["TypeScript + Tailwind CSS"]
+        FE3["Recharts + Framer Motion + Radix UI"]
+    end
+
+    subgraph L2["API Layer"]
+        API1["/api/churn"]
+        API2["/api/segment"]
+        API3["/api/campaign"]
+        API4["/api/insights"]
+        API5["/api/send-email"]
+        API6["/api/send-call"]
+    end
+
+    subgraph L3["AI Layer"]
+        AI1["Anthropic Claude Sonnet 4<br/>(@anthropic-ai/sdk)"]
+        ML1["XGBoost 2.x<br/>(scikit-learn pipeline)"]
+    end
+
+    subgraph L4["Data"]
+        D1["10K synthetic subscribers<br/>data/subscribers_scored.csv"]
+        D2["Trained model artifact<br/>ml/churn_model.pkl + metadata.json"]
+    end
+
+    subgraph L5["Outbound"]
+        OB1["Twilio Voice / SMS"]
+        OB2["Nodemailer SMTP"]
+    end
+
+    subgraph L6["Platform"]
+        P1["Vercel (Edge + Node)"]
+        P2["GitHub Actions CI"]
+    end
+
+    L1 --> L2
+    L2 --> L3
+    L2 --> L4
+    L2 --> L5
+    L3 --> L4
+    L1 -.deploy.-> L6
+    L2 -.deploy.-> L6
+
+    classDef pres fill:#EFF6FF,stroke:#60A5FA,stroke-width:1px,color:#1F2937
+    classDef api fill:#FEF3F2,stroke:#F97066,stroke-width:1px,color:#1F2937
+    classDef ai fill:#F5F3FF,stroke:#A78BFA,stroke-width:1px,color:#1F2937
+    classDef data fill:#FFFBEB,stroke:#FBBF24,stroke-width:1px,color:#1F2937
+    classDef out fill:#ECFDF5,stroke:#34D399,stroke-width:1px,color:#1F2937
+    classDef plat fill:#F1F5F9,stroke:#94A3B8,stroke-width:1px,color:#1F2937
+
+    class FE1,FE2,FE3 pres
+    class API1,API2,API3,API4,API5,API6 api
+    class AI1,ML1 ai
+    class D1,D2 data
+    class OB1,OB2 out
+    class P1,P2 plat

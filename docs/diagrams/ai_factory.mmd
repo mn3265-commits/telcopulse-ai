@@ -1,0 +1,68 @@
+flowchart LR
+    subgraph S1["Data Sources"]
+        DS1["CRM<br/>(demographics, plan)"]
+        DS2["CDR<br/>(voice, SMS, data)"]
+        DS3["Billing<br/>(topups, ARPU)"]
+        DS4["Care + NPS<br/>(complaints, scores)"]
+    end
+
+    subgraph S2["Ingestion & Prep"]
+        IN["CSV / ETL load<br/>10K subscribers"]
+        FE["Feature Engineering<br/>18 features"]
+    end
+
+    subgraph S3["Model Layer"]
+        TR["XGBoost training<br/>class-balanced"]
+        BL["Baselines:<br/>LR + Rule-based"]
+        EV["Evaluation<br/>PR-curve threshold tune"]
+    end
+
+    subgraph S4["Inference"]
+        SC["Per-subscriber score<br/>0-1 + risk tier"]
+        API["Next.js API<br/>/api/churn /segment /campaign"]
+    end
+
+    subgraph S5["Generative"]
+        CL["Claude Sonnet 4<br/>multi-step prompt chains"]
+    end
+
+    subgraph S6["Activation"]
+        UI["Dashboard<br/>9 modules"]
+        OUT["Outbound<br/>Twilio SMS/Voice + SMTP Email"]
+    end
+
+    subgraph S7["Feedback Loop"]
+        HITL["Human-in-the-loop<br/>Approve / Escalate / Outcome"]
+        RT["Retraining trigger<br/>weekly cadence"]
+    end
+
+    DS1 --> IN
+    DS2 --> IN
+    DS3 --> IN
+    DS4 --> IN
+    IN --> FE
+    FE --> TR
+    FE --> BL
+    TR --> EV
+    BL --> EV
+    EV --> SC
+    SC --> API
+    API --> CL
+    API --> UI
+    CL --> UI
+    UI --> OUT
+    UI --> HITL
+    HITL --> RT
+    RT -.->|retrain| TR
+
+    classDef data fill:#FEF3F2,stroke:#F97066,stroke-width:1px,color:#1F2937
+    classDef compute fill:#EFF6FF,stroke:#60A5FA,stroke-width:1px,color:#1F2937
+    classDef gen fill:#F5F3FF,stroke:#A78BFA,stroke-width:1px,color:#1F2937
+    classDef out fill:#ECFDF5,stroke:#34D399,stroke-width:1px,color:#1F2937
+    classDef fb fill:#FFFBEB,stroke:#FBBF24,stroke-width:1px,color:#1F2937
+
+    class DS1,DS2,DS3,DS4,IN,FE data
+    class TR,BL,EV,SC,API compute
+    class CL gen
+    class UI,OUT out
+    class HITL,RT fb

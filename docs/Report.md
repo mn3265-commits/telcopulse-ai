@@ -80,21 +80,9 @@ The pipeline implements all six components required by the AI factory pattern:
 
 ### 2.5 Pipeline diagram
 
-```
-Data Sources       Ingestion        Feature Eng      Model Training    Scoring
-(CRM, CDR,  ───►   (CSV / ETL  ───► (18 features) ─► (XGBoost,     ─► (risk
- billing, NPS)      pipeline)                          baselines)        prob 0–1)
-                                                                         │
-                                                                         ▼
-              Outcome ◄─── Delivery ◄─── Campaign Gen ◄─── Threshold + Tier
-              Tracking     (Email,       (Claude            (Low / Med /
-              (HITL        SMS, Voice)    Sonnet 4)          High)
-              workflow)
-                  │
-                  └────► Feedback / Retrain ──► (back to Model Training)
-```
+![AI Factory Pipeline](diagrams/ai_factory.png)
 
-The same architecture is rendered visually inside the Model Evaluation module of the running prototype.
+**Figure 1.** End-to-end AI factory: data sources flow through ingestion and feature engineering into the model layer, where XGBoost is trained alongside two baselines and evaluated via PR-curve threshold tuning. Per-subscriber scores are served through Next.js API routes; Claude Sonnet 4 produces generative artifacts (segments, campaigns, impact narration) on demand. The dashboard activates outbound channels (Twilio, SMTP), and human-in-the-loop decisions feed a weekly retraining cadence.
 
 ## 3. AI Techniques and Technology Stack
 
@@ -121,6 +109,10 @@ The solution is intentionally hybrid because no single AI paradigm fits all four
 | Versioning & CI | Git, GitHub | Standard |
 
 The full stack is summarized inside the Model Evaluation tab of the running app.
+
+![Technology Stack](diagrams/tech_stack.png)
+
+**Figure 2.** Layered technology stack. The Next.js presentation layer talks to a typed API layer that orchestrates the AI layer (Claude + XGBoost), the data layer (synthetic CSV + serialized model artifact), and outbound channels (Twilio, Nodemailer). The whole application deploys to Vercel from GitHub.
 
 ## 4. Prototype Development
 
