@@ -85,7 +85,7 @@ const edgeCases = [
 // ── Technology Stack ──
 const techStack = [
   { component: 'Predictive Model', technology: 'XGBoost (scikit-learn, production: LightGBM)' },
-  { component: 'Generative AI', technology: 'Claude Sonnet 4.5 (Anthropic SDK)' },
+  { component: 'Generative AI', technology: 'Claude Sonnet 4 (Anthropic SDK)' },
   { component: 'Frontend', technology: 'Next.js 14, React, Tailwind CSS' },
   { component: 'Backend API', technology: 'Next.js API Routes (serverless)' },
   { component: 'Email Delivery', technology: 'Gmail SMTP (nodemailer)' },
@@ -101,7 +101,7 @@ const architectureSteps = [
   { label: 'Feature Engineering', icon: Cpu, desc: '18 behavioral features' },
   { label: 'Model Training', icon: Brain, desc: 'XGBoost / LightGBM' },
   { label: 'Scoring', icon: Target, desc: 'Risk probability 0-1' },
-  { label: 'Campaign Generation', icon: Megaphone, desc: 'Claude Sonnet 4.5' },
+  { label: 'Campaign Generation', icon: Megaphone, desc: 'Claude Sonnet 4' },
   { label: 'Delivery', icon: Send, desc: 'Email, SMS, Voice' },
   { label: 'Outcome Tracking', icon: BarChart3, desc: 'Retention metrics' },
   { label: 'Feedback / Retraining', icon: RefreshCw, desc: 'Model refresh cycle' },
