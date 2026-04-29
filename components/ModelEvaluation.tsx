@@ -18,7 +18,7 @@ const performanceMetrics = [
   { label: 'Recall (churn)', value: '0.66', icon: Eye },
   { label: 'F1 Score', value: '0.50', icon: BarChart3 },
   { label: 'Threshold', value: '0.40', icon: Timer },
-  { label: 'Inference latency', value: '0.3ms/sample', icon: Zap },
+  { label: 'Inference latency', value: '0.3ms', icon: Zap },
 ]
 
 // ── Baseline Comparison ──
@@ -120,10 +120,10 @@ export default function ModelEvaluation() {
         <p className="text-xs text-gray-600 mb-4">XGBoost classifier trained on 10,000 subscribers with 18 behavioral and demographic features.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
           {performanceMetrics.map((m) => (
-            <div key={m.label} className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
+            <div key={m.label} className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center min-w-0 overflow-hidden">
               <m.icon className="w-4 h-4 text-brand-400 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{m.value}</div>
-              <div className="text-[10px] text-gray-600 mt-1">{m.label}</div>
+              <div className="text-xl font-bold text-gray-900 leading-tight tabular-nums truncate">{m.value}</div>
+              <div className="text-[10px] text-gray-600 mt-1 leading-tight">{m.label}</div>
             </div>
           ))}
         </div>
