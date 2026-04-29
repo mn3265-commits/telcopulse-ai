@@ -1,6 +1,5 @@
 # 🚀 TelcoPulse AI — Complete Deployment Guide
 
-**From zero to live URL in 2 hours. Every single step.**
 
 This guide assumes you have **never deployed a Next.js app before**. We'll go slowly.
 
