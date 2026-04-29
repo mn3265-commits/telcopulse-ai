@@ -66,7 +66,7 @@ Nine modules, one platform, one shared subscriber dataset:
 │  AI Reasoning  │   │  ML Inference             │
 │  Claude Sonnet │   │  XGBoost (joblib)         │
 │  4 — multi-step│   │  18 features · ROC-AUC    │
-│  chains via    │   │  0.65 · trained on 8K /   │
+│  chains via    │   │  0.73 · trained on 8K /   │
 │  Anthropic SDK │   │  evaluated on 2K          │
 └───────┬────────┘   └────────┬──────────────────┘
         │                     │
@@ -143,26 +143,34 @@ This isn't random noise. Every signal is a churn predictor I actually used manag
 ## The ML model
 
 ```
-Algorithm:    XGBoost Classifier
+Algorithm:    XGBoost Classifier (class-balanced, scale_pos_weight=3.03)
 Features:     18 (behavioral + demographic)
 Training:     80/20 stratified split (8K train · 2K test)
+Threshold:    0.40 — tuned via PR-curve F1 maximization
 
-Metrics
-  Accuracy:   0.70
-  ROC-AUC:    0.65
-  Precision:  0.50
-  Recall:     0.26
-  F1:         0.35
+Metrics @ tuned threshold
+  ROC-AUC:    0.73
+  Recall:     0.66
+  Precision:  0.41
+  F1:         0.50
+  Accuracy:   0.68
 
 Top feature importances
-  1. NPS score                    0.13
+  1. NPS score                    0.17
   2. Complaints (last 90d)        0.09
   3. Days since last topup        0.08
-  4. Plan type (prepaid vs post)  0.07
+  4. Plan type (prepaid vs post)  0.08
   5. Tenure (months)              0.06
+
+Baseline comparison (same test set)
+  XGBoost              AUC 0.73  P 0.41  R 0.66  F1 0.50
+  Logistic Regression  AUC 0.72  P 0.39  R 0.66  F1 0.49
+  Rule-based heuristic AUC 0.69  P 0.49  R 0.55  F1 0.52
 ```
 
-The Model Evaluation tab in the app surfaces these numbers alongside a baseline comparison, business-impact estimate, and Go/No-Go assessment — the same artifact a CVM lead would expect before moving a model to production.
+Targets are recall-prioritized: in CVM, the cost of missing a churner is higher than the cost of contacting a stable subscriber. XGBoost wins on AUC (threshold-independent ranking quality), which gives the operator flexibility to retune the precision/recall trade-off at deployment time.
+
+The Model Evaluation tab in the app surfaces these numbers alongside the confusion matrix, edge-case stress projections, business-impact estimate, and Go/No-Go assessment — the same artifact a CVM lead would expect before moving a model to production.
 
 ## Project layout
 

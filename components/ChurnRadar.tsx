@@ -112,7 +112,7 @@ export default function ChurnRadar() {
               <Row label="Algorithm" value="XGBoost Classifier" />
               <Row label="Features" value="18 behavioral + demographic" />
               <Row label="Training samples" value="8,000" />
-              <Row label="ROC-AUC" value="0.65" highlight />
+              <Row label="ROC-AUC" value="0.73" highlight />
               <Row label="Top signal" value="NPS score" />
             </div>
           </div>

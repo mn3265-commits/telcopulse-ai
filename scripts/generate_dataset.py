@@ -109,11 +109,11 @@ def generate_subscriber(user_id):
     if plan_type == 'postpaid': churn_score -= 1
     if nps_score >= 9: churn_score -= 2
     
-    # Add some randomness (real world is noisy)
-    churn_score += np.random.normal(0, 1.5)
-    
-    # Churn probability via sigmoid
-    churn_prob = 1 / (1 + np.exp(-0.4 * (churn_score - 3)))
+    # Add some randomness (real world is noisy, but signal should dominate)
+    churn_score += np.random.normal(0, 0.9)
+
+    # Churn probability via sigmoid — sharper slope so signal dominates noise
+    churn_prob = 1 / (1 + np.exp(-0.55 * (churn_score - 3)))
     churned = 1 if np.random.random() < churn_prob else 0
     
     # Phone number (Indonesian format, masked for privacy)

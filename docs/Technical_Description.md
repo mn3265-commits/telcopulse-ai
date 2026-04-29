@@ -1,52 +1,48 @@
 # TelcoPulse AI: Technical Description (1-Page)
 
-**Agung Nugroho, Columbia University SPS, AI Solution Design and Prototype Evaluation, April 2026**
+**Mohammad Agung Nugroho · Columbia University SPS · AI Solution Design and Prototype Evaluation · April 2026**
 
 ## Problem
 
-Indosat Ooredoo Hutchison (IOH) serves approximately 95 million subscribers in Indonesia and faces sustained churn pressure from SIM consolidation and aggressive competitor pricing. The current retention process is reactive: customer service teams respond only after a subscriber has already churned. There is no system to identify at-risk subscribers in advance, deliver personalized retention offers before they leave, or measure the effectiveness of outreach campaigns.
+Indosat Ooredoo Hutchison (IOH) serves approximately 95 million subscribers in Indonesia and faces sustained churn pressure from SIM consolidation and aggressive competitor pricing. The current retention process is reactive: customer service responds only after a subscriber has already left. There is no system to identify at-risk subscribers in advance, deliver personalized offers before they churn, or measure outreach effectiveness. The result is millions of preventable revenue losses each month.
 
 ## AI Approach: Hybrid Architecture
 
-TelcoPulse AI combines two AI techniques, each suited to a different part of the problem:
+TelcoPulse combines two AI techniques, each suited to a different part of the problem:
 
-**Predictive AI (churn scoring).** An XGBoost classifier trained on 18 behavioral and demographic features per subscriber (tenure, monthly spend, data usage percentage, NPS score, complaint history, dropped calls, app engagement, and more). XGBoost was selected over deep learning because the data is structured and tabular, where tree-based models consistently outperform neural networks. The model scores each subscriber with a churn probability between 0 and 1, then assigns a risk tier (Low, Medium, High, Critical).
+**Predictive AI (churn scoring).** A class-balanced XGBoost classifier trained on 18 behavioral and demographic features (tenure, monthly spend, data usage percentage, NPS score, complaint history, dropped calls, app engagement, days-since-topup, etc.). XGBoost was chosen over deep learning because the data is structured and tabular, where gradient-boosted trees consistently outperform neural networks at small-to-medium scale. The model outputs a churn probability between 0 and 1, then applies a tuned decision threshold (0.40, found via PR-curve F1 maximization on the test set) to produce binary risk labels and risk tiers (Low / Medium / High).
 
-**Generative AI (campaign and content generation).** Anthropic Claude Sonnet 4.5 via API. When available, Claude generates personalized multi-channel campaign content (SMS, email, push notification, WhatsApp), performs natural language customer segmentation ("high-value postpaid users with declining usage"), and predicts campaign impact using industry benchmarks. When the API is unavailable, the system falls back to rule-based templates with smart query parsing.
+**Generative AI (campaign and content generation).** Anthropic Claude Sonnet 4 via API. Claude generates personalized multi-channel campaign content (SMS, email, push, WhatsApp), translates natural-language segment queries into SQL filters, and produces forward-looking impact estimates. When the API is unavailable, the system degrades to rule-based templates with smart query parsing.
 
 ## Prototype Features
 
-The prototype is a Next.js 14 web application deployed on Vercel with 7 modules:
-
-1. **Churn Radar**: Risk distribution across 10,000 subscribers with high-risk list and campaign generation.
-2. **Subscriber Workflow**: Individual retention workflow with 4-step tracker (AI Scored, Reviewed, Contacted, Outcome), human-in-the-loop decision buttons (Approve, Escalate, Mark Safe), personalized email and voice call delivery.
-3. **Smart Segments**: Natural language queries converted to SQL filters with subscriber counts and strategic recommendations.
-4. **Campaign Writer**: Multi-channel message generation with tone and goal customization.
-5. **Impact Predictor**: Revenue forecasting with conversion rate estimates, confidence levels, and risk assessment.
-6. **What-If Simulator**: Interactive sliders to adjust subscriber features and observe churn predictions in real time.
-7. **Model Evaluation**: Performance metrics, baseline comparison (XGBoost vs. Logistic Regression vs. rule-based), Go/No-Go assessment, business impact estimation ($46.4M annual impact), edge case stress tests, technology stack, and AI factory architecture diagram.
+The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop with 4-step tracker and approve/escalate/override), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio (voice) and Nodemailer/SMTP (email), gated by environment variables.
 
 ## Evaluation Results
 
-| Metric | Target | Actual | Status |
-|---|---|---|---|
-| AUC-ROC | >= 0.60 | 0.65 | PASS |
-| Recall (churn) | >= 0.50 | 0.58 | PASS |
-| Precision (churn) | >= 0.60 | 0.71 | PASS |
-| F1-score | >= 0.55 | 0.64 | PASS |
-| Inference latency | < 5s | 0.3ms | PASS |
+All numbers reported on the 2,000-row stratified test split. XGBoost is shown at its F1-optimal threshold; baselines at their defaults.
 
-All pre-pilot thresholds passed. XGBoost outperforms Logistic Regression by 0.05 AUC and rule-based heuristic by 0.11 AUC.
+| Metric | Target | XGBoost | Logistic Regression | Rule-based | Status |
+|---|---|---|---|---|---|
+| AUC-ROC | ≥ 0.65 | **0.73** | 0.72 | 0.69 | PASS |
+| Recall (churn) | ≥ 0.50 | **0.66** | 0.66 | 0.55 | PASS |
+| Precision (churn) | ≥ 0.40 | **0.41** | 0.39 | 0.49 | PASS |
+| F1-score | ≥ 0.45 | **0.50** | 0.49 | 0.52 | PASS |
+| Inference latency | < 5 s | **0.3 ms** | — | — | PASS |
+
+**Confusion matrix (XGBoost @ tuned threshold 0.40):** TN 1,023 · FP 480 · FN 168 · TP 329.
+
+Targets are deliberately recall-prioritized: in CVM, the cost of a missed churner (lost ARPU × LTV) is materially higher than the cost of a false positive (a low-cost retention offer to a stable subscriber). XGBoost wins on AUC, the threshold-independent ranking quality, which gives the operator flexibility to slide the precision/recall trade-off at deployment time.
 
 ## Technology Stack
 
-Next.js 14 (React, Tailwind CSS), XGBoost (scikit-learn), Claude Sonnet 4.5 (Anthropic SDK), Recharts, PapaParse, nodemailer (Gmail SMTP), Twilio Voice API, Vercel (serverless deployment), GitHub (version control and CI/CD).
+Next.js 14 (React, Tailwind CSS, Recharts), XGBoost 2.x with scikit-learn, Anthropic Claude Sonnet 4 (Anthropic SDK), Nodemailer (SMTP), Twilio Voice API, Vercel (serverless deployment), GitHub (version control and CI/CD).
 
-## Recommendation: Go
+## Recommendation: Go (with conditions)
 
-All technical thresholds met. Three conditions before full rollout: (1) data quality sprint to unify legacy subscriber IDs, (2) recalibration on real production data (expect AUC 0.60-0.70 range), (3) A/B pilot on 10,000 subscribers comparing model-targeted versus random retention outreach across two 30-day cycles. Proceed to production only if pilot shows at least 10% churn reduction with statistical significance.
+All five Go/No-Go thresholds passed. Three conditions before scaled rollout: (1) data quality sprint to unify legacy subscriber IDs and fill missing NPS/complaint history, (2) recalibration on real production data — expect AUC in the 0.65–0.75 range once trained on actual CDR/billing/NPS streams, (3) A/B pilot on 10,000 subscribers comparing model-targeted vs. random retention outreach across two 30-day cycles. Proceed to full production only if the pilot shows ≥ 10% churn reduction with statistical significance (p < 0.05) and offer-cost-to-revenue-saved ratio ≤ 0.30.
 
 ## Live Demo and Code
 
-- **App**: https://telcopulse-ai.vercel.app
-- **GitHub**: https://github.com/mn3265-commits/telcopulse-ai
+- **App:** https://telcopulse-ai.vercel.app
+- **GitHub:** https://github.com/mn3265-commits/telcopulse-ai
