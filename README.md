@@ -4,7 +4,7 @@
 
 ### Marketing intelligence for subscription businesses — built by someone who managed it at scale.
 
-**[Live Demo](https://telcopulse-ai.vercel.app)** · **[Architecture](#architecture)** · **[Modules](#what-it-does)** · **[Quick start](#quick-start)**
+**[Live Demo](https://telcopulse-ai.vercel.app)** · **[Report](docs/Report.md)** · **[Architecture](#architecture)** · **[Modules](#what-it-does)** · **[Quick start](#quick-start)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)
@@ -47,6 +47,17 @@ Nine modules, one platform, one shared subscriber dataset:
 
 ## Architecture
 
+![AI Factory Pipeline](docs/diagrams/ai_factory.png)
+
+End-to-end flow: data sources → ingestion + feature engineering → model layer (XGBoost + LR + rule-based baselines) → per-subscriber scoring → Next.js API → Claude Sonnet 4 for generative tasks → dashboard activation → outbound (Twilio + SMTP) → human-in-the-loop feedback → weekly retraining.
+
+![Technology Stack](docs/diagrams/tech_stack.png)
+
+Layered stack: typed React frontend, Next.js API routes, hybrid AI layer, CSV-backed data plus serialized model artifact, optional outbound integrations, Vercel hosting.
+
+<details>
+<summary>Text version of the architecture (for accessibility)</summary>
+
 ```
 ┌─────────────────────────────────────────────────┐
 │  Frontend Layer                                 │
@@ -83,6 +94,8 @@ Nine modules, one platform, one shared subscriber dataset:
 │  Twilio (voice/SMS) · Nodemailer (email)         │
 └──────────────────────────────────────────────────┘
 ```
+
+</details>
 
 ## Tech stack
 
@@ -175,17 +188,35 @@ The Model Evaluation tab in the app surfaces these numbers alongside the confusi
 ## Project layout
 
 ```
-app/             # Next.js App Router (pages + route handlers)
-  api/           # /churn, /segment, /campaign, /insights, /send-email, /send-call
-  dashboard/     # Main product surface
-components/      # Nine module components + shared UI primitives
-lib/             # Shared helpers (Anthropic client, dataset loader, utils)
-ml/              # Trained model artifact + metadata
-scripts/         # Dataset generator + model trainer (Python)
-data/            # Generated synthetic subscriber CSV
-docs/            # Deployment guide + technical description
-notebooks/       # Exploratory notebooks
-public/          # Static assets
+app/                # Next.js App Router (pages + route handlers)
+  api/              # /churn, /segment, /campaign, /insights, /send-email, /send-call
+  dashboard/        # Main product surface
+components/         # Nine module components + shared UI primitives
+lib/                # Shared helpers (Anthropic client, dataset loader, utils)
+ml/                 # Trained model artifact + metadata (gitignored, regenerated)
+scripts/            # Dataset generator + model trainer (Python)
+data/               # Generated synthetic subscriber CSV
+docs/
+  Report.md         # 6-page AI Solution Design report
+  Technical_Description.md   # 1-page technical brief
+  DEPLOYMENT_GUIDE.md
+  diagrams/         # Mermaid sources (.mmd) + rendered PNGs
+notebooks/          # Exploratory notebooks
+public/             # Static assets
+```
+
+## Documentation
+
+- **[`docs/Report.md`](docs/Report.md)** — full 6-page report covering problem, AI factory design, technique justification, prototype, and Go/No-Go evaluation
+- **[`docs/Technical_Description.md`](docs/Technical_Description.md)** — 1-page executive brief
+- **[`docs/diagrams/`](docs/diagrams/)** — Mermaid `.mmd` sources and rendered PNGs for the AI factory pipeline and tech stack
+- **[`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md)** — step-by-step Vercel deployment
+
+To regenerate diagrams after editing `.mmd` sources:
+
+```bash
+npx -p @mermaid-js/mermaid-cli mmdc -i docs/diagrams/ai_factory.mmd \
+  -o docs/diagrams/ai_factory.png -b transparent -w 1600 -H 900
 ```
 
 ## Deployment
