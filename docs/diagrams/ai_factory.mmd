@@ -1,70 +1,50 @@
 flowchart LR
-    subgraph S1["Data Sources"]
-        DS1["CRM<br/>(demographics, plan)"]
-        DS2["CDR<br/>(voice, SMS, data)"]
-        DS3["Billing<br/>(topups, ARPU)"]
-        DS4["Care + NPS<br/>(complaints, scores)"]
+    DataSrc(["Data<br/>10K subscribers<br/>CRM · CDR · billing · NPS"])
+
+    subgraph DP["Data Pipeline"]
+      direction LR
+      G["Gather<br/>CSV / ETL load"]
+      CL["Clean<br/>NPS imputation<br/>ID dedupe"]
+      N["Normalize<br/>StandardScaler<br/>for LR baseline"]
+      INT["Integrate<br/>18 engineered<br/>features"]
+      G --> CL --> N --> INT
     end
 
-    subgraph S2["Ingestion & Prep"]
-        IN["CSV / ETL load<br/>10K subscribers"]
-        FE["Feature Engineering<br/>18 features"]
+    subgraph AD["Algorithm Development"]
+      ALG["<b>Supervised:</b> XGBoost (primary, class-balanced) · Logistic Regression baseline<br/><b>Other AI:</b> Anthropic Claude Sonnet 4 (transformer LLM, prompt-based, no fine-tuning)<br/><b>Rule-based:</b> NPS ≤ 4 OR complaints ≥ 2 OR days-since-topup &gt; 10"]
     end
 
-    subgraph S3["Model Layer"]
-        TR["XGBoost training<br/>class-balanced"]
-        BL["Baselines:<br/>LR + Rule-based"]
-        EV["Evaluation<br/>PR-curve threshold tune"]
+    subgraph ID["Infrastructure Development"]
+      INF["<b>Workflows:</b> Next.js API routes · Python training script · GitHub Actions CI<br/><b>Compute:</b> Vercel serverless · Anthropic API · scikit-learn pipeline<br/><b>Storage:</b> CSV dataset · churn_model.pkl · model_metadata.json<br/><b>Analytics:</b> scikit-learn metrics · PR-curve · confusion matrix"]
     end
 
-    subgraph S4["Inference"]
-        SC["Per-subscriber score<br/>0-1 + risk tier"]
-        API["Next.js API<br/>7 Claude + 2 outbound + 1 feedback"]
-    end
+    EXP["<b>Experimentation Platform</b><br/>PR-curve F1-optimal threshold tuning (0.40)<br/>Baseline benchmark (XGBoost vs LR vs rule-based)<br/>Edge-case stress projections<br/>Go / No-Go panel + business impact estimate"]
 
-    subgraph S5["Generative"]
-        CL["Claude Sonnet 4<br/>multi-step prompt chains"]
-    end
+    PROD["<b>Productize &amp; Deploy</b><br/>Vercel auto-deploy from GitHub<br/>9 modules live for CVM team<br/>7 Claude routes + 2 outbound + 1 feedback sink<br/>Weekly retrain trigger via /api/feedback"]
 
-    subgraph S6["Activation"]
-        UI["Dashboard<br/>9 modules"]
-        OUT["Outbound<br/>Twilio Voice + Gmail SMTP"]
-    end
+    DataSrc --> G
+    DataSrc --> ALG
+    DataSrc --> INF
 
-    subgraph S7["Feedback Loop"]
-        HITL["Human-in-the-loop<br/>Approve / Escalate / Outcome"]
-        FB["/api/feedback<br/>logs labelled rows"]
-        RT["Retraining trigger<br/>weekly cadence"]
-    end
+    INT --> EXP
+    ALG --> EXP
+    INF --> EXP
+    EXP --> PROD
 
-    DS1 --> IN
-    DS2 --> IN
-    DS3 --> IN
-    DS4 --> IN
-    IN --> FE
-    FE --> TR
-    FE --> BL
-    TR --> EV
-    BL --> EV
-    EV --> SC
-    SC --> API
-    API --> CL
-    API --> UI
-    CL --> UI
-    UI --> OUT
-    UI --> HITL
-    HITL --> FB
-    FB --> RT
-    RT -.->|retrain| TR
+    classDef dataFlow fill:#D1FAE5,stroke:#10B981,stroke-width:2px,color:#064E3B
+    classDef algoFlow fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#7F1D1D
+    classDef infraFlow fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E3A8A
+    classDef expFlow fill:#CFFAFE,stroke:#0891B2,stroke-width:2px,color:#164E63
+    classDef prodFlow fill:#E5E7EB,stroke:#4B5563,stroke-width:2px,color:#1F2937
+    classDef src fill:#FAFAFA,stroke:#9CA3AF,stroke-width:1px,color:#1F2937
 
-    classDef data fill:#FEF3F2,stroke:#F97066,stroke-width:1px,color:#1F2937
-    classDef compute fill:#EFF6FF,stroke:#60A5FA,stroke-width:1px,color:#1F2937
-    classDef gen fill:#F5F3FF,stroke:#A78BFA,stroke-width:1px,color:#1F2937
-    classDef out fill:#ECFDF5,stroke:#34D399,stroke-width:1px,color:#1F2937
-    classDef fb fill:#FFFBEB,stroke:#FBBF24,stroke-width:1px,color:#1F2937
+    class G,CL,N,INT dataFlow
+    class ALG algoFlow
+    class INF infraFlow
+    class EXP expFlow
+    class PROD prodFlow
+    class DataSrc src
 
-    class DS1,DS2,DS3,DS4,IN,FE data
-    class TR,BL,EV,SC,API compute
-    class CL gen
-    class UI,OUT out
-    class HITL,FB,RT fb
+    style DP fill:#ECFDF5,stroke:#10B981,stroke-width:1px
+    style AD fill:#FEF2F2,stroke:#DC2626,stroke-width:1px
+    style ID fill:#EFF6FF,stroke:#2563EB,stroke-width:1px

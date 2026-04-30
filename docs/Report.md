@@ -82,7 +82,7 @@ The pipeline implements all six components required by the AI factory pattern:
 
 ![AI Factory Pipeline](diagrams/ai_factory.png)
 
-**Figure 1.** End-to-end AI factory: data sources flow through ingestion and feature engineering into the model layer, where XGBoost is trained alongside two baselines and evaluated via PR-curve threshold tuning. Per-subscriber scores are served through Next.js API routes; Claude Sonnet 4 produces generative artifacts (segments, campaigns, impact narration) on demand. The dashboard activates two integrated outbound channels — **Twilio Voice** for calls and **Gmail SMTP via Nodemailer** for email — and human-in-the-loop decisions feed a weekly retraining cadence.
+**Figure 1.** AI Factory pattern applied to TelcoPulse: three parallel tracks — **Data Pipeline** (Gather → Clean → Normalize → Integrate), **Algorithm Development** (supervised XGBoost + LR baselines · transformer-based Claude Sonnet 4 prompt-only · rule-based heuristic), and **Infrastructure Development** (workflows, compute, storage, analytics) — all converging into the **Experimentation Platform** (PR-curve tuning, baseline benchmark, edge cases, Go/No-Go) and then **Productize &amp; Deploy** on Vercel with the weekly retrain trigger via `/api/feedback`.
 
 ## 3. AI Techniques and Technology Stack
 
@@ -201,9 +201,7 @@ Targets are **recall-prioritized**: in retention, missing a true churner costs l
 
 1. **Data-quality sprint.** Unify legacy subscriber IDs across CRM and billing; backfill 30 days of missing NPS via median imputation plus an `nps_missing` indicator feature; correct tenure for re-registered SIMs.
 2. **Real-data recalibration.** Retrain on the most recent 90 days of production CDR / billing / NPS. Expected AUC range: 0.65–0.75 (telecom industry norm).
-3. **A/B pilot.** 10,000 subscribers split 50/50 between model-targeted and random outreach for two consecutive 30-day cycles. Promote to full production only if (a) churn reduction ≥ 10% with p < 0.05, and (b) offer-cost-to-revenue-saved ratio ≤ 0.30.
-
-If either pilot condition fails, the recommended fallback is a **Conditional Go**: deploy the model only on the highest-decile risk segment, where precision is materially higher, and revisit the broader rollout after one quarter.
+3. **A/B pilot.** 10,000 subscribers split 50/50 between model-targeted and random outreach for two consecutive 30-day cycles. Promote to full production only if (a) churn reduction ≥ 10% with p < 0.05, and (b) offer-cost-to-revenue-saved ratio ≤ 0.30. If either condition fails, fallback to **Conditional Go**: deploy only on the highest-decile risk segment (where precision is materially higher) and revisit broader rollout after one quarter.
 
 <div style="page-break-after: always;"></div>
 
