@@ -718,20 +718,27 @@ Indosat Ooredoo Hutchison`
                       <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Record Outcome</div>
                       <p className="text-[10px] text-gray-600 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
                       <div className="flex gap-2">
-                        {['Retained', 'Churned', 'No response'].map(outcome => (
-                          <button key={outcome}
-                            onClick={() => doOutcome(sub.user_id, outcome)}
-                            disabled={!!feedbackSaved[sub.user_id]}
-                            className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                              wf.outcome === outcome
-                                ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
-                                : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
-                                : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                : 'bg-gray-100 hover:bg-gray-200 text-gray-500'
-                            }`}>
-                            {outcome}
-                          </button>
-                        ))}
+                        {['Retained', 'Churned', 'No response'].map(outcome => {
+                          const isSelected = wf.outcome === outcome
+                          const isSaved = !!feedbackSaved[sub.user_id]
+                          return (
+                            <button key={outcome}
+                              onClick={() => doOutcome(sub.user_id, outcome)}
+                              disabled={isSaved}
+                              className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed flex items-center justify-center gap-1.5 ${
+                                isSelected && isSaved
+                                  ? 'bg-green-500/25 text-green-700 border border-green-500/50 ring-1 ring-green-500/30'
+                                  : isSelected
+                                    ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
+                                    : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
+                                    : 'bg-amber-500/20 text-amber-600 border border-amber-500/30'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-500 disabled:opacity-50'
+                              }`}>
+                              {isSelected && isSaved && <CheckCircle2 className="w-3.5 h-3.5" />}
+                              {outcome}
+                            </button>
+                          )
+                        })}
                       </div>
                       {/* HITL reviewer notes */}
                       <div className="mt-3">
