@@ -75,7 +75,7 @@ The pipeline implements all six components required by the AI factory pattern:
 | 2 | Feature engineering | 18 features chosen for behavioral, demographic, and network coverage |
 | 3 | Model training | XGBoost classifier with class balancing; LR and rule-based baselines for comparison |
 | 4 | Evaluation & validation | Held-out test split, PR-curve threshold tuning, confusion matrix, baseline comparison |
-| 5 | Deployment / inference | Pre-scored CSV consumed by seven Next.js API routes — `/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`, `/api/persona`, `/api/launch`, `/api/subscriber-brief` — each invoking Claude at request time with a strict JSON schema and a deterministic template fallback when no API key is set. Two further outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
+| 5 | Deployment / inference | **Two-tier inference.** ML scoring is **batch** (XGBoost runs over the full subscriber CSV at training time and persists `subscribers_scored.csv`); generative steps are **on-demand real-time** through seven Next.js API routes (`/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`, `/api/persona`, `/api/launch`, `/api/subscriber-brief`), each invoking Claude with a strict JSON schema and a deterministic template fallback when no API key is set. Two further outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
 | 6 | Feedback loop | The Subscriber Workflow module captures per-subscriber human decisions (Approve / Escalate / Mark Safe / Outcome) — the labels needed to retrain the model on production drift |
 
 ### 2.5 Pipeline diagram
@@ -90,9 +90,9 @@ The pipeline implements all six components required by the AI factory pattern:
 
 The solution is intentionally hybrid because no single AI paradigm fits all four required capabilities.
 
-**Predictive ML (gradient-boosted trees).** Churn scoring is a binary classification problem on tabular, mixed-type features with strong univariate signals (NPS, complaints, days-since-topup) and meaningful interactions (tenure × plan type). On data of this shape, gradient-boosted trees consistently match or beat deep networks while being faster to train, easier to interpret, and trivial to serve. The prototype uses **XGBoost** with `scale_pos_weight = 3.03` to address class imbalance (24.8% churn rate) and a tuned decision threshold of 0.40, found by maximizing F1 along the precision-recall curve on the test set. Two baselines are computed for comparison: a class-balanced **logistic regression** with standardized features, and a transparent **rule-based heuristic** (`NPS ≤ 4 OR complaints ≥ 2 OR days_since_topup > 10`).
+**Predictive ML (gradient-boosted trees, supervised classification).** Churn scoring is a binary classification problem on tabular, mixed-type features with strong univariate signals (NPS, complaints, days-since-topup) and meaningful interactions (tenure × plan type). On data of this shape, gradient-boosted trees consistently match or beat deep networks while being faster to train, easier to interpret, and trivial to serve. The prototype uses **XGBoost** with `scale_pos_weight = 3.03` to address class imbalance (24.8% churn rate) and a tuned decision threshold of 0.40, found by maximizing F1 along the precision-recall curve on the test set. Two baselines are computed for comparison: a class-balanced **logistic regression** with standardized features, and a transparent **rule-based heuristic** (`NPS ≤ 4 OR complaints ≥ 2 OR days_since_topup > 10`). Training is fully supervised on the synthetic churn label.
 
-**Generative AI (large language model).** Three of the four required capabilities — natural-language segmentation, multi-channel content generation, and impact narration — are open-ended generation problems for which an LLM is the only practical fit. The prototype uses **Anthropic Claude Sonnet 4** through the official SDK, with separate prompt chains per module. Prompts include the relevant subscriber-aggregate statistics so generation is grounded in the data, not hallucinated.
+**Generative AI (transformer-based LLM, prompt-based — no fine-tuning).** Three of the four required capabilities — natural-language segmentation, multi-channel content generation, and impact narration — are open-ended generation problems for which an LLM is the only practical fit. The prototype uses **Anthropic Claude Sonnet 4**, a transformer-based foundation model, through the official SDK. Each of the seven Claude routes runs a separate prompt chain with a strict output JSON schema; no fine-tuning or RAG store is used. Prompts include the relevant subscriber-aggregate statistics so generation is grounded in the data, not hallucinated.
 
 **Why not deep learning end-to-end?** A neural sequence model on raw CDR could in principle learn richer representations, but the 18 hand-engineered features already capture the dominant signal; the data volume (10K rows, 95M at production) is well below the threshold where deep models start to win on tabular data; and interpretability matters for regulatory and CVM-team trust.
 
@@ -191,7 +191,7 @@ Targets are **recall-prioritized**: in retention, missing a true churner costs l
 | F1 | ≥ 0.45 | 0.50 | PASS |
 | Inference latency | < 5 s | 0.3 ms | PASS |
 
-**Risks identified.**
+**Risks identified through experimentation, baseline benchmarking, and operator domain knowledge.**
 - *Distribution drift.* Competitor mass-promo events compress usage signals and inflate false positives; projected AUC drop to ~0.60 in this regime.
 - *Data quality at scale.* Missing NPS and corrupted tenure post-SIM-re-registration are known production issues.
 - *Generative AI hallucination.* Claude-generated content must be brand-reviewed before first send; current prototype does not enforce a human approval gate on outbound copy.
