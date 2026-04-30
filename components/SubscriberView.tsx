@@ -1,9 +1,27 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Phone, Mail, MapPin, Clock, AlertTriangle, ChevronDown, ChevronUp, CheckCircle2, XCircle, Shield, RotateCcw, Send, PhoneCall } from 'lucide-react'
+import { Search, Mail, MapPin, AlertTriangle, ChevronDown, ChevronUp, CheckCircle2, XCircle, Shield, RotateCcw, PhoneCall, Sparkles, Loader2, Brain, Target } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import Papa from 'papaparse'
+
+interface SubscriberBrief {
+  narrative: string
+  recommendation: {
+    channel: string
+    offer: string
+    urgency: string
+    rationale: string
+  }
+  email: { subject: string; body: string }
+  voice_script: string
+}
+
+interface EditedDraft {
+  emailSubject: string
+  emailBody: string
+  voiceScript: string
+}
 
 interface Subscriber {
   user_id: string
@@ -63,8 +81,12 @@ export default function SubscriberView() {
   const [search, setSearch] = useState('')
   const [riskFilter, setRiskFilter] = useState('All')
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [workflows, setWorkflows] = useState<Record<string, { step: number; action?: string; outcome?: string; sendStatus?: string }>>({})
+  const [workflows, setWorkflows] = useState<Record<string, { step: number; action?: string; outcome?: string; sendStatus?: string; channelOverride?: 'email' | 'voice'; notes?: string }>>({})
   const [sending, setSending] = useState<string | null>(null)
+  const [briefs, setBriefs] = useState<Record<string, SubscriberBrief>>({})
+  const [briefSource, setBriefSource] = useState<Record<string, 'claude' | 'template'>>({})
+  const [briefLoading, setBriefLoading] = useState<string | null>(null)
+  const [edits, setEdits] = useState<Record<string, EditedDraft>>({})
 
   useEffect(() => {
     fetch('/data/subscribers_scored.csv')
@@ -108,6 +130,117 @@ export default function SubscriberView() {
       delete copy[id]
       return copy
     })
+    setBriefs(prev => {
+      const copy = { ...prev }
+      delete copy[id]
+      return copy
+    })
+    setEdits(prev => {
+      const copy = { ...prev }
+      delete copy[id]
+      return copy
+    })
+    setBriefSource(prev => {
+      const copy = { ...prev }
+      delete copy[id]
+      return copy
+    })
+  }
+
+  function templateBrief(sub: Subscriber): SubscriberBrief {
+    const drivers = getDrivers(sub)
+    const topDriver = drivers[0] || 'general churn signal'
+    const channel = sub.complaints_last_90d >= 2 || sub.dropped_calls_last_30d >= 5 ? 'voice' : 'email'
+    const urgency = sub.predicted_churn_prob >= 0.7 ? 'high' : sub.predicted_churn_prob >= 0.5 ? 'medium' : 'low'
+    const offer = sub.monthly_spend_usd > 15
+      ? '15GB bonus data + 30% off next bill + free streaming pack'
+      : '10GB bonus data for 7 days + 30% off next bill'
+    const subject = `[Indosat] Special Offer for ${sub.plan_name} Subscriber`
+    const body = `Dear valued subscriber ${sub.phone},
+
+Greetings from Indosat Ooredoo Hutchison.
+
+${sub.tenure_months <= 3 ? `As a new subscriber (${sub.tenure_months} months), we want to ensure you have the best possible experience.` : `We truly appreciate your loyalty over ${sub.tenure_months} months with Indosat.`}${sub.complaints_last_90d >= 2 ? ` We are aware of ${sub.complaints_last_90d} unresolved complaints and our team is prioritizing their resolution.` : ''}${sub.data_usage_pct < 30 ? ` We noticed your data usage has been declining recently.` : ''}
+
+As a ${sub.plan_name} subscriber in ${sub.city}, we have prepared a special offer for you: ${offer}.
+
+Claim easily through the myIndosat app > Special Offers menu.
+
+Warm regards,
+Customer Retention Team
+Indosat Ooredoo Hutchison`
+    const voice = `Hello. I am calling from Indosat Ooredoo Hutchison, reaching out from ${sub.city}. ${sub.complaints_last_90d >= 2 ? `We are aware of ${sub.complaints_last_90d} unresolved complaints. Our team is prioritizing their resolution.` : sub.data_usage_pct < 30 ? `We noticed your data usage has been declining recently.` : `As a loyal subscriber for ${sub.tenure_months} months, you are very important to us.`} We have prepared a special offer for you: ${offer}. Please open the myIndosat app, go to Special Offers, and tap Claim Now. Thank you.`
+    return {
+      narrative: `${sub.user_id} shows a ${(sub.predicted_churn_prob * 100).toFixed(0)}% churn probability driven primarily by ${topDriver.toLowerCase()}. ${drivers.length > 1 ? `Secondary signals include ${drivers[1].toLowerCase()}.` : ''} Without intervention this account is likely to churn within 30 days.`,
+      recommendation: {
+        channel,
+        offer,
+        urgency,
+        rationale: channel === 'voice'
+          ? 'Service-quality complaints and dropped calls warrant a personal voice contact rather than another email.'
+          : 'Behavioral signals (low usage, declining engagement) respond better to a tangible offer reviewed at the subscriber\'s own pace via email.',
+      },
+      email: { subject, body },
+      voice_script: voice,
+    }
+  }
+
+  async function generateBrief(sub: Subscriber) {
+    setBriefLoading(sub.user_id)
+    try {
+      const res = await fetch('/api/subscriber-brief', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub),
+      })
+      let brief: SubscriberBrief
+      let src: 'claude' | 'template' = 'template'
+      if (res.ok) {
+        const data = await res.json()
+        brief = data.brief
+        src = 'claude'
+      } else {
+        brief = templateBrief(sub)
+      }
+      setBriefs(prev => ({ ...prev, [sub.user_id]: brief }))
+      setBriefSource(prev => ({ ...prev, [sub.user_id]: src }))
+      setEdits(prev => ({
+        ...prev,
+        [sub.user_id]: {
+          emailSubject: brief.email.subject,
+          emailBody: brief.email.body,
+          voiceScript: brief.voice_script,
+        },
+      }))
+    } catch {
+      const brief = templateBrief(sub)
+      setBriefs(prev => ({ ...prev, [sub.user_id]: brief }))
+      setBriefSource(prev => ({ ...prev, [sub.user_id]: 'template' }))
+      setEdits(prev => ({
+        ...prev,
+        [sub.user_id]: {
+          emailSubject: brief.email.subject,
+          emailBody: brief.email.body,
+          voiceScript: brief.voice_script,
+        },
+      }))
+    } finally {
+      setBriefLoading(null)
+    }
+  }
+
+  function updateEdit(id: string, field: keyof EditedDraft, value: string) {
+    setEdits(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value },
+    }))
+  }
+
+  function urgencyBadge(urgency: string) {
+    const u = urgency.toLowerCase()
+    if (u === 'high') return 'bg-red-500/15 text-red-600 border-red-500/20'
+    if (u === 'medium') return 'bg-amber-500/15 text-amber-600 border-amber-500/20'
+    return 'bg-green-500/15 text-green-600 border-green-500/20'
   }
 
   return (
@@ -248,6 +381,108 @@ export default function SubscriberView() {
                     </div>
                   </div>
 
+                  {/* AI Brief — narrative + recommendation */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">AI Retention Brief</div>
+                      {briefSource[sub.user_id] === 'claude' && (
+                        <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">Claude Sonnet 4</span>
+                      )}
+                      {briefSource[sub.user_id] === 'template' && (
+                        <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">Template fallback</span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-gray-600 mb-3">Per-subscriber narrative explanation, recommended action, and personalized message drafts. Generated on demand and editable before sending.</p>
+
+                    {!briefs[sub.user_id] ? (
+                      <button
+                        onClick={() => generateBrief(sub)}
+                        disabled={briefLoading === sub.user_id}
+                        className="w-full bg-brand-400/10 hover:bg-brand-400/20 disabled:opacity-50 text-brand-400 border border-brand-400/30 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2"
+                      >
+                        {briefLoading === sub.user_id ? (
+                          <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating brief...</>
+                        ) : (
+                          <><Sparkles className="w-3.5 h-3.5" /> Generate AI brief for this subscriber</>
+                        )}
+                      </button>
+                    ) : (
+                      <div className="space-y-3">
+                        {/* Narrative */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <Brain className="w-3.5 h-3.5 text-brand-400" />
+                            <div className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Why this subscriber is at risk</div>
+                          </div>
+                          <p className="text-xs text-gray-700 leading-relaxed">{briefs[sub.user_id].narrative}</p>
+                        </div>
+
+                        {/* Recommendation */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-1.5">
+                              <Target className="w-3.5 h-3.5 text-brand-400" />
+                              <div className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Recommended action</div>
+                            </div>
+                            <span className={`text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full border ${urgencyBadge(briefs[sub.user_id].recommendation.urgency)}`}>
+                              {briefs[sub.user_id].recommendation.urgency} urgency
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Suggested channel</div>
+                              <div className="text-gray-900 font-medium capitalize">{briefs[sub.user_id].recommendation.channel}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Offer</div>
+                              <div className="text-gray-900 font-medium">{briefs[sub.user_id].recommendation.offer}</div>
+                            </div>
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-gray-100">
+                            <div className="text-[10px] text-gray-600 italic">Rationale: {briefs[sub.user_id].recommendation.rationale}</div>
+                          </div>
+
+                          {/* Channel override (HITL) */}
+                          <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+                            <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Override channel (HITL)</div>
+                            <div className="flex gap-1.5">
+                              {(['email', 'voice'] as const).map(ch => (
+                                <button
+                                  key={ch}
+                                  onClick={() => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: prev[sub.user_id]?.step ?? 1, channelOverride: ch } }))}
+                                  className={`flex-1 px-2.5 py-1.5 rounded text-[11px] font-medium transition capitalize ${
+                                    wf.channelOverride === ch
+                                      ? 'bg-brand-400/15 text-brand-400 border border-brand-400/30'
+                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600 border border-transparent'
+                                  }`}
+                                >
+                                  {ch}
+                                </button>
+                              ))}
+                              <button
+                                onClick={() => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: prev[sub.user_id]?.step ?? 1, channelOverride: undefined } }))}
+                                className="px-2.5 py-1.5 rounded text-[11px] font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 transition"
+                                title="Clear override"
+                              >
+                                Auto
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Re-generate */}
+                        <button
+                          onClick={() => generateBrief(sub)}
+                          disabled={briefLoading === sub.user_id}
+                          className="text-[11px] text-brand-400 hover:text-brand-400/80 font-medium flex items-center gap-1"
+                        >
+                          {briefLoading === sub.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
+                          Re-generate brief
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Actions */}
                   <div>
                     <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Marketer Decision</div>
@@ -277,34 +512,61 @@ export default function SubscriberView() {
 
                   {/* Contact actions */}
                   {wf.step >= 2 && (() => {
-                    const emailSubject = `[Indosat] Special Offer for ${sub.plan_name} Subscriber`
-                    const emailBody = `Dear valued subscriber ${sub.phone},\n\nGreetings from Indosat Ooredoo Hutchison.\n\n${sub.tenure_months <= 3 ? `As a new subscriber (${sub.tenure_months} months), we want to ensure you have the best possible experience.` : `We truly appreciate your loyalty over ${sub.tenure_months} months with Indosat.`}${sub.complaints_last_90d >= 2 ? ` We are aware of ${sub.complaints_last_90d} unresolved complaints and our team is prioritizing their resolution.` : ''}${sub.data_usage_pct < 30 ? ` We noticed your data usage has been declining recently.` : ''}\n\nAs a ${sub.plan_name} subscriber in ${sub.city}, we have prepared a special offer for you:\n- Free 10GB bonus data for 7 days\n- 30% discount on next month's bill\n\nClaim easily through the myIndosat app > Special Offers menu.\n\nWarm regards,\nCustomer Retention Team\nIndosat Ooredoo Hutchison\n---\nContact us: 185`
-                    const callScript = `Hello. I am calling from Indosat Ooredoo Hutchison, reaching out from ${sub.city}. ${sub.complaints_last_90d >= 2 ? `We are aware of ${sub.complaints_last_90d} unresolved complaints. Our team is prioritizing their resolution.` : sub.data_usage_pct < 30 ? `We noticed your data usage has been declining recently.` : `As a loyal subscriber for ${sub.tenure_months} months, you are very important to us.`} We have prepared a special offer for you: free 10GB bonus data and a 30% discount next month. Please open the myIndosat app, go to Special Offers, and tap Claim Now. Thank you.`
+                    // Use edited drafts if a brief was generated; otherwise fall back to the inline template.
+                    const fallback = templateBrief(sub)
+                    const draft = edits[sub.user_id] || {
+                      emailSubject: fallback.email.subject,
+                      emailBody: fallback.email.body,
+                      voiceScript: fallback.voice_script,
+                    }
+                    const emailSubject = draft.emailSubject
+                    const emailBody = draft.emailBody
+                    const callScript = draft.voiceScript
                     return (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Send Retention Message</div>
-                      <p className="text-[10px] text-gray-600 mb-3">Personalized messages generated for this subscriber. Review the email and call script, then send via Gmail or Twilio voice call.</p>
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Send Retention Message — review &amp; edit before send</div>
+                      <p className="text-[10px] text-gray-600 mb-3">Edit the email subject, body, and voice script below before dispatching. Changes are saved per-subscriber and used by the send buttons.</p>
 
-                      {/* Email and Call Script preview */}
+                      {/* Editable Email + Voice */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Email Preview</div>
-                          <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto whitespace-pre-line">
-                            <div className="text-gray-600 mb-1">Subject: {emailSubject}</div>
-                            {emailBody}
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="text-[10px] text-gray-600 uppercase tracking-wider">Email — editable</div>
+                            <span className="text-[10px] text-gray-500">{emailBody.length} chars</span>
                           </div>
+                          <input
+                            type="text"
+                            value={emailSubject}
+                            onChange={e => updateEdit(sub.user_id, 'emailSubject', e.target.value)}
+                            className="w-full bg-white border border-gray-200 rounded-t-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition"
+                            placeholder="Email subject"
+                          />
+                          <textarea
+                            value={emailBody}
+                            onChange={e => updateEdit(sub.user_id, 'emailBody', e.target.value)}
+                            rows={9}
+                            className="w-full bg-white border border-t-0 border-gray-200 rounded-b-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y font-mono leading-relaxed"
+                            placeholder="Email body"
+                          />
                         </div>
                         <div>
-                          <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Voice Call Script</div>
-                          <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 max-h-40 overflow-y-auto">
-                            {callScript}
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="text-[10px] text-gray-600 uppercase tracking-wider">Voice script — editable</div>
+                            <span className="text-[10px] text-gray-500">{callScript.length} chars</span>
                           </div>
+                          <textarea
+                            value={callScript}
+                            onChange={e => updateEdit(sub.user_id, 'voiceScript', e.target.value)}
+                            rows={11}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y font-mono leading-relaxed"
+                            placeholder="Voice call script (Twilio TwiML will read this aloud)"
+                          />
                         </div>
                       </div>
 
                       <div className="flex gap-2">
                         <button
-                          disabled={sending === sub.user_id}
+                          disabled={sending === sub.user_id || (wf.channelOverride && wf.channelOverride !== 'email')}
                           onClick={async () => {
                             setSending(sub.user_id)
                             try {
@@ -331,11 +593,16 @@ export default function SubscriberView() {
                               setSending(null)
                             }
                           }}
-                          className="flex-1 bg-brand-400 hover:bg-brand-400/90 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
+                            wf.channelOverride === 'email' || (briefs[sub.user_id]?.recommendation.channel === 'email' && !wf.channelOverride)
+                              ? 'bg-brand-400 hover:bg-brand-400/90 text-white'
+                              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                          } disabled:opacity-40 disabled:cursor-not-allowed`}
+                        >
                           {sending === sub.user_id ? <span className="animate-spin">...</span> : <Mail className="w-3.5 h-3.5" />} Send Email
                         </button>
                         <button
-                          disabled={sending === sub.user_id}
+                          disabled={sending === sub.user_id || (wf.channelOverride && wf.channelOverride !== 'voice')}
                           onClick={async () => {
                             setSending(sub.user_id)
                             try {
@@ -361,7 +628,12 @@ export default function SubscriberView() {
                               setSending(null)
                             }
                           }}
-                          className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-600 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
+                            wf.channelOverride === 'voice' || (briefs[sub.user_id]?.recommendation.channel === 'voice' && !wf.channelOverride)
+                              ? 'bg-brand-400 hover:bg-brand-400/90 text-white'
+                              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                          } disabled:opacity-40 disabled:cursor-not-allowed`}
+                        >
                           {sending === sub.user_id ? <span className="animate-spin">...</span> : <PhoneCall className="w-3.5 h-3.5" />} Voice Call
                         </button>
                       </div>
@@ -398,6 +670,18 @@ export default function SubscriberView() {
                           Outcome recorded. This data feeds into the monthly model retraining pipeline.
                         </div>
                       )}
+
+                      {/* HITL reviewer notes */}
+                      <div className="mt-3">
+                        <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Reviewer notes (optional)</div>
+                        <textarea
+                          value={wf.notes || ''}
+                          onChange={e => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: prev[sub.user_id]?.step ?? 1, notes: e.target.value } }))}
+                          rows={2}
+                          placeholder="Why did this subscriber retain / churn? Any signal the model missed?"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

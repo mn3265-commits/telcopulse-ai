@@ -75,7 +75,7 @@ The pipeline implements all six components required by the AI factory pattern:
 | 2 | Feature engineering | 18 features chosen for behavioral, demographic, and network coverage |
 | 3 | Model training | XGBoost classifier with class balancing; LR and rule-based baselines for comparison |
 | 4 | Evaluation & validation | Held-out test split, PR-curve threshold tuning, confusion matrix, baseline comparison |
-| 5 | Deployment / inference | Pre-scored CSV consumed by six Next.js API routes — `/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`, `/api/persona`, `/api/launch` — each invoking Claude at request time with a strict JSON schema and a deterministic template fallback when no API key is set. Two further outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
+| 5 | Deployment / inference | Pre-scored CSV consumed by seven Next.js API routes — `/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`, `/api/persona`, `/api/launch`, `/api/subscriber-brief` — each invoking Claude at request time with a strict JSON schema and a deterministic template fallback when no API key is set. Two further outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
 | 6 | Feedback loop | The Subscriber Workflow module captures per-subscriber human decisions (Approve / Escalate / Mark Safe / Outcome) — the labels needed to retrain the model on production drift |
 
 ### 2.5 Pipeline diagram
@@ -121,7 +121,7 @@ The full stack is summarized inside the Model Evaluation tab of the running app.
 The prototype is a production-grade Next.js 14 web application deployed at `telcopulse-ai.vercel.app`. It exposes nine modules sharing one synthetic subscriber dataset and one trained model:
 
 1. **Churn Radar** — risk distribution, top-risk list, model details panel.
-2. **Subscriber Workflow** — individual retention tracker with four states (AI Scored → Reviewed → Contacted → Outcome) and human-in-the-loop decision buttons.
+2. **Subscriber Workflow** — individual retention tracker with four states (AI Scored → Reviewed → Contacted → Outcome). One click generates a Claude-authored brief per subscriber: a 2–3 sentence risk narrative citing the decisive features, a recommended action (channel, offer, urgency, rationale), and a personalized email + Twilio voice script. The reviewer can approve / escalate / mark-safe the prediction, override the channel, **edit the email subject, body, and voice script before send**, capture free-text reviewer notes, and record the final outcome (Retained / Churned / No response) which closes the retraining feedback loop.
 3. **Smart Segments** — natural-language query → SQL filter → subscriber count → suggested angle.
 4. **Campaign Writer** — one brief, four channels (SMS, push, email, WhatsApp), tone-adjustable.
 5. **Impact Predictor** — pre-send forecast of reach, conversion, and revenue.

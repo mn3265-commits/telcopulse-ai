@@ -36,7 +36,7 @@ Nine modules, one platform, one shared subscriber dataset:
 | # | Module | Tag | What it does |
 |---|---|---|---|
 | 1 | 🧠 **Churn Radar** | ML-POWERED | XGBoost model scores every subscriber on 18 behavioral features. Returns risk + the *reason* each one might churn. |
-| 2 | 👤 **Subscriber Workflow** | HUMAN-IN-THE-LOOP | Per-subscriber retention tracker with a 4-step flow: AI Scored → Reviewed → Contacted → Outcome. Approve, escalate, or override the AI. |
+| 2 | 👤 **Subscriber Workflow** | HUMAN-IN-THE-LOOP + AI BRIEF | Per-subscriber retention tracker with a 4-step flow: AI Scored → Reviewed → Contacted → Outcome. One click generates a Claude brief (risk narrative + recommended channel/offer/urgency + personalized email + voice script). Reviewer can override the channel, edit the email and script before send, capture notes, and record the final outcome for retraining. |
 | 3 | 🎯 **Smart Segments** | NATURAL LANGUAGE | Type "high-value postpaid with declining usage" → Claude turns it into SQL filters, runs it, and suggests a campaign angle. |
 | 4 | ⚡ **Campaign Writer** | MULTI-CHANNEL | One brief, four channels. SMS (160 char), push, email, WhatsApp — all on-brand, tone-adjustable, compliance-aware. |
 | 5 | 📊 **Impact Predictor** | FORECASTING | Before you hit send, Claude estimates reach, conversion, and revenue using telecom benchmarks and your segment data. |

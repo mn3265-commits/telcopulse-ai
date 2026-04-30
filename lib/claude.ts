@@ -363,6 +363,70 @@ No markdown. Just JSON.`
   return JSON.parse(cleaned)
 }
 
+// ── Subscriber Brief (per-subscriber AI brief for the retention workflow) ──
+export interface SubscriberInput {
+  user_id: string
+  city: string
+  age: number
+  tenure_months: number
+  plan_type: string
+  plan_name: string
+  monthly_spend_usd: number
+  data_usage_pct: number
+  voice_minutes: number
+  complaints_last_90d: number
+  nps_score: number
+  dropped_calls_last_30d: number
+  days_since_last_topup: number
+  app_logins_last_30d: number
+  predicted_churn_prob: number
+  risk_tier: string
+}
+
+export async function generateSubscriberBriefWithClaude(sub: SubscriberInput) {
+  const client = getClient()
+  if (!client) throw new Error('NO_API_KEY')
+
+  const riskPct = (sub.predicted_churn_prob * 100).toFixed(1)
+
+  const prompt = `You are a senior CVM (Customer Value Management) analyst at Indosat Ooredoo Hutchison. The XGBoost churn model has scored the subscriber below at ${riskPct}% churn probability (${sub.risk_tier} tier). Produce a tight retention brief.
+
+Subscriber:
+- ID: ${sub.user_id}, ${sub.age} y/o, ${sub.city}
+- Plan: ${sub.plan_name} (${sub.plan_type}), $${sub.monthly_spend_usd}/mo, tenure ${sub.tenure_months} months
+- Usage: ${sub.data_usage_pct}% data quota, ${sub.voice_minutes} voice min, ${sub.app_logins_last_30d} app logins / 30d
+- Service: NPS ${sub.nps_score}/10, ${sub.complaints_last_90d} complaints / 90d, ${sub.dropped_calls_last_30d} dropped calls / 30d
+- Recency: ${sub.days_since_last_topup} days since last top-up
+
+Return ONLY valid JSON in this exact schema (no markdown, no preamble, no code fences):
+{
+  "narrative": "2-3 sentence plain-English explanation of WHY this subscriber is at risk, citing the most decisive 2-3 features by name. End with the implication for retention.",
+  "recommendation": {
+    "channel": "email | voice | either",
+    "offer": "Short concrete offer (e.g., '10GB data bonus + 30% off next bill')",
+    "urgency": "high | medium | low",
+    "rationale": "1 sentence on why this channel + offer fits this profile"
+  },
+  "email": {
+    "subject": "Under 60 chars, personalized",
+    "body": "3-4 short paragraphs in English, addresses the subscriber by their plan + city, references the 1-2 most relevant pain points, names the offer, gives a clear claim path via the myIndosat app. Sign off as Customer Retention Team."
+  },
+  "voice_script": "30-second talking points for a Twilio voice call. Conversational English, no markdown, opens with a friendly identification, references one specific pain point, names the offer, gives a clear next step."
+}
+
+No markdown. Just JSON.`
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 1500,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
+  const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
+  return JSON.parse(cleaned)
+}
+
 // ── Persona Architect ──────────────────────────────────────────────────────
 export async function generatePersonaWithClaude(product: string, industry: string) {
   const client = getClient()
