@@ -546,32 +546,35 @@ Indosat Ooredoo Hutchison`
                     )}
                   </div>
 
-                  {/* Actions */}
-                  <div>
-                    <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Marketer Decision</div>
-                    <p className="text-[10px] text-gray-600 mb-3">Human-in-the-loop decision point. Review the AI prediction and decide: approve, escalate to high priority, or mark as safe.</p>
-                    <div className="flex gap-2">
-                      <button onClick={() => doAction(sub.user_id, 'approved', 2)}
-                        className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'approved' ? 'bg-green-500/20 text-green-600 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Approve AI
-                      </button>
-                      <button onClick={() => doAction(sub.user_id, 'escalated', 2)}
-                        className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'escalated' ? 'bg-red-500/20 text-red-600 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
-                        <AlertTriangle className="w-3.5 h-3.5" /> Escalate
-                      </button>
-                      <button onClick={() => doAction(sub.user_id, 'safe', 2)}
-                        className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                          wf.action === 'safe' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
-                        <Shield className="w-3.5 h-3.5" /> Mark Safe
-                      </button>
-                      <button onClick={() => doReset(sub.user_id)}
-                        className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
+                  {/* Marketer Decision — gated behind generating an AI brief so the
+                      reviewer reads the model's reasoning before approving/overriding */}
+                  {briefs[sub.user_id] && (
+                    <div>
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Marketer Decision</div>
+                      <p className="text-[10px] text-gray-600 mb-3">Human-in-the-loop decision point. Now that you have reviewed the AI brief above, decide: approve the prediction, escalate to high priority, or mark as safe.</p>
+                      <div className="flex gap-2">
+                        <button onClick={() => doAction(sub.user_id, 'approved', 2)}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
+                            wf.action === 'approved' ? 'bg-green-500/20 text-green-600 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Approve AI
+                        </button>
+                        <button onClick={() => doAction(sub.user_id, 'escalated', 2)}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
+                            wf.action === 'escalated' ? 'bg-red-500/20 text-red-600 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                          <AlertTriangle className="w-3.5 h-3.5" /> Escalate
+                        </button>
+                        <button onClick={() => doAction(sub.user_id, 'safe', 2)}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
+                            wf.action === 'safe' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                          <Shield className="w-3.5 h-3.5" /> Mark Safe
+                        </button>
+                        <button onClick={() => doReset(sub.user_id)}
+                          className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Contact actions */}
                   {wf.step >= 2 && (() => {
