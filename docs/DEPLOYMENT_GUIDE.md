@@ -89,7 +89,7 @@ mkdir projects
 cd projects
 
 # Clone this repo (replace with your GitHub username once you fork)
-git clone https://github.com/mohagungnugroho/telcopulse-ai.git
+git clone https://github.com/mn3265-commits/telcopulse-ai.git
 cd telcopulse-ai
 ```
 
@@ -229,8 +229,11 @@ On GitHub:
 1. **Framework:** Next.js (auto-detected)
 2. **Build command:** `next build` (default)
 3. **Environment Variables** — click "Add":
-   - Name: `ANTHROPIC_API_KEY`
-   - Value: `sk-ant-api03-xxxxxxxxxxxxxx` (your key)
+   - **Required:**
+     - `ANTHROPIC_API_KEY` — your Claude API key (`sk-ant-api03-...`)
+   - **Optional** (only if you want to enable outbound retention email and voice calls):
+     - `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` — for Gmail SMTP via Nodemailer (powers `/api/send-email`)
+     - `TWILIO_SID`, `TWILIO_TOKEN`, `TWILIO_PHONE_FROM` — for Twilio Voice (powers `/api/send-call`)
 4. Click **Deploy**
 
 Wait 2-3 minutes. ⏱️
