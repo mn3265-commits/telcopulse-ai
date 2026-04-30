@@ -75,14 +75,14 @@ The pipeline implements all six components required by the AI factory pattern:
 | 2 | Feature engineering | 18 features chosen for behavioral, demographic, and network coverage |
 | 3 | Model training | XGBoost classifier with class balancing; LR and rule-based baselines for comparison |
 | 4 | Evaluation & validation | Held-out test split, PR-curve threshold tuning, confusion matrix, baseline comparison |
-| 5 | Deployment / inference | Pre-scored CSV consumed by Next.js API routes (`/api/churn`, `/api/segment`, `/api/campaign`); Claude reasoning invoked at request time |
+| 5 | Deployment / inference | Pre-scored CSV consumed by Next.js API routes (`/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`); Claude reasoning invoked at request time. Two outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
 | 6 | Feedback loop | The Subscriber Workflow module captures per-subscriber human decisions (Approve / Escalate / Mark Safe / Outcome) — the labels needed to retrain the model on production drift |
 
 ### 2.5 Pipeline diagram
 
 ![AI Factory Pipeline](diagrams/ai_factory.png)
 
-**Figure 1.** End-to-end AI factory: data sources flow through ingestion and feature engineering into the model layer, where XGBoost is trained alongside two baselines and evaluated via PR-curve threshold tuning. Per-subscriber scores are served through Next.js API routes; Claude Sonnet 4 produces generative artifacts (segments, campaigns, impact narration) on demand. The dashboard activates outbound channels (Twilio, SMTP), and human-in-the-loop decisions feed a weekly retraining cadence.
+**Figure 1.** End-to-end AI factory: data sources flow through ingestion and feature engineering into the model layer, where XGBoost is trained alongside two baselines and evaluated via PR-curve threshold tuning. Per-subscriber scores are served through Next.js API routes; Claude Sonnet 4 produces generative artifacts (segments, campaigns, impact narration) on demand. The dashboard activates two integrated outbound channels — **Twilio Voice** for calls and **Gmail SMTP via Nodemailer** for email — and human-in-the-loop decisions feed a weekly retraining cadence.
 
 ## 3. AI Techniques and Technology Stack
 
@@ -104,7 +104,7 @@ The solution is intentionally hybrid because no single AI paradigm fits all four
 | AI reasoning | Anthropic Claude Sonnet 4 via `@anthropic-ai/sdk` | State-of-the-art reasoning quality, native streaming, lowest latency among frontier models for this size class |
 | ML model | XGBoost 2.x, scikit-learn (LR baseline, scaler, metrics) | Best-in-class tabular performance; mature scikit-learn ecosystem for evaluation |
 | Data | Local CSV (10K subscribers); Postgres / Supabase planned for production | CSV is appropriate at prototype scale; the API layer abstracts the source so a swap is local |
-| Outbound | Twilio (voice/SMS), Nodemailer (email via SMTP) | Reference implementations gated behind env vars; no hard dependency |
+| Integrations | **Twilio Voice** (`twilio` v6) for outbound retention calls; **Nodemailer** v8 with **Gmail SMTP** for retention emails | Already wired into the codebase via `/api/send-call` and `/api/send-email`; activated by `TWILIO_SID` / `TWILIO_TOKEN` / `TWILIO_PHONE_FROM` and `GMAIL_ADDRESS` / `GMAIL_APP_PASSWORD` |
 | Hosting | Vercel (serverless edge + Node runtime) | Zero-ops deploy from GitHub; preview deployments per branch |
 | Versioning & CI | Git, GitHub | Standard |
 
@@ -132,7 +132,7 @@ The prototype is a production-grade Next.js 14 web application deployed at `telc
 
 ### 4.2 The value moment
 
-The single-screen "value moment" the prototype is designed to deliver is the **Churn Radar → Subscriber Workflow → Campaign Writer** flow. A CVM analyst opens Churn Radar, sees the top-100 highest-risk subscribers ranked by predicted probability, opens one (Subscriber Workflow), reviews the model's reasoning, clicks "Generate retention campaign", picks a channel, and sends — all from one tab, in under a minute. The same flow today involves three teams and two days.
+The single-screen "value moment" the prototype is designed to deliver is the **Churn Radar → Subscriber Workflow → Campaign Writer** flow. A CVM analyst opens Churn Radar, sees the top-N highest-risk subscribers ranked by predicted probability — the dashboard surfaces a concrete number on this screen ("Projected MRR loss if no action: **$1,247**" against the six most-at-risk subscribers in the current synthetic dataset). The analyst opens one subscriber (Subscriber Workflow), reviews the model's reasoning, clicks *Generate retention campaign*, picks a channel, and dispatches it through Gmail SMTP or Twilio Voice — all from one tab, in under a minute. The same flow today involves three teams and two days.
 
 ### 4.3 Architecture in production
 
