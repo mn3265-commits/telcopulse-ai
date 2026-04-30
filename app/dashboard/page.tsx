@@ -37,51 +37,53 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white">
       {/* Top nav */}
       <header className="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-xl z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+            <Link href="/" className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition flex-shrink-0">
               <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm">Back</span>
+              <span className="text-sm hidden sm:inline">Back</span>
             </Link>
-            <div className="h-6 w-px bg-gray-200" />
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-brand-400 flex items-center justify-center">
+            <div className="h-6 w-px bg-gray-200 hidden sm:block" />
+            <Link href="/" className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 rounded-md bg-brand-400 flex items-center justify-center flex-shrink-0">
                 <Activity className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-gray-900 font-medium tracking-tight">TelcoPulse</span>
+              <span className="text-gray-900 font-medium tracking-tight truncate">TelcoPulse</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span>Demo mode · 10,000 subscribers loaded</span>
-            </div>
+          <div className="hidden md:flex items-center gap-2 text-xs text-gray-600 flex-shrink-0">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span>Demo mode · 10,000 subscribers loaded</span>
+          </div>
+          <div className="flex md:hidden items-center gap-1.5 text-[10px] text-gray-600 flex-shrink-0">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span>10K subs</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Overview */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-brand-400" />
             <span className="text-xs font-medium text-brand-400 tracking-wider uppercase">Live dashboard</span>
           </div>
-          <h1 className="text-3xl font-medium text-gray-900 tracking-tight mb-1">Marketing intelligence</h1>
-          <p className="text-gray-500 text-sm">Real-time AI insights across your subscriber base</p>
+          <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 tracking-tight mb-1">Marketing intelligence</h1>
+          <p className="text-gray-500 text-xs sm:text-sm">Real-time AI insights across your subscriber base</p>
         </div>
 
         <StatsOverview />
 
         {/* Tabs */}
-        <div className="mt-10 mb-6 border-b border-gray-200">
-          <div className="flex gap-1">
+        <div className="mt-8 sm:mt-10 mb-6 border-b border-gray-200">
+          <div className="flex gap-1 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 [-ms-overflow-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`relative px-3 py-3 text-xs font-medium transition flex items-center gap-1.5 group ${
+                className={`relative px-3 py-3 text-xs font-medium transition flex items-center gap-1.5 group flex-shrink-0 whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'text-gray-900'
                     : 'text-gray-600 hover:text-gray-700'
@@ -122,8 +124,8 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-gray-600">
+      <footer className="border-t border-gray-200 mt-12 sm:mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 text-xs text-gray-600">
           <div>Powered by Claude Sonnet 4 · XGBoost · Next.js 14</div>
           <div>Synthetic data — no real subscriber info</div>
         </div>
