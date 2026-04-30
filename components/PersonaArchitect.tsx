@@ -223,14 +223,34 @@ export default function PersonaArchitect() {
   const [persona, setPersona] = useState<Persona | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleGenerate = () => {
+  const [source, setSource] = useState<'claude' | 'template' | null>(null)
+
+  const handleGenerate = async () => {
     if (!product.trim() || !industry.trim()) return
     setLoading(true)
     setPersona(null)
-    setTimeout(() => {
+    setSource(null)
+    try {
+      const res = await fetch('/api/persona', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product, industry }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setPersona(data.persona)
+        setSource('claude')
+      } else {
+        // No API key (503) or other failure → fallback to local template
+        setPersona(generatePersona(product, industry))
+        setSource('template')
+      }
+    } catch {
       setPersona(generatePersona(product, industry))
+      setSource('template')
+    } finally {
       setLoading(false)
-    }, 1200)
+    }
   }
 
   const handleExample = (ex: typeof EXAMPLES[0]) => {
@@ -332,9 +352,20 @@ export default function PersonaArchitect() {
         <div className="space-y-4">
           {/* Persona Summary */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <User className="w-4 h-4 text-brand-400" />
-              <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Persona Summary</h3>
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-brand-400" />
+                <h3 className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Persona Summary</h3>
+              </div>
+              {source === 'claude' ? (
+                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">
+                  Claude Sonnet 4
+                </span>
+              ) : source === 'template' ? (
+                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">
+                  Template fallback
+                </span>
+              ) : null}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {[

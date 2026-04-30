@@ -362,3 +362,117 @@ No markdown. Just JSON.`
   const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
   return JSON.parse(cleaned)
 }
+
+// ── Persona Architect ──────────────────────────────────────────────────────
+export async function generatePersonaWithClaude(product: string, industry: string) {
+  const client = getClient()
+  if (!client) throw new Error('NO_API_KEY')
+
+  const prompt = `You are a marketing and UX research analyst. Build a credible Ideal Customer Profile (ICP / persona) for the product and segment below. The context is Southeast Asian telecom and adjacent industries (Indosat / Smartfren / Hutchison 3 / GrabKios scale).
+
+Product: ${product}
+Industry or target segment: ${industry}
+
+Return ONLY valid JSON in this exact schema (no markdown, no preamble, no code fences):
+{
+  "summary": {
+    "name": "Realistic full name (use Indonesian names for SEA-telecom context unless industry implies otherwise)",
+    "role": "Job title or life role, e.g., 'University Student / Content Creator'",
+    "ageRange": "e.g., '25-34'",
+    "companySize": "Individual consumer, household size, or company employee count",
+    "location": "Specific Indonesian or SEA cities / regions"
+  },
+  "painPoints": ["sentence 1", "sentence 2", "sentence 3", "sentence 4"],
+  "goals": ["sentence 1", "sentence 2", "sentence 3", "sentence 4"],
+  "channels": [
+    {"name": "channel name", "percentage": 0-100},
+    {"name": "channel name", "percentage": 0-100},
+    {"name": "channel name", "percentage": 0-100},
+    {"name": "channel name", "percentage": 0-100}
+  ],
+  "lifecycle": [
+    {"stage": "Awareness", "description": "1 sentence"},
+    {"stage": "Consideration", "description": "1 sentence"},
+    {"stage": "Activation", "description": "1 sentence"},
+    {"stage": "Retention", "description": "1 sentence"},
+    {"stage": "Advocacy", "description": "1 sentence"}
+  ]
+}
+
+Channels must be sorted by percentage descending. Pain points and goals must be specific (no generic platitudes). Keep every sentence under 25 words. No markdown. Just JSON.`
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 1500,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
+  const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
+  return JSON.parse(cleaned)
+}
+
+// ── Launch Copilot ─────────────────────────────────────────────────────────
+const PHASE_BORDERS = ['border-l-gray-400', 'border-l-brand-400', 'border-l-green-500']
+
+export async function generateLaunchPlanWithClaude(
+  product: string,
+  audience: string,
+  budget: string
+) {
+  const client = getClient()
+  if (!client) throw new Error('NO_API_KEY')
+
+  const prompt = `You are a senior B2B marketing strategist. Build a complete go-to-market launch plan tailored to the inputs.
+
+Product: ${product || '(not specified — infer a reasonable product)'}
+Target audience: ${audience || '(not specified — infer a reasonable audience)'}
+Budget: ${budget}
+
+Return ONLY valid JSON in this exact schema (no markdown, no preamble, no code fences):
+{
+  "positioning": "Begin with 'For [audience] who [pain or goal], [product] is a/an ' — return only this lead-in (no period, ends with a space)",
+  "boldPhrase": "The bold completion of the positioning sentence — 1 line, ends with a period",
+  "tagline": "Memorable tagline, ≤ 12 words",
+  "pillars": [
+    {"title": "≤ 3 word value prop", "description": "1-2 sentences with a concrete number or benefit"},
+    {"title": "≤ 3 word value prop", "description": "1-2 sentences with a concrete number or benefit"},
+    {"title": "≤ 3 word value prop", "description": "1-2 sentences with a concrete number or benefit"}
+  ],
+  "phases": [
+    {"name": "Pre-launch", "timeline": "Week 1-2", "items": ["item 1", "item 2", "item 3", "item 4"]},
+    {"name": "Launch", "timeline": "Week 3-4", "items": ["item 1", "item 2", "item 3", "item 4"]},
+    {"name": "Scale", "timeline": "Month 2-3", "items": ["item 1", "item 2", "item 3", "item 4"]}
+  ],
+  "channels": [
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '25%'", "reach": "e.g. '10K-20K impressions/mo'", "cta": "≤ 4 word CTA"},
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '20%'", "reach": "...", "cta": "..."},
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '20%'", "reach": "...", "cta": "..."},
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '15%'", "reach": "...", "cta": "..."},
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '10%'", "reach": "...", "cta": "..."},
+    {"channel": "name", "priority": "High|Medium|Low", "budgetPct": "e.g. '10%'", "reach": "...", "cta": "..."}
+  ]
+}
+
+Channel budgetPct values must add to 100%. Items in each phase must be specific (mention numbers, named tactics, real channels). No markdown. Just JSON.`
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 2000,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const text = response.content?.[0]?.type === 'text' ? response.content[0].text : ''
+  const cleaned = text.replace(/```json\n?|```\n?/g, '').trim()
+  const parsed = JSON.parse(cleaned)
+
+  // Server-side: attach borderColor to each phase so the UI doesn't depend on Claude for Tailwind classes
+  if (Array.isArray(parsed.phases)) {
+    parsed.phases = parsed.phases.map((p: any, i: number) => ({
+      ...p,
+      borderColor: PHASE_BORDERS[i] || PHASE_BORDERS[2],
+    }))
+  }
+
+  return parsed
+}

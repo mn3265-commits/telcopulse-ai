@@ -75,7 +75,7 @@ The pipeline implements all six components required by the AI factory pattern:
 | 2 | Feature engineering | 18 features chosen for behavioral, demographic, and network coverage |
 | 3 | Model training | XGBoost classifier with class balancing; LR and rule-based baselines for comparison |
 | 4 | Evaluation & validation | Held-out test split, PR-curve threshold tuning, confusion matrix, baseline comparison |
-| 5 | Deployment / inference | Pre-scored CSV consumed by Next.js API routes (`/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`); Claude reasoning invoked at request time. Two outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
+| 5 | Deployment / inference | Pre-scored CSV consumed by six Next.js API routes — `/api/churn`, `/api/segment`, `/api/campaign`, `/api/insights`, `/api/persona`, `/api/launch` — each invoking Claude at request time with a strict JSON schema and a deterministic template fallback when no API key is set. Two further outbound endpoints (`/api/send-email`, `/api/send-call`) deliver retention messages through Gmail SMTP and Twilio Voice. |
 | 6 | Feedback loop | The Subscriber Workflow module captures per-subscriber human decisions (Approve / Escalate / Mark Safe / Outcome) — the labels needed to retrain the model on production drift |
 
 ### 2.5 Pipeline diagram
@@ -127,8 +127,8 @@ The prototype is a production-grade Next.js 14 web application deployed at `telc
 5. **Impact Predictor** — pre-send forecast of reach, conversion, and revenue.
 6. **What-If Simulator** — interactive sliders re-score a subscriber in real time.
 7. **Model Evaluation** — performance, confusion matrix, baseline comparison, Go/No-Go panel, business impact, edge cases, AI factory architecture.
-8. **Persona Architect** — generate an Ideal Customer Profile from a product + industry input.
-9. **Launch Copilot** — generate positioning, taglines, phased plan, and channel mix.
+8. **Persona Architect** — Claude generates a complete Ideal Customer Profile (summary, four pain points, four goals, four channels with engagement weights, and a five-stage lifecycle) from a product + industry input. Falls back to a deterministic template when no API key is present.
+9. **Launch Copilot** — Claude generates positioning, bold phrase, tagline, three messaging pillars, a three-phase launch plan with four items each, and a six-channel budget allocation totalling 100%, conditioned on product, audience, and budget. Same template fallback pattern.
 
 ### 4.2 The value moment
 

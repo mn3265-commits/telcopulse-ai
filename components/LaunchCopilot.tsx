@@ -208,15 +208,33 @@ export default function LaunchCopilot() {
   const [plan, setPlan] = useState<LaunchPlan | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleGenerate = () => {
+  const [source, setSource] = useState<'claude' | 'template' | null>(null)
+
+  const handleGenerate = async () => {
     if (!product.trim() && !audience.trim()) return
     setLoading(true)
     setPlan(null)
-    setTimeout(() => {
-      const result = generateLaunchPlan(product, audience, budget)
-      setPlan(result)
+    setSource(null)
+    try {
+      const res = await fetch('/api/launch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product, audience, budget }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setPlan(data.plan)
+        setSource('claude')
+      } else {
+        setPlan(generateLaunchPlan(product, audience, budget))
+        setSource('template')
+      }
+    } catch {
+      setPlan(generateLaunchPlan(product, audience, budget))
+      setSource('template')
+    } finally {
       setLoading(false)
-    }, 1200)
+    }
   }
 
   const loadExample = (ex: typeof EXAMPLES[0]) => {
@@ -360,7 +378,18 @@ export default function LaunchCopilot() {
         <div className="space-y-6">
           {/* Positioning Statement */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-            <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-3">Positioning Statement</div>
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase">Positioning Statement</div>
+              {source === 'claude' ? (
+                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">
+                  Claude Sonnet 4
+                </span>
+              ) : source === 'template' ? (
+                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">
+                  Template fallback
+                </span>
+              ) : null}
+            </div>
             <p className="text-sm text-gray-700 leading-relaxed">
               {plan.positioning}<span className="font-bold text-gray-900">{plan.boldPhrase}</span>
             </p>
