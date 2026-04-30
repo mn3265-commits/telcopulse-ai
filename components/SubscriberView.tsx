@@ -382,19 +382,25 @@ Indosat Ooredoo Hutchison`
               {/* Expanded detail */}
               {isOpen && (
                 <div className="border-t border-gray-200 p-5 space-y-5 animate-in fade-in duration-200">
-                  {/* Step tracker — all green once feedback is saved (workflow complete) */}
+                  {/* Step tracker — all green once feedback is saved (workflow complete);
+                      Contacted step renders as "skipped" when the analyst marked the
+                      subscriber as a model false positive (Mark Safe). */}
                   <div className="flex gap-1">
                     {STEPS.map((step, idx) => {
                       const isSaved = !!feedbackSaved[sub.user_id]
-                      const completed = isSaved || idx + 1 < wf.step
-                      const current = !isSaved && idx + 1 === wf.step
+                      const isContactedStep = idx === 2 // 3. CONTACTED
+                      const skipped = wf.action === 'safe' && isContactedStep
+                      const completed = !skipped && (isSaved || idx + 1 < wf.step)
+                      const current = !isSaved && !skipped && idx + 1 === wf.step
                       return (
                         <div key={idx} className={`flex-1 text-center py-1.5 rounded text-[10px] font-semibold tracking-wider ${
+                          skipped ? 'bg-gray-100 text-gray-400 line-through decoration-gray-400' :
                           completed ? 'bg-green-500/20 text-green-600' :
                           current ? 'bg-brand-400/20 text-brand-400' :
                           'bg-gray-100 text-gray-600'
                         }`}>
                           {idx + 1}. {step.toUpperCase()}
+                          {skipped && <span className="ml-1 no-underline">(skipped)</span>}
                         </div>
                       )
                     })}
@@ -558,19 +564,19 @@ Indosat Ooredoo Hutchison`
                       <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Marketer Decision</div>
                       <p className="text-[10px] text-gray-600 mb-3">Human-in-the-loop decision point. Now that you have reviewed the AI brief above, decide: approve the prediction, escalate to high priority, or mark as safe.</p>
                       <div className="flex gap-2">
-                        <button onClick={() => doAction(sub.user_id, 'approved', 2)}
+                        <button onClick={() => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: 2, action: 'approved', channelOverride: undefined } }))}
                           className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
                             wf.action === 'approved' ? 'bg-green-500/20 text-green-600 border border-green-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                           <CheckCircle2 className="w-3.5 h-3.5" /> Approve AI
                         </button>
-                        <button onClick={() => doAction(sub.user_id, 'escalated', 2)}
+                        <button onClick={() => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: 2, action: 'escalated', channelOverride: 'voice' } }))}
                           className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
                             wf.action === 'escalated' ? 'bg-red-500/20 text-red-600 border border-red-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                           <AlertTriangle className="w-3.5 h-3.5" /> Escalate
                         </button>
-                        <button onClick={() => doAction(sub.user_id, 'safe', 2)}
+                        <button onClick={() => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: 3, action: 'safe', channelOverride: undefined, outcome: 'No outreach needed' } }))}
                           className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5 ${
-                            wf.action === 'safe' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                            wf.action === 'safe' ? 'bg-blue-500/20 text-blue-600 border border-blue-500/30' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
                           <Shield className="w-3.5 h-3.5" /> Mark Safe
                         </button>
                         <button onClick={() => doReset(sub.user_id)}
@@ -582,7 +588,7 @@ Indosat Ooredoo Hutchison`
                   )}
 
                   {/* Contact actions */}
-                  {wf.step >= 2 && (() => {
+                  {wf.step >= 2 && wf.action !== 'safe' && (() => {
                     // Use edited drafts if a brief was generated; otherwise fall back to the inline template.
                     const fallback = templateBrief(sub)
                     const draft = edits[sub.user_id] || {
@@ -597,6 +603,17 @@ Indosat Ooredoo Hutchison`
                     <div>
                       <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Send Retention Message — review &amp; edit before send</div>
                       <p className="text-[10px] text-gray-600 mb-3">Edit the email subject, body, and voice script below before dispatching. Changes are saved per-subscriber and used by the send buttons.</p>
+
+                      {/* Escalation banner */}
+                      {wf.action === 'escalated' && (
+                        <div className="mb-3 bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1 text-xs">
+                            <div className="font-semibold text-red-700 mb-0.5">Escalated to senior CVM agent</div>
+                            <div className="text-red-600/90">High-priority retention case. Channel auto-set to <span className="font-mono">voice</span> for personal contact. Consider richer offer (extended bonus, complaint resolution mention) than the model&apos;s default.</div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Editable Email + Voice */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
@@ -720,40 +737,62 @@ Indosat Ooredoo Hutchison`
                   {/* Outcome */}
                   {wf.step >= 3 && (
                     <div>
-                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">Record Outcome</div>
-                      <p className="text-[10px] text-gray-600 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
-                      <div className="flex gap-2">
-                        {['Retained', 'Churned', 'No response'].map(outcome => {
-                          const isSelected = wf.outcome === outcome
-                          const isSaved = !!feedbackSaved[sub.user_id]
-                          return (
-                            <button key={outcome}
-                              onClick={() => doOutcome(sub.user_id, outcome)}
-                              disabled={isSaved}
-                              className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed flex items-center justify-center gap-1.5 ${
-                                isSelected && isSaved
-                                  ? 'bg-green-500/25 text-green-700 border border-green-500/50 ring-1 ring-green-500/30'
-                                  : isSelected
-                                    ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
-                                    : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
-                                    : 'bg-amber-500/20 text-amber-600 border border-amber-500/30'
-                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-500 disabled:opacity-50'
-                              }`}>
-                              {isSelected && isSaved && <CheckCircle2 className="w-3.5 h-3.5" />}
-                              {outcome}
-                            </button>
-                          )
-                        })}
+                      <div className="text-[10px] font-semibold text-brand-400 tracking-wider uppercase mb-1">
+                        {wf.action === 'safe' ? 'Override AI — No Outreach' : 'Record Outcome'}
                       </div>
+                      <p className="text-[10px] text-gray-600 mb-3">
+                        {wf.action === 'safe'
+                          ? 'You marked this subscriber as a false positive — no retention contact will be sent. Please add a short reason below; this label feeds back into the model retraining pipeline so future predictions improve.'
+                          : 'Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.'}
+                      </p>
+
+                      {/* Mark Safe path — single locked outcome */}
+                      {wf.action === 'safe' ? (
+                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 flex items-start gap-2">
+                          <Shield className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1 text-xs">
+                            <div className="font-semibold text-blue-700 mb-0.5">No outreach needed</div>
+                            <div className="text-blue-600/90">Subscriber flagged as a model false positive. Contact step skipped. Reviewer notes recommended.</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          {['Retained', 'Churned', 'No response'].map(outcome => {
+                            const isSelected = wf.outcome === outcome
+                            const isSaved = !!feedbackSaved[sub.user_id]
+                            return (
+                              <button key={outcome}
+                                onClick={() => doOutcome(sub.user_id, outcome)}
+                                disabled={isSaved}
+                                className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed flex items-center justify-center gap-1.5 ${
+                                  isSelected && isSaved
+                                    ? 'bg-green-500/25 text-green-700 border border-green-500/50 ring-1 ring-green-500/30'
+                                    : isSelected
+                                      ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
+                                      : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
+                                      : 'bg-amber-500/20 text-amber-600 border border-amber-500/30'
+                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-500 disabled:opacity-50'
+                                }`}>
+                                {isSelected && isSaved && <CheckCircle2 className="w-3.5 h-3.5" />}
+                                {outcome}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      )}
                       {/* HITL reviewer notes */}
                       <div className="mt-3">
-                        <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Reviewer notes (optional)</div>
+                        <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">
+                          Reviewer notes {wf.action === 'safe' ? '(strongly recommended for false-positive labels)' : '(optional)'}
+                        </div>
                         <textarea
                           value={wf.notes || ''}
                           disabled={!!feedbackSaved[sub.user_id]}
                           onChange={e => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: prev[sub.user_id]?.step ?? 1, notes: e.target.value } }))}
                           rows={2}
-                          placeholder="Why did this subscriber retain / churn? Any signal the model missed?"
+                          placeholder={wf.action === 'safe'
+                            ? 'Why is this subscriber not actually at risk? (e.g., business account on shared SIM, recent long-term plan upgrade, manually retained off-system, dual-SIM secondary line, etc.)'
+                            : 'Why did this subscriber retain / churn? Any signal the model missed?'}
                           className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y disabled:bg-gray-50 disabled:text-gray-500"
                         />
                       </div>
