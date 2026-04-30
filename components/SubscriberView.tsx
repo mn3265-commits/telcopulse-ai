@@ -382,17 +382,22 @@ Indosat Ooredoo Hutchison`
               {/* Expanded detail */}
               {isOpen && (
                 <div className="border-t border-gray-200 p-5 space-y-5 animate-in fade-in duration-200">
-                  {/* Step tracker */}
+                  {/* Step tracker — all green once feedback is saved (workflow complete) */}
                   <div className="flex gap-1">
-                    {STEPS.map((step, idx) => (
-                      <div key={idx} className={`flex-1 text-center py-1.5 rounded text-[10px] font-semibold tracking-wider ${
-                        idx + 1 < wf.step ? 'bg-green-500/20 text-green-600' :
-                        idx + 1 === wf.step ? 'bg-brand-400/20 text-brand-400' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {idx + 1}. {step.toUpperCase()}
-                      </div>
-                    ))}
+                    {STEPS.map((step, idx) => {
+                      const isSaved = !!feedbackSaved[sub.user_id]
+                      const completed = isSaved || idx + 1 < wf.step
+                      const current = !isSaved && idx + 1 === wf.step
+                      return (
+                        <div key={idx} className={`flex-1 text-center py-1.5 rounded text-[10px] font-semibold tracking-wider ${
+                          completed ? 'bg-green-500/20 text-green-600' :
+                          current ? 'bg-brand-400/20 text-brand-400' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {idx + 1}. {step.toUpperCase()}
+                        </div>
+                      )
+                    })}
                   </div>
 
                   {/* Profile grid */}
