@@ -44,7 +44,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-sm sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 animate-slide-up" style={{ animationDelay: '100ms' }}>
-            Predict churn, segment customers in plain English, generate multi-channel campaigns,
+            Predict churn, segment customers with natural language, generate multi-channel campaigns,
             and forecast impact — all powered by Claude and real telecom patterns from Southeast Asia.
           </p>
 
