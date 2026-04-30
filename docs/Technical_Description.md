@@ -16,7 +16,7 @@ TelcoPulse combines two AI techniques, each suited to a different part of the pr
 
 ## Prototype Features
 
-The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop tracker with on-demand Claude brief, channel override, editable email + voice drafts, and outcome capture for retraining), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio Voice and Gmail SMTP via Nodemailer, gated by environment variables.
+The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop tracker with on-demand Claude brief and three differentiated decision paths — Approve / Escalate / Mark Safe — plus channel override, editable email + voice drafts, and outcome capture submitted through `/api/feedback`), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio Voice and Gmail SMTP via Nodemailer, gated by environment variables.
 
 ## Evaluation Results
 
