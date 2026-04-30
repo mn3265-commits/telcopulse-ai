@@ -1,0 +1,134 @@
+/* TelcoPulse AI Report — print stylesheet */
+
+@page {
+  size: Letter;
+  margin: 0.5in 0.65in;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.25;
+  color: #111;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 16pt;
+  font-weight: 700;
+  margin: 0 0 0.3em 0;
+  line-height: 1.15;
+}
+h2 {
+  font-size: 12pt;
+  font-weight: 700;
+  margin: 0.7em 0 0.2em 0;
+  line-height: 1.15;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+h3 {
+  font-size: 10.5pt;
+  font-weight: 600;
+  margin: 0.5em 0 0.15em 0;
+  line-height: 1.15;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+p, li {
+  margin: 0 0 0.3em 0;
+}
+
+ul, ol {
+  margin: 0.15em 0 0.35em 1.3em;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.2em 0 0.5em 0;
+  font-size: 9pt;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 4px 7px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #f3f3f3;
+  font-weight: 600;
+}
+
+code, pre {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 9pt;
+}
+pre {
+  background: #f6f8fa;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0.3em 0 0.6em 0;
+  page-break-inside: avoid;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+}
+
+blockquote {
+  margin: 0.4em 0;
+  padding: 0 0.8em;
+  border-left: 3px solid #d1d5db;
+  color: #4b5563;
+}
+
+img {
+  max-width: 100%;
+  max-height: 3.2in;
+  height: auto;
+  display: block;
+  margin: 0.3em auto;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 0.8em 0;
+}
+
+a {
+  color: #1a56db;
+  text-decoration: none;
+}
+
+/* Page-break helpers */
+div[style*="page-break-after"] {
+  page-break-after: always;
+  height: 0;
+}
+div[style*="page-break-before"] {
+  page-break-before: always;
+}
+
+/* Cover */
+div[align="center"] h1:first-of-type {
+  margin-top: 1.5in;
+  font-size: 22pt;
+}
