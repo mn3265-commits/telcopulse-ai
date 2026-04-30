@@ -19,7 +19,7 @@ flowchart LR
 
     subgraph S4["Inference"]
         SC["Per-subscriber score<br/>0-1 + risk tier"]
-        API["Next.js API<br/>7 Claude routes + 2 outbound"]
+        API["Next.js API<br/>7 Claude + 2 outbound + 1 feedback"]
     end
 
     subgraph S5["Generative"]
@@ -33,6 +33,7 @@ flowchart LR
 
     subgraph S7["Feedback Loop"]
         HITL["Human-in-the-loop<br/>Approve / Escalate / Outcome"]
+        FB["/api/feedback<br/>logs labelled rows"]
         RT["Retraining trigger<br/>weekly cadence"]
     end
 
@@ -52,7 +53,8 @@ flowchart LR
     CL --> UI
     UI --> OUT
     UI --> HITL
-    HITL --> RT
+    HITL --> FB
+    FB --> RT
     RT -.->|retrain| TR
 
     classDef data fill:#FEF3F2,stroke:#F97066,stroke-width:1px,color:#1F2937
@@ -65,4 +67,4 @@ flowchart LR
     class TR,BL,EV,SC,API compute
     class CL gen
     class UI,OUT out
-    class HITL,RT fb
+    class HITL,FB,RT fb

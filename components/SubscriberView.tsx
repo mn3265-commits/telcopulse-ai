@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Mail, MapPin, AlertTriangle, ChevronDown, ChevronUp, CheckCircle2, XCircle, Shield, RotateCcw, PhoneCall, Sparkles, Loader2, Brain, Target } from 'lucide-react'
+import { Search, Mail, MapPin, AlertTriangle, ChevronDown, ChevronUp, CheckCircle2, XCircle, Shield, RotateCcw, PhoneCall, Sparkles, Loader2, Brain, Target, Send } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import Papa from 'papaparse'
 
@@ -87,6 +87,9 @@ export default function SubscriberView() {
   const [briefSource, setBriefSource] = useState<Record<string, 'claude' | 'template'>>({})
   const [briefLoading, setBriefLoading] = useState<string | null>(null)
   const [edits, setEdits] = useState<Record<string, EditedDraft>>({})
+  const [feedbackSaved, setFeedbackSaved] = useState<Record<string, { at: string; message: string }>>({})
+  const [feedbackSaving, setFeedbackSaving] = useState<string | null>(null)
+  const [feedbackError, setFeedbackError] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch('/data/subscribers_scored.csv')
@@ -141,6 +144,16 @@ export default function SubscriberView() {
       return copy
     })
     setBriefSource(prev => {
+      const copy = { ...prev }
+      delete copy[id]
+      return copy
+    })
+    setFeedbackSaved(prev => {
+      const copy = { ...prev }
+      delete copy[id]
+      return copy
+    })
+    setFeedbackError(prev => {
       const copy = { ...prev }
       delete copy[id]
       return copy
@@ -234,6 +247,56 @@ Indosat Ooredoo Hutchison`
       ...prev,
       [id]: { ...prev[id], [field]: value },
     }))
+  }
+
+  async function submitFeedback(sub: Subscriber) {
+    const wf = workflows[sub.user_id]
+    if (!wf?.outcome) return
+    setFeedbackSaving(sub.user_id)
+    setFeedbackError(prev => {
+      const copy = { ...prev }
+      delete copy[sub.user_id]
+      return copy
+    })
+    try {
+      const channelUsed = wf.sendStatus
+        ? wf.sendStatus.toLowerCase().includes('email')
+          ? 'email'
+          : wf.sendStatus.toLowerCase().includes('call')
+            ? 'voice'
+            : 'none'
+        : 'none'
+      const payload = {
+        user_id: sub.user_id,
+        predicted_churn_prob: sub.predicted_churn_prob,
+        risk_tier: sub.risk_tier,
+        human_action: wf.action,
+        channel_used: channelUsed,
+        outcome: wf.outcome,
+        notes: wf.notes || '',
+        ai_brief_used: !!briefs[sub.user_id],
+        recommendation_channel: briefs[sub.user_id]?.recommendation.channel,
+        timestamp_iso: new Date().toISOString(),
+      }
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setFeedbackSaved(prev => ({
+          ...prev,
+          [sub.user_id]: { at: data.stored_at, message: data.message },
+        }))
+      } else {
+        setFeedbackError(prev => ({ ...prev, [sub.user_id]: data.error || 'Save failed' }))
+      }
+    } catch (err: any) {
+      setFeedbackError(prev => ({ ...prev, [sub.user_id]: err.message || 'Network error' }))
+    } finally {
+      setFeedbackSaving(null)
+    }
   }
 
   function urgencyBadge(urgency: string) {
@@ -653,8 +716,10 @@ Indosat Ooredoo Hutchison`
                       <p className="text-[10px] text-gray-600 mb-3">Record the result after contacting this subscriber. Outcome data feeds back into the monthly model retraining pipeline.</p>
                       <div className="flex gap-2">
                         {['Retained', 'Churned', 'No response'].map(outcome => (
-                          <button key={outcome} onClick={() => doOutcome(sub.user_id, outcome)}
-                            className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition ${
+                          <button key={outcome}
+                            onClick={() => doOutcome(sub.user_id, outcome)}
+                            disabled={!!feedbackSaved[sub.user_id]}
+                            className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
                               wf.outcome === outcome
                                 ? outcome === 'Retained' ? 'bg-green-500/20 text-green-600 border border-green-500/30'
                                 : outcome === 'Churned' ? 'bg-red-500/20 text-red-600 border border-red-500/30'
@@ -665,22 +730,53 @@ Indosat Ooredoo Hutchison`
                           </button>
                         ))}
                       </div>
-                      {wf.outcome && (
-                        <div className="mt-2 text-xs text-gray-500">
-                          Outcome recorded. This data feeds into the monthly model retraining pipeline.
-                        </div>
-                      )}
-
                       {/* HITL reviewer notes */}
                       <div className="mt-3">
                         <div className="text-[10px] text-gray-600 uppercase tracking-wider mb-1.5">Reviewer notes (optional)</div>
                         <textarea
                           value={wf.notes || ''}
+                          disabled={!!feedbackSaved[sub.user_id]}
                           onChange={e => setWorkflows(prev => ({ ...prev, [sub.user_id]: { ...prev[sub.user_id], step: prev[sub.user_id]?.step ?? 1, notes: e.target.value } }))}
                           rows={2}
                           placeholder="Why did this subscriber retain / churn? Any signal the model missed?"
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-brand-400/50 transition resize-y disabled:bg-gray-50 disabled:text-gray-500"
                         />
+                      </div>
+
+                      {/* Save / submit feedback for retraining */}
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <button
+                          onClick={() => submitFeedback(sub)}
+                          disabled={!wf.outcome || feedbackSaving === sub.user_id || !!feedbackSaved[sub.user_id]}
+                          className={`w-full px-3 py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2 ${
+                            feedbackSaved[sub.user_id]
+                              ? 'bg-green-500/15 text-green-700 border border-green-500/30 cursor-default'
+                              : !wf.outcome
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-brand-400 hover:bg-brand-400/90 text-white'
+                          }`}
+                        >
+                          {feedbackSaving === sub.user_id ? (
+                            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving feedback...</>
+                          ) : feedbackSaved[sub.user_id] ? (
+                            <><CheckCircle2 className="w-3.5 h-3.5" /> Saved · queued for next retrain</>
+                          ) : !wf.outcome ? (
+                            <>Pick an outcome to enable Save</>
+                          ) : (
+                            <><Send className="w-3.5 h-3.5" /> Save feedback for retraining</>
+                          )}
+                        </button>
+                        {feedbackSaved[sub.user_id] && (
+                          <div className="mt-2 text-[11px] text-gray-600">
+                            <span className="text-gray-500">{feedbackSaved[sub.user_id].message}</span>
+                            <span className="text-gray-400"> Stored at {new Date(feedbackSaved[sub.user_id].at).toLocaleTimeString()}.</span>
+                          </div>
+                        )}
+                        {feedbackError[sub.user_id] && (
+                          <div className="mt-2 text-[11px] text-red-600 flex items-center gap-1.5">
+                            <XCircle className="w-3 h-3" /> {feedbackError[sub.user_id]}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
