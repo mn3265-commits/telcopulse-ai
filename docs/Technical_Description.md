@@ -12,11 +12,11 @@ TelcoPulse combines two AI techniques, each suited to a different part of the pr
 
 **Predictive AI (churn scoring).** A class-balanced XGBoost classifier trained on 18 behavioral and demographic features (tenure, monthly spend, data usage percentage, NPS score, complaint history, dropped calls, app engagement, days-since-topup, etc.). XGBoost was chosen over deep learning because the data is structured and tabular, where gradient-boosted trees consistently outperform neural networks at small-to-medium scale. The model outputs a churn probability between 0 and 1, then applies a tuned decision threshold (0.40, found via PR-curve F1 maximization on the test set) to produce binary risk labels and risk tiers (Low / Medium / High).
 
-**Generative AI (campaign and content generation).** Anthropic Claude Sonnet 4 via API. Claude generates personalized multi-channel campaign content (SMS, email, push, WhatsApp), translates natural-language segment queries into SQL filters, and produces forward-looking impact estimates. When the API is unavailable, the system degrades to rule-based templates with smart query parsing.
+**Generative AI (multi-surface).** Anthropic Claude Sonnet 4 via API powers seven distinct prompt chains, each behind its own Next.js route: per-segment campaign content (SMS, email, push, WhatsApp), natural-language segment queries to SQL, dashboard insights, campaign impact forecasting, ICP / persona generation, end-to-end launch plans, and per-subscriber retention briefs (risk narrative + recommended channel/offer + personalized email + voice script). Each route degrades to a deterministic template fallback when no API key is configured, so the prototype never breaks.
 
 ## Prototype Features
 
-The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop with 4-step tracker and approve/escalate/override), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio (voice) and Nodemailer/SMTP (email), gated by environment variables.
+The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop tracker with on-demand Claude brief, channel override, editable email + voice drafts, and outcome capture for retraining), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio Voice and Gmail SMTP via Nodemailer, gated by environment variables.
 
 ## Evaluation Results
 

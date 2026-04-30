@@ -67,8 +67,12 @@ Layered stack: typed React frontend, Next.js API routes, hybrid AI layer, CSV-ba
                    │
 ┌──────────────────┴──────────────────────────────┐
 │  API Layer (Next.js route handlers)             │
-│  /api/churn  /api/segment  /api/campaign        │
-│  /api/insights  /api/send-email  /api/send-call │
+│  7 Claude routes:                                │
+│   /api/churn  /api/segment  /api/campaign       │
+│   /api/insights  /api/persona  /api/launch      │
+│   /api/subscriber-brief                         │
+│  2 outbound routes:                              │
+│   /api/send-email  /api/send-call               │
 └──────────────────┬──────────────────────────────┘
                    │
         ┌──────────┴──────────┐
