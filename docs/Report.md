@@ -116,25 +116,33 @@ The full stack is summarized inside the Model Evaluation tab of the running app.
 
 ## 4. Prototype Development
 
-### 4.1 What was built
+### 4.1 Scope of this report
 
-The prototype is a production-grade Next.js 14 web application deployed at `telcopulse-ai.vercel.app`. It exposes nine modules sharing one synthetic subscriber dataset and one trained model:
+The prototype is a production-grade Next.js 14 web application deployed at `telcopulse-ai.vercel.app`. It exposes **nine dashboard modules** sharing one synthetic subscriber dataset and one trained model — Churn Radar, Subscriber Workflow, Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. A short description of each module, screenshots, and the live demo link live in the repository's [`README.md`](https://github.com/mn3265-commits/telcopulse-ai#what-it-does).
 
-1. **Churn Radar** — risk distribution, top-risk list, model details panel.
-2. **Subscriber Workflow** — individual retention tracker with four states (AI Scored → Reviewed → Contacted → Outcome). One click generates a Claude brief: a 2–3 sentence risk narrative citing the decisive features, a recommended action (channel + offer + urgency + rationale), and a personalized email + Twilio voice script. The Marketer Decision panel is gated behind that brief so the analyst always reviews the model's reasoning before committing, and the three decision buttons drive **three differentiated paths**: **(a) Approve AI** runs the standard send with the recommended channel/offer; **(b) Escalate** auto-pins the channel to voice, surfaces a senior-CVM banner, and disables Email so the case is treated as high-priority; **(c) Mark Safe** overrides the model as a false positive, hides the contact step entirely, marks step 3 as skipped, pre-sets the outcome to "No outreach needed", and guides the reviewer to record the false-positive reason — the highest-value label for retraining. All three paths converge on a **Save feedback** button that POSTs the full row (prediction, action, channel, outcome, notes, brief flag) through `/api/feedback`, locking the row and turning the four step pills green to signal closure of the retraining loop.
-3. **Smart Segments** — natural-language query → SQL filter → subscriber count → suggested angle.
-4. **Campaign Writer** — one brief, four channels (SMS, push, email, WhatsApp), tone-adjustable.
-5. **Impact Predictor** — pre-send forecast of reach, conversion, and revenue.
-6. **What-If Simulator** — interactive sliders re-score a subscriber in real time.
-7. **Model Evaluation** — performance, confusion matrix, baseline comparison, Go/No-Go panel, business impact, edge cases, AI factory architecture.
-8. **Persona Architect** — Claude generates a complete Ideal Customer Profile (summary, four pain points, four goals, four channels with engagement weights, and a five-stage lifecycle) from a product + industry input. Falls back to a deterministic template when no API key is present.
-9. **Launch Copilot** — Claude generates positioning, bold phrase, tagline, three messaging pillars, a three-phase launch plan with four items each, and a six-channel budget allocation totalling 100%, conditioned on product, audience, and budget. Same template fallback pattern.
+Per the rubric's *narrowly scoped* requirement, **the rest of this report focuses on a single module — the Subscriber Workflow** — because that is where the prototype's value moment lives and where every AI Factory component (ML inference, generative AI, human-in-the-loop, feedback loop) is exercised in one screen. The eight other modules are supporting surfaces; treat them as breadth.
 
-### 4.2 The value moment
+### 4.2 The Subscriber Workflow module — deep dive
 
-The single-screen "value moment" the prototype is designed to deliver is the **Churn Radar → Subscriber Workflow** flow. A CVM analyst opens Churn Radar, sees the top-N highest-risk subscribers ranked by predicted probability — the dashboard surfaces a concrete number on this screen ("Projected MRR loss if no action: **$1,247**" against the six most-at-risk subscribers in the current synthetic dataset). The analyst opens one subscriber, clicks *Generate AI brief* — Claude returns a risk narrative, recommended channel + offer, and a fully drafted email and voice script. The analyst then chooses one of three paths: **Approve AI** (standard send), **Escalate** (auto-voice + senior-agent treatment), or **Mark Safe** (model false-positive override — contact skipped, false-positive reason captured for retraining). For Approve / Escalate, the analyst can edit the email subject, body, and voice script before dispatching through Gmail SMTP or Twilio Voice, then records the outcome. **Save feedback** posts the row to `/api/feedback`, locks the workflow, and turns all four step pills green — all from one tab, in under a minute. The same flow today involves three teams and two days.
+Subscriber Workflow is a per-subscriber retention tracker with four explicit states (AI Scored → Reviewed → Contacted → Outcome) and a tightly designed interaction loop:
 
-### 4.3 Architecture in production
+1. **AI Scored.** XGBoost has already scored every subscriber (batch). The expanded row shows the customer profile, the rule-based risk drivers, and the predicted probability with risk tier.
+2. **Generate AI brief.** A single button calls `/api/subscriber-brief`. Claude Sonnet 4 returns a strict-schema JSON: a 2–3 sentence risk narrative citing the decisive features, a recommended action (channel + offer + urgency + rationale), and a fully drafted personalized email + Twilio voice script. A "Claude Sonnet 4" badge confirms the live call; a "Template fallback" badge appears if no API key is set.
+3. **Reviewed — three differentiated decision paths.** The Marketer Decision panel is *gated behind the brief* so the analyst must read the model's reasoning before committing. The three buttons drive materially different paths:
+   - **Approve AI** — accept the prediction. Contact step proceeds with Claude's recommended channel and offer.
+   - **Escalate** — agree the subscriber is at risk and want a richer intervention. The contact step is shown with a red "Escalated to senior CVM agent" banner; the channel is auto-pinned to voice; the Email button is disabled.
+   - **Mark Safe** — override the model as a false positive. The contact step is hidden, step 3 (CONTACTED) renders as `(skipped)`, the outcome is auto-set to "No outreach needed", and the reviewer notes prompt switches to a guided placeholder asking *why* this was a false positive — the highest-value label for retraining.
+4. **Contacted (skipped on Mark Safe).** Editable email subject + body and voice script. Send Email goes through `/api/send-email` (Gmail SMTP via Nodemailer); Voice Call goes through `/api/send-call` (Twilio TwiML). The send buttons use the *edited* values, not the original draft.
+5. **Outcome.** Retained / Churned / No response, plus a free-text reviewer-notes textarea.
+6. **Save feedback.** A single submit button POSTs the full row — predicted probability, risk tier, human action, channel used, outcome, notes, AI-brief flag, recommendation channel, ISO timestamp — through `/api/feedback`. The endpoint logs to the serverless function output (in production this becomes a Postgres / Supabase insert). The row is then locked, the four step pills turn green, and the workflow is observably closed.
+
+Because this single module exercises ML inference, generative AI, three distinct HITL paths, real outbound channels, and the labelled-feedback sink, it is by design the report's only deep-dive surface.
+
+### 4.3 The value moment
+
+A CVM analyst opens **Churn Radar**, sees the top-N highest-risk subscribers ranked by predicted probability — the dashboard surfaces a concrete number on this screen ("Projected MRR loss if no action: **$1,247**" against the six most-at-risk subscribers in the current synthetic dataset). The analyst opens one subscriber, clicks *Generate AI brief*, picks one of the three decision paths, edits the message if needed, dispatches it (or skips on Mark Safe), records the outcome, and clicks **Save feedback** — all from one tab, in under a minute. The same flow today involves three teams and two days.
+
+### 4.4 Architecture in production
 
 In production the same prototype would only require three changes: replace the local CSV with a managed Postgres / Supabase instance, replace the in-line model file with an inference endpoint (or re-export to ONNX for edge serving), and add per-tenant authentication. Every other layer — Next.js API routes, Claude prompt chains, the UI — remains as-is.
 

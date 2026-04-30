@@ -16,7 +16,9 @@ TelcoPulse combines two AI techniques, each suited to a different part of the pr
 
 ## Prototype Features
 
-The prototype is a Next.js 14 web application deployed on Vercel with nine modules: Churn Radar, Subscriber Workflow (human-in-the-loop tracker with on-demand Claude brief and three differentiated decision paths — Approve / Escalate / Mark Safe — plus channel override, editable email + voice drafts, and outcome capture submitted through `/api/feedback`), Smart Segments, Campaign Writer, Impact Predictor, What-If Simulator, Model Evaluation, Persona Architect, and Launch Copilot. Outbound delivery is wired through Twilio Voice and Gmail SMTP via Nodemailer, gated by environment variables.
+The prototype is a Next.js 14 web application on Vercel exposing **nine dashboard modules** that share one subscriber dataset and one trained model. The full module index lives in the project [`README`](https://github.com/mn3265-commits/telcopulse-ai#what-it-does). For brevity, this 1-pager focuses on the **Subscriber Workflow** module — the value-moment surface that exercises every AI Factory component in one screen.
+
+**Subscriber Workflow** is a per-subscriber retention tracker (AI Scored → Reviewed → Contacted → Outcome). One click calls `/api/subscriber-brief`, where Claude Sonnet 4 returns a structured JSON: risk narrative, recommended channel + offer + urgency, plus a personalized email and Twilio voice script. The Marketer Decision panel is gated behind that brief and offers **three differentiated paths**: **Approve AI** (standard send), **Escalate** (channel auto-pinned to voice + senior-agent banner + Email disabled), and **Mark Safe** (model false-positive override — contact step skipped, outcome auto-set, reviewer notes captured as the retraining label). Outbound goes through Twilio Voice (`/api/send-call`) and Gmail SMTP via Nodemailer (`/api/send-email`). The full row is then submitted through `/api/feedback`, locking the workflow and queueing it for the next weekly retrain.
 
 ## Evaluation Results
 
