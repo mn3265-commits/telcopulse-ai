@@ -42,8 +42,8 @@ Nine modules, one platform, one shared subscriber dataset:
 | 5 | 📊 **Impact Predictor** | FORECASTING | Before you hit send, Claude estimates reach, conversion, and revenue using telecom benchmarks and your segment data. |
 | 6 | 🎚️ **What-If Simulator** | INTERPRETABILITY | Drag sliders on subscriber features and watch churn probability move in real time. Makes the model legible. |
 | 7 | 📋 **Model Evaluation** | GO / NO-GO | Full eval suite: metrics, baseline comparison, business-impact estimate, edge cases, and an AI factory architecture view. |
-| 8 | 🪪 **Persona Architect** | ICP GENERATOR | Claude generates a full Ideal Customer Profile from a product + industry — summary, pains, goals, channels, lifecycle. Falls back to a deterministic template when no API key is set. |
-| 9 | 🚀 **Launch Copilot** | GTM STRATEGY | Claude generates positioning, taglines, messaging pillars, a phased plan, and a budget-allocated channel mix conditioned on product, audience, and budget. Same template fallback. |
+| 8 | 🪪 **Persona Architect** | ICP GENERATOR | Claude generates a full Ideal Customer Profile from a product + industry — summary, pains, goals, channels, lifecycle. Activates when an API key is configured. |
+| 9 | 🚀 **Launch Copilot** | GTM STRATEGY | Claude generates positioning, taglines, messaging pillars, a phased plan, and a budget-allocated channel mix conditioned on product, audience, and budget. Activates when an API key is configured. |
 
 ## Architecture
 

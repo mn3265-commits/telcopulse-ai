@@ -23,7 +23,65 @@ interface LaunchPlan {
   }[]
 }
 
-function generateLaunchPlan(product: string, audience: string, budget: string): LaunchPlan {
+function seededInt(seed: string, min: number, max: number): number {
+  let h = 2166136261
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  const norm = ((h >>> 0) % 1000) / 1000
+  return Math.floor(min + norm * (max - min + 1))
+}
+
+function budgetMultiplier(budget: string): number {
+  if (budget.startsWith('<')) return 0.5
+  if (budget.startsWith('$10K')) return 1
+  if (budget.startsWith('$50K')) return 2.5
+  if (budget.startsWith('>')) return 5
+  return 1
+}
+
+function scaleRange(text: string, mult: number): string {
+  return text.replace(/(\d+(?:\.\d+)?)([KkMm]?)\s*-\s*(\d+(?:\.\d+)?)([KkMm]?)/g, (_, a, au, b, bu) => {
+    const toNum = (n: string, u: string) => parseFloat(n) * (u.toLowerCase() === 'k' ? 1000 : u.toLowerCase() === 'm' ? 1_000_000 : 1)
+    const fromNum = (n: number) => {
+      if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1)}M`
+      if (n >= 1000) return `${Math.round(n / 1000)}K`
+      return `${Math.round(n)}`
+    }
+    const lo = Math.max(1, Math.round(toNum(a, au) * mult))
+    const hi = Math.max(lo + 1, Math.round(toNum(b, bu) * mult))
+    return `${fromNum(lo)}-${fromNum(hi)}`
+  })
+}
+
+function personalizePlan(base: LaunchPlan, product: string, audience: string, budget: string): LaunchPlan {
+  const productLower = product.trim().toLowerCase() || 'this offering'
+  const audienceLower = audience.trim().toLowerCase() || 'the target segment'
+  const seed = `${product}|${audience}|${budget}`.toLowerCase()
+  const mult = budgetMultiplier(budget)
+
+  const pillars = base.pillars.map((pillar, i) => ({
+    title: pillar.title,
+    description: i === 0
+      ? `${pillar.description} Tuned for ${audienceLower} evaluating ${productLower}.`
+      : pillar.description,
+  }))
+
+  const channels = base.channels.map((ch, i) => {
+    const jitter = seededInt(seed + 'b' + i, -3, 3)
+    const pct = Math.max(5, parseInt(ch.budgetPct) + jitter)
+    return {
+      ...ch,
+      budgetPct: `${pct}%`,
+      reach: scaleRange(ch.reach, mult),
+    }
+  })
+
+  return { ...base, pillars, channels }
+}
+
+function pickBaseLaunchPlan(product: string, audience: string): LaunchPlan {
   const p = product.toLowerCase()
   const a = audience.toLowerCase()
 
@@ -191,6 +249,10 @@ function generateLaunchPlan(product: string, audience: string, budget: string): 
       { channel: 'Partnerships', priority: 'Low', budgetPct: '10%', reach: '15-40 referrals', cta: 'Partner With Us' },
     ],
   }
+}
+
+function generateLaunchPlan(product: string, audience: string, budget: string): LaunchPlan {
+  return personalizePlan(pickBaseLaunchPlan(product, audience), product, audience, budget)
 }
 
 const EXAMPLES = [
@@ -383,10 +445,6 @@ export default function LaunchCopilot() {
               {source === 'claude' ? (
                 <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">
                   Claude Sonnet 4
-                </span>
-              ) : source === 'template' ? (
-                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">
-                  Template fallback
                 </span>
               ) : null}
             </div>

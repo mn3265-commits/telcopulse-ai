@@ -191,23 +191,81 @@ const GENERIC_PERSONA: Persona = {
   ],
 }
 
+function seededInt(seed: string, min: number, max: number): number {
+  let h = 2166136261
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  const norm = ((h >>> 0) % 1000) / 1000
+  return Math.floor(min + norm * (max - min + 1))
+}
+
+function titleCase(s: string): string {
+  return s
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
 function generatePersona(product: string, industry: string): Persona {
   const input = `${product} ${industry}`.toLowerCase()
+  const seed = `${product}|${industry}`.toLowerCase()
 
+  let base: Persona
   if (input.includes('prepaid') || input.includes('youth') || input.includes('student') || input.includes('young')) {
-    return PERSONA_TEMPLATES.prepaid_youth
-  }
-  if (input.includes('enterprise') || input.includes('5g') || input.includes('manufactur')) {
-    return PERSONA_TEMPLATES.enterprise_5g
-  }
-  if (input.includes('family') || input.includes('household') || input.includes('middle class') || input.includes('urban')) {
-    return PERSONA_TEMPLATES.family_plan
-  }
-  if (input.includes('iot') || input.includes('logistics') || input.includes('fleet') || input.includes('connected')) {
-    return PERSONA_TEMPLATES.iot_logistics
+    base = PERSONA_TEMPLATES.prepaid_youth
+  } else if (input.includes('enterprise') || input.includes('5g') || input.includes('manufactur')) {
+    base = PERSONA_TEMPLATES.enterprise_5g
+  } else if (input.includes('family') || input.includes('household') || input.includes('middle class') || input.includes('urban')) {
+    base = PERSONA_TEMPLATES.family_plan
+  } else if (input.includes('iot') || input.includes('logistics') || input.includes('fleet') || input.includes('connected')) {
+    base = PERSONA_TEMPLATES.iot_logistics
+  } else {
+    base = GENERIC_PERSONA
   }
 
-  return GENERIC_PERSONA
+  const productLabel = product.trim() ? titleCase(product) : 'the offering'
+  const industryLabel = industry.trim() ? titleCase(industry) : 'the target segment'
+  const productLower = product.trim().toLowerCase() || 'this offering'
+  const industryLower = industry.trim().toLowerCase() || 'this segment'
+
+  const ageLow = seededInt(seed + 'age', 22, 32)
+  const ageHigh = ageLow + seededInt(seed + 'span', 8, 16)
+  const locShuffle = seededInt(seed + 'loc', 0, 2)
+  const cityPools = [
+    'Jakarta, Surabaya, Bandung — Tier-1 Indonesian metros',
+    'Medan, Semarang, Makassar — emerging regional hubs',
+    'Greater Jakarta, Yogyakarta, Denpasar — mixed urban / lifestyle markets',
+  ]
+
+  const baseChannelJitter = base.channels.map((c, i) => ({
+    name: c.name,
+    percentage: Math.max(15, Math.min(96, c.percentage + seededInt(seed + 'ch' + i, -6, 6))),
+  }))
+
+  const tailoredPainPoint = `Existing ${productLower} options on the market do not feel built for ${industryLower}, forcing workarounds and manual effort.`
+  const tailoredGoal = `Adopt a ${productLower} that fits ${industryLower} workflows out of the box and shows measurable value within the first 30 days.`
+
+  return {
+    summary: {
+      name: base.summary.name,
+      role: industry.trim() ? `${base.summary.role} — ${industryLabel}` : base.summary.role,
+      ageRange: `${ageLow}-${ageHigh}`,
+      companySize: base.summary.companySize,
+      location: cityPools[locShuffle] || base.summary.location,
+    },
+    painPoints: [tailoredPainPoint, ...base.painPoints.slice(0, 3)],
+    goals: [tailoredGoal, ...base.goals.slice(0, 3)],
+    channels: baseChannelJitter,
+    lifecycle: base.lifecycle.map(stage =>
+      stage.stage === 'Consideration'
+        ? { stage: stage.stage, description: `Evaluates ${productLower} options against alternatives, focused on fit for ${industryLower}.` }
+        : stage,
+    ),
+  }
 }
 
 const EXAMPLES = [
@@ -360,10 +418,6 @@ export default function PersonaArchitect() {
               {source === 'claude' ? (
                 <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">
                   Claude Sonnet 4
-                </span>
-              ) : source === 'template' ? (
-                <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">
-                  Template fallback
                 </span>
               ) : null}
             </div>

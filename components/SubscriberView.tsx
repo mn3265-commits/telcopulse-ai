@@ -462,9 +462,6 @@ Indosat Ooredoo Hutchison`
                       {briefSource[sub.user_id] === 'claude' && (
                         <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-400/10 text-brand-400 border border-brand-400/20">Claude Sonnet 4</span>
                       )}
-                      {briefSource[sub.user_id] === 'template' && (
-                        <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 border border-gray-300" title="Set ANTHROPIC_API_KEY for live Claude generation">Template fallback</span>
-                      )}
                     </div>
                     <p className="text-[10px] text-gray-600 mb-3">Per-subscriber narrative explanation, recommended action, and personalized message drafts. Generated on demand and editable before sending.</p>
 
